@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>White Box Content Filter Extension</title>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; margin:0; padding:0; background:#f7f7f7; color:#333; }
+    header { background:#324d67; color:#fff; padding:20px; text-align:center; }
+    header img { display:block; margin:0 auto 10px; }
+    main { max-width:800px; margin:0 auto; padding:20px; background:#fff; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+    h1, h2 { margin-top:0; }
+    h2 { color:#324d67; }
+    h3 { margin-top:15px; color:#324d67; }
+    ul { margin-left:20px; }
+    .download-buttons a { display:inline-block; margin:10px 5px; padding:10px 15px; background:#007acc; color:#fff; text-decoration:none; border-radius:4px; }
+    .download-buttons a:hover { background:#005fa3; }
+    footer { text-align:center; margin-top:40px; font-size:0.9em; color:#777; }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="data:image/png;base64,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" alt="White Box Logo" style="height:80px;">
+    <h1>Content Filter Extension</h1>
+    <p>Keep your browsing safe by filtering out inappropriate and sexual content.</p>
+  </header>
+  <main>
+    <section>
+      <h2>About</h2>
+      <p>This open‑source extension filters inappropriate or sexual content from websites. It runs entirely on your device and supports Chrome and Edge browsers.</p>
+    </section>
+    <section>
+      <h2>Download</h2>
+      <p>Select your browser and version. Replace the files in the <code>downloads</code> directory with your actual extension packages (ZIP files) to update.</p>
+      <h3>Free version</h3>
+      <div class="download-buttons">
+        <a href="downloads/free-chrome.zip">Free – Chrome</a>
+        <a href="downloads/free-edge.zip">Free – Edge</a>
+      </div>
+      <h3>Paid subscription</h3>
+      <div class="download-buttons">
+        <a href="downloads/paid-chrome.zip">Paid – Chrome</a>
+        <a href="downloads/paid-edge.zip">Paid – Edge</a>
+      </div>
+    </section>
+    <section>
+      <h2>Install on Chrome</h2>
+      <ul>
+        <li>Download and extract the desired ZIP file (free or paid).</li>
+        <li>Open <code>chrome://extensions</code> and enable <strong>Developer mode</strong>.</li>
+        <li>Click <strong>Load unpacked</strong> and select the extracted folder to install【744565989825595†L229-L235】.</li>
+        <li>To update, replace the files and click <strong>Reload</strong>.</li>
+      </ul>
+    </section>
+    <section>
+      <h2>Install on Edge</h2>
+      <ul>
+        <li>Download and extract the desired ZIP file (free or paid).</li>
+        <li>Open the Edge Extensions menu and choose <strong>Manage extensions</strong>.</li>
+        <li>Enable <strong>Developer mode</strong>, click <strong>Load unpacked</strong>, and select the folder【79644310503460†L221-L229】.</li>
+        <li>For updates, replace the files and click <strong>Reload</strong>【79644310503460†L266-L286】.</li>
+      </ul>
+    </section>
+    <section>
+      <h2>Updating the website</h2>
+      <p>This site is hosted on GitHub Pages. Edit <code>index.html</code> or replace files in <code>downloads/</code> (free or paid) and commit the changes to update automatically【869014136628778†L2-L6】.</p>
+    </section>
+  </main>
+  <footer>
+    &copy; 2026 White Box Extension
+  </footer>
+</body>
+</html>
