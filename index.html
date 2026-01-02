@@ -56,7 +56,7 @@
 
       /* Bigger branding to make the logo and name front and centre */
       .hero-logo {
-        width: 300px;
+        width: 240px;
         height: auto;
         margin-bottom: 1.25rem;
       }
@@ -137,6 +137,134 @@
         text-decoration: underline;
       }
 
+      /* How-it-works + demo */
+      .how-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+        margin-top: 1.25rem;
+      }
+      .how-card {
+        background: #fff;
+        border: 1px solid #e3e9f0;
+        border-radius: 14px;
+        padding: 1rem;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+      }
+      .how-card h3 {
+        margin: 0 0 0.35rem;
+        color: #0b3d91;
+        font-size: 1.05rem;
+      }
+      .how-card p {
+        margin: 0;
+        color: #444;
+      }
+      .demo-wrap {
+        margin-top: 1.5rem;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      .demo-visual {
+        border-radius: 18px;
+        overflow: hidden;
+        border: 1px solid #e3e9f0;
+        background: #fff;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+      }
+      .demo-visual svg {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+      .demo-note {
+        margin-top: 0.75rem;
+        font-size: 0.95rem;
+        color: #555;
+      }
+
+      /* Pills */
+      .pill-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.45rem 0.75rem;
+        border-radius: 999px;
+        background: rgba(11, 61, 145, 0.08);
+        color: #0b3d91;
+        font-weight: 600;
+      }
+
+      /* Comparison table */
+      .table-wrap {
+        overflow-x: auto;
+        border-radius: 14px;
+        border: 1px solid #e3e9f0;
+        background: #fff;
+      }
+      .compare-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 560px;
+      }
+      .compare-table th,
+      .compare-table td {
+        padding: 0.85rem 1rem;
+        border-bottom: 1px solid #eef2f6;
+        text-align: left;
+      }
+      .compare-table th {
+        background: rgba(11, 61, 145, 0.06);
+        color: #0b3d91;
+      }
+      .compare-table td:nth-child(2),
+      .compare-table td:nth-child(3) {
+        width: 22%;
+      }
+      .small {
+        font-size: 0.95rem;
+        color: #555;
+        margin-top: 0.75rem;
+      }
+
+      /* Roadmap */
+      .roadmap-list {
+        margin: 1rem 0 0;
+        padding-left: 1.2rem;
+        color: #444;
+      }
+      .roadmap-list li {
+        margin: 0.5rem 0;
+      }
+
+      /* Trust cards */
+      .trust-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+      }
+      .trust-card {
+        background: #fff;
+        border: 1px solid #e3e9f0;
+        border-radius: 14px;
+        padding: 1rem;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+      }
+      .trust-card h3 {
+        margin: 0 0 0.35rem;
+        color: #0b3d91;
+        font-size: 1.05rem;
+      }
+      .trust-card p {
+        margin: 0;
+        color: #444;
+      }
+
       /* Sections */
       section {
         padding: 2rem 0;
@@ -206,6 +334,8 @@
     <nav class="top-nav">
       <a href="login.html">Login</a>
       <a href="signup_free.html">Sign Up</a>
+      <a href="version.html">Version</a>
+      <a href="feedback.html">Feedback</a>
     </nav>
     <header class="hero">
       <!-- Logo and brand name -->
@@ -217,7 +347,7 @@
       <h1>White Box</h1>
       <p>
         Take back control from the internet. You decide what you see — not
-        algorithms, advertisers or strangers. Filter out inappropriate or unwanted
+        algorithms, advertisers or strangers. Filter out inappropriate or sexual
         content and browse with confidence knowing you’re in charge.
       </p>
       <div class="cta-buttons">
@@ -238,6 +368,79 @@
             more control over what appears on screen, White Box empowers you to
             craft your own safe corner of the internet.
           </p>
+        </div>
+      </section>
+
+      <section id="how-it-works">
+        <h2>How White Box Works</h2>
+        <div class="about-content">
+          <p>
+            White Box is built for real-life browsing. Instead of blocking whole
+            websites, it steps in <strong>as you browse</strong> and cleanly
+            “white‑boxes” unwanted content—so the rest of the page can stay usable.
+          </p>
+
+          <div class="how-grid">
+            <div class="how-card">
+              <h3>1) Detect</h3>
+              <p>
+                Scans the page as it loads and as you scroll, looking at images,
+                text, and surrounding context.
+              </p>
+            </div>
+            <div class="how-card">
+              <h3>2) Decide</h3>
+              <p>
+                Uses fast on‑device heuristics first, then AI‑assisted checks when
+                needed—<em>without storing your browsing history</em>.
+              </p>
+            </div>
+            <div class="how-card">
+              <h3>3) White‑Box</h3>
+              <p>
+                Replaces detected content with clean placeholders so you stay in
+                control of what appears on your screen.
+              </p>
+            </div>
+          </div>
+
+          <div class="demo-wrap">
+            <div class="demo-copy">
+              <h3>See it in action</h3>
+              <p>
+                Here’s a simple preview of what “white‑boxing” looks like.
+              </p>
+            </div>
+
+            <div class="demo-visual" aria-label="White Box preview example">
+              <svg viewBox="0 0 640 360" role="img" aria-label="Example page with white boxes">
+                <defs>
+                  <linearGradient id="bgGrad" x1="0" x2="1" y1="0" y2="1">
+                    <stop offset="0" stop-color="#bde3ff" />
+                    <stop offset="1" stop-color="#ffffff" />
+                  </linearGradient>
+                </defs>
+                <rect x="0" y="0" width="640" height="360" rx="18" fill="url(#bgGrad)" />
+                <rect x="24" y="22" width="592" height="44" rx="12" fill="#0b3d91" opacity="0.12" />
+                <rect x="24" y="84" width="360" height="18" rx="8" fill="#0b3d91" opacity="0.18" />
+                <rect x="24" y="112" width="520" height="12" rx="6" fill="#0b3d91" opacity="0.10" />
+                <rect x="24" y="132" width="480" height="12" rx="6" fill="#0b3d91" opacity="0.10" />
+
+                <rect x="24" y="168" width="240" height="140" rx="14" fill="#ffffff" opacity="0.95" />
+                <rect x="276" y="168" width="340" height="70" rx="14" fill="#ffffff" opacity="0.95" />
+                <rect x="276" y="246" width="340" height="62" rx="14" fill="#ffffff" opacity="0.95" />
+
+                <text x="144" y="245" text-anchor="middle" font-size="14" fill="#0b3d91" opacity="0.75">Blocked</text>
+                <text x="446" y="212" text-anchor="middle" font-size="14" fill="#0b3d91" opacity="0.75">Blocked</text>
+                <text x="446" y="282" text-anchor="middle" font-size="14" fill="#0b3d91" opacity="0.75">Blocked</text>
+              </svg>
+            </div>
+          </div>
+
+          <div class="demo-note">
+            Want a real demo video here? Add a YouTube/Vimeo embed and we’ll place
+            it in this spot—clean, fast, and professional.
+          </div>
         </div>
       </section>
 
@@ -294,6 +497,112 @@
         </div>
       </section>
 
+      <section id="who-its-for">
+        <h2>Who White Box Is For</h2>
+        <div class="about-content">
+          <div class="pill-grid">
+            <span class="pill">Parents &amp; families</span>
+            <span class="pill">Personal accountability</span>
+            <span class="pill">Work &amp; shared computers</span>
+            <span class="pill">Schools &amp; learning</span>
+            <span class="pill">Anyone who wants control</span>
+          </div>
+          <p style="margin-top: 1rem;">
+            White Box isn’t about shame or censorship—it’s about giving you
+            practical control so you can browse with confidence.
+          </p>
+        </div>
+      </section>
+
+      <section id="compare">
+        <h2>How We Compare</h2>
+        <div class="about-content">
+          <div class="table-wrap">
+            <table class="compare-table" aria-label="Comparison table">
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>Traditional Blocklists</th>
+                  <th>White Box</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Blocks whole websites</td><td>✅</td><td>❌</td></tr>
+                <tr><td>Context‑aware scanning</td><td>❌</td><td>✅</td></tr>
+                <tr><td>Works on new/unknown sites</td><td>❌</td><td>✅</td></tr>
+                <tr><td>Adjustable strictness</td><td>Limited</td><td>✅ (None / Moderate / Strict)</td></tr>
+                <tr><td>Privacy‑first (on‑device)</td><td>Sometimes</td><td>✅</td></tr>
+                <tr><td>Actively adapts while you scroll</td><td>❌</td><td>✅</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="small">
+            Our goal is simple: keep the web usable while protecting you from what
+            you don’t want to see.
+          </p>
+        </div>
+      </section>
+
+      <section id="roadmap">
+        <h2>Roadmap &amp; Vision</h2>
+        <div class="about-content">
+          <p>
+            The internet shouldn’t decide what appears on your screen. White Box
+            exists to take an active role in protecting you—so you’re not at the
+            mercy of whatever pops up next.
+          </p>
+          <ul class="roadmap-list">
+            <li><strong>Smarter detection:</strong> better context understanding and fewer false positives.</li>
+            <li><strong>Feedback loop:</strong> quick “Was this correct?” prompts to improve accuracy.</li>
+            <li><strong>Per‑site preferences:</strong> different rules for different sites.</li>
+            <li><strong>Family &amp; device profiles:</strong> tailored protection for each person/device.</li>
+            <li><strong>Mobile support:</strong> long‑term goal to extend protection beyond desktop browsers.</li>
+          </ul>
+        </div>
+      </section>
+
+
+      <section id="faq">
+        <h2>FAQ</h2>
+        <div class="about-content">
+          <details open>
+            <summary>Does White Box track me?</summary>
+            <p>No. White Box does not store browsing history. Filtering runs on your device.</p>
+          </details>
+          <details>
+            <summary>Will it block entire sites?</summary>
+            <p>White Box focuses on blocking unwanted content on a page while keeping the rest usable.</p>
+          </details>
+          <details>
+            <summary>What if it misses something (or blocks too much)?</summary>
+            <p>Early access means improvements are ongoing. Use the Feedback page to report misses or false positives.</p>
+          </details>
+          <details>
+            <summary>Can I change strictness?</summary>
+            <p>Yes—None, Moderate, and Strict are designed for different sensitivity levels.</p>
+          </details>
+        </div>
+      </section>
+
+      <section id="trust">
+        <h2>Built for Trust</h2>
+        <div class="about-content">
+          <div class="trust-grid">
+            <div class="trust-card">
+              <h3>Privacy‑First</h3>
+              <p>Filtering happens on your device. We don’t store browsing history.</p>
+            </div>
+            <div class="trust-card">
+              <h3>Transparent Controls</h3>
+              <p>Choose None, Moderate, or Strict—and adjust as your needs change.</p>
+            </div>
+            <div class="trust-card">
+              <h3>Early Access, Real Feedback</h3>
+              <p>We listen fast. Your feedback directly shapes improvements.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section id="instructions" class="instructions">
         <h2>Installation &amp; Setup</h2>
@@ -342,6 +651,14 @@
         “as‑is” without warranties of any kind and is intended as a best
         effort to help you take back control from the internet. Use at your
         own discretion.
+      </p>
+
+      <p class="small" style="margin-top: 0.75rem;">
+        <a href="privacy.html">Privacy Policy</a>
+        &nbsp;|&nbsp;
+        <a href="terms.html">Terms of Service</a>
+        &nbsp;|&nbsp;
+        <a href="early_access.html">Early Access Disclaimer</a>
       </p>
     </footer>
   </body>
