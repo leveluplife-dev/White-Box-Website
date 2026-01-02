@@ -58,65 +58,14 @@
         color: #007bff;
       }
     
-      /* Shared top navigation */
-      .top-nav{
-        width:90%;
-        max-width:980px;
-        margin:0 auto;
-        padding:1rem 0;
-        display:flex;
-        justify-content:flex-end;
-        gap:1.2rem;
-        align-items:center;
-        font-size:0.98rem;
-      }
-      .top-nav a{
-        color:#0b3d91;
-        text-decoration:none;
-        font-weight:600;
-        opacity:0.92;
-      }
-      .top-nav a:hover{ opacity:1; text-decoration:underline; }
-      .top-nav .nav-cta{
-        background:#0b3d91;
-        color:#fff;
-        padding:0.45rem 0.75rem;
-        border-radius:999px;
-        text-decoration:none;
-      }
-      .top-nav .nav-cta:hover{ text-decoration:none; filter:brightness(1.05); }
-      /* Shared footer */
-      .footer{
-        margin-top:3rem;
-        padding:2.25rem 1rem;
-        border-top:1px solid #e0e8f2;
-        background:#ffffff;
-        text-align:center;
-        color:#445a72;
-      }
-      .footer-links{
-        display:flex;
-        justify-content:center;
-        gap:1.25rem;
-        flex-wrap:wrap;
-        margin-bottom:0.75rem;
-      }
-      .footer a{ color:#0b3d91; text-decoration:none; font-weight:600; }
-      .footer a:hover{ text-decoration:underline; }
-      .footer .small{ font-size:0.9rem; opacity:0.85; }
+      .error-text{color:#b00020;font-size:0.92rem;margin:0.35rem 0 0.75rem;}
+      .input-error{border:1.5px solid #b00020 !important; outline:none;}
+      .hint{color:#5b6f86;font-size:0.92rem;margin:0.25rem 0 0.75rem;}
+      .button[disabled]{opacity:.6;cursor:not-allowed;}
 </style>
   </head>
   <body>
-    
-
-    <nav class="top-nav">
-      <a href="index.html">Home</a>
-      <a href="version.html">Version</a>
-      <a href="feedback.html">Feedback</a>
-      <a href="login.html">Login</a>
-      <a class="nav-cta" href="signup_free.html">Sign Up</a>
-    </nav>
-<div class="header">
+    <div class="header">
       <h1>Early Access Disclosure</h1>
     </div>
     <div class="container">
@@ -127,32 +76,25 @@
       </p>
       <p>
         Your feedback helps us improve. By continuing, you acknowledge that
-        White Box is offered “as‑is” during this early phase.
+        White Box is offered “as‑is” during this early phase and you agree to
+        share constructive feedback with our team.
       </p>
       <p>
         If you’re comfortable proceeding, click below to enter your payment
         information and start your subscription. Otherwise you may return to the
         previous page.
       </p>
-      <a href="pro_payment.html" class="button">I Understand &amp; Continue</a>
+      <div style="margin:1rem 0;">
+        <label style="display:flex;gap:0.6rem;align-items:flex-start;font-weight:600;">
+          <input type="checkbox" id="ack" style="margin-top:0.25rem;" />
+          <span>I understand this is an early-access version. It may miss content or block incorrectly, and I agree to provide feedback when possible.</span>
+        </label>
+        <div class="hint">You must acknowledge this to continue.</div>
+      </div>
+<a href="pro_payment.html" class="button">I Understand &amp; Continue</a>
       <div class="back-link">
         <a href="pro_step1.html">&larr; Back to account creation</a>
       </div>
     </div>
-  
-    <footer class="footer">
-      <div class="footer-links">
-        <a href="privacy.html">Privacy</a>
-        <a href="terms.html">Terms</a>
-        <a href="early_access.html">Early Access</a>
-        <a href="version.html">Version</a>
-        <a href="feedback.html">Feedback</a>
-      </div>
-      <p>
-        White Box does not store your browsing history. Filtering happens on your device.
-        This is early-access software and may miss content or block incorrectly.
-      </p>
-      <p class="small">&copy; 2026 White Box. All rights reserved.</p>
-    </footer>
-</body>
+  </body>
 </html>

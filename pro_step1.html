@@ -79,65 +79,14 @@
         color: #007bff;
       }
     
-      /* Shared top navigation */
-      .top-nav{
-        width:90%;
-        max-width:980px;
-        margin:0 auto;
-        padding:1rem 0;
-        display:flex;
-        justify-content:flex-end;
-        gap:1.2rem;
-        align-items:center;
-        font-size:0.98rem;
-      }
-      .top-nav a{
-        color:#0b3d91;
-        text-decoration:none;
-        font-weight:600;
-        opacity:0.92;
-      }
-      .top-nav a:hover{ opacity:1; text-decoration:underline; }
-      .top-nav .nav-cta{
-        background:#0b3d91;
-        color:#fff;
-        padding:0.45rem 0.75rem;
-        border-radius:999px;
-        text-decoration:none;
-      }
-      .top-nav .nav-cta:hover{ text-decoration:none; filter:brightness(1.05); }
-      /* Shared footer */
-      .footer{
-        margin-top:3rem;
-        padding:2.25rem 1rem;
-        border-top:1px solid #e0e8f2;
-        background:#ffffff;
-        text-align:center;
-        color:#445a72;
-      }
-      .footer-links{
-        display:flex;
-        justify-content:center;
-        gap:1.25rem;
-        flex-wrap:wrap;
-        margin-bottom:0.75rem;
-      }
-      .footer a{ color:#0b3d91; text-decoration:none; font-weight:600; }
-      .footer a:hover{ text-decoration:underline; }
-      .footer .small{ font-size:0.9rem; opacity:0.85; }
+      .error-text{color:#b00020;font-size:0.92rem;margin:0.35rem 0 0.75rem;}
+      .input-error{border:1.5px solid #b00020 !important; outline:none;}
+      .hint{color:#5b6f86;font-size:0.92rem;margin:0.25rem 0 0.75rem;}
+      .button[disabled]{opacity:.6;cursor:not-allowed;}
 </style>
   </head>
   <body>
-    
-
-    <nav class="top-nav">
-      <a href="index.html">Home</a>
-      <a href="version.html">Version</a>
-      <a href="feedback.html">Feedback</a>
-      <a href="login.html">Login</a>
-      <a class="nav-cta" href="signup_free.html">Sign Up</a>
-    </nav>
-<div class="header">
+    <div class="header">
       <h1>Create Your Pro Account</h1>
     </div>
     <div class="container">
@@ -151,16 +100,19 @@
         your address. Please check your inbox and click the link to activate
         your account before proceeding.
       </p>
-      <form>
+      <form id="proSignupForm" novalidate>
         <label for="name">Name</label>
         <input type="text" id="name" name="name" required />
         <label for="email">Email address</label>
         <input type="email" id="email" name="email" required />
         <label for="password">Password</label>
-        <input type="password" id="password" name="password" required />
+        <input type="password" id="password" name="password" required pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}" title="At least 8 characters with uppercase, lowercase, and a number." />
+        <div class="hint">At least 8 characters with upper, lower, and a number.</div>
+        <label for="confirm_password">Confirm Password</label>
+        <input type="password" id="confirm_password" name="confirm_password" required />
         <!-- In a real application this button would submit the form and send a verification email -->
       </form>
-      <a href="pro_disclosure.html" class="button">Create Account &amp; Continue</a>
+      <button class="button" id="continueBtn" type="submit" disabled>Create Account &amp; Continue</button>
       <p class="note">
         This sign‑up form is a placeholder. Connect it to your user
         management system and email verification flow when you’re ready.
@@ -170,19 +122,66 @@
       </div>
     </div>
   
-    <footer class="footer">
-      <div class="footer-links">
-        <a href="privacy.html">Privacy</a>
-        <a href="terms.html">Terms</a>
-        <a href="early_access.html">Early Access</a>
-        <a href="version.html">Version</a>
-        <a href="feedback.html">Feedback</a>
-      </div>
-      <p>
-        White Box does not store your browsing history. Filtering happens on your device.
-        This is early-access software and may miss content or block incorrectly.
-      </p>
-      <p class="small">&copy; 2026 White Box. All rights reserved.</p>
-    </footer>
+    <script>
+      function validateEmail(email){
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      }
+      function setError(el, msg){
+        el.classList.add('input-error');
+        let err = el.nextElementSibling;
+        if(!err || !err.classList.contains('error-text')){
+          err = document.createElement('div');
+          err.className='error-text';
+          el.insertAdjacentElement('afterend', err);
+        }
+        err.textContent = msg;
+      }
+      function clearError(el){
+        el.classList.remove('input-error');
+        let err = el.nextElementSibling;
+        if(err && err.classList.contains('error-text')) err.remove();
+      }
+      function isStrongPassword(pw){
+        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(pw);
+      }
+
+      const form = document.getElementById('proSignupForm');
+      const btn = document.getElementById('continueBtn');
+      const name = document.getElementById('name');
+      const email = document.getElementById('email');
+      const pass = document.getElementById('password');
+      const confirm = document.getElementById('confirm_password');
+
+      function validateLive(){
+        let ok=true;
+        if(name.value.trim().length < 2) ok=false;
+        if(!validateEmail(email.value.trim())) ok=false;
+        if(!isStrongPassword(pass.value)) ok=false;
+        if(confirm.value !== pass.value || confirm.value.length===0) ok=false;
+        btn.disabled = !ok;
+      }
+      [name,email,pass,confirm].forEach(el => el.addEventListener('input', validateLive));
+
+      form.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        let ok=true;
+
+        clearError(name);
+        if(name.value.trim().length < 2){ setError(name,'Please enter your name.'); ok=false; }
+
+        clearError(email);
+        if(!validateEmail(email.value.trim())){ setError(email,'Please enter a valid email address.'); ok=false; }
+
+        clearError(pass);
+        if(!isStrongPassword(pass.value)){ setError(pass,'Password must be 8+ chars and include upper, lower, and a number.'); ok=false; }
+
+        clearError(confirm);
+        if(confirm.value !== pass.value){ setError(confirm,'Passwords do not match.'); ok=false; }
+
+        if(ok){
+          window.location.href='pro_disclosure.html';
+        }
+      });
+    </script>
 </body>
 </html>

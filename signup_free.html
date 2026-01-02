@@ -14,7 +14,7 @@
         line-height: 1.6;
       }
       .header {
-        background: linear-gradient(135deg, #bde3ff 0%, #eaf4ff 100%);
+        background: #e6f0ff;
         padding: 1.5rem;
         border-bottom: 1px solid #d6e4f1;
         text-align: center;
@@ -74,75 +74,17 @@
       .back-link a {
         color: #007bff;
       }
-    
-      /* Shared top navigation */
-      .top-nav{
-        width:90%;
-        max-width:980px;
-        margin:0 auto;
-        padding:1rem 0;
-        display:flex;
-        justify-content:flex-end;
-        gap:1.2rem;
-        align-items:center;
-        font-size:0.98rem;
-      }
-      .top-nav a{
-        color:#0b3d91;
-        text-decoration:none;
-        font-weight:600;
-        opacity:0.92;
-      }
-      .top-nav a:hover{ opacity:1; text-decoration:underline; }
-      .top-nav .nav-cta{
-        background:#0b3d91;
-        color:#fff;
-        padding:0.45rem 0.75rem;
-        border-radius:999px;
-        text-decoration:none;
-      }
-      .top-nav .nav-cta:hover{ text-decoration:none; filter:brightness(1.05); }
-      /* Shared footer */
-      .footer{
-        margin-top:3rem;
-        padding:2.25rem 1rem;
-        border-top:1px solid #e0e8f2;
-        background:#ffffff;
-        text-align:center;
-        color:#445a72;
-      }
-      .footer-links{
-        display:flex;
-        justify-content:center;
-        gap:1.25rem;
-        flex-wrap:wrap;
-        margin-bottom:0.75rem;
-      }
-      .footer a{ color:#0b3d91; text-decoration:none; font-weight:600; }
-      .footer a:hover{ text-decoration:underline; }
-      .footer .small{ font-size:0.9rem; opacity:0.85; }
-</style>
+    </style>
   </head>
   <body>
-    
-
-    <nav class="top-nav">
-      <a href="index.html">Home</a>
-      <a href="version.html">Version</a>
-      <a href="feedback.html">Feedback</a>
-      <a href="login.html">Login</a>
-      <a class="nav-cta" href="signup_free.html">Sign Up</a>
-    </nav>
-<div class="header">
+    <div class="header">
       <h1>Sign up for the Free Version</h1>
     </div>
     <div class="container">
       <p>
         Create a free account to download the basic version of White Box. Get
         started with core filtering features and take control of what you see.
-        After you sign up we’ll send a verification email. Please confirm your
-        email to activate your account and receive the download link along with
-        a welcome message.
+        After you sign up, we'll send you a link to download the extension.
       </p>
       <form>
         <label for="name">Name</label>
@@ -151,34 +93,15 @@
         <input type="email" id="email" name="email" required />
         <label for="password">Password</label>
         <input type="password" id="password" name="password" required />
-        <!-- In a real application this button would submit the form and trigger an email verification -->
-        <button type="submit">Create Account &amp; Verify</button>
+        <button type="submit">Create Account &amp; Download</button>
       </form>
-      <div class="note">
-        Already have an account? <a href="login.html">Log in here</a>.
-      </div>
       <p class="note">
-        This sign‑up form is a placeholder. Integrate it with your user
-        management system and email verification flow when you’re ready.
+        This sign‑up form is a placeholder. You can replace it with your
+        preferred account creation and download workflow.
       </p>
       <div class="back-link">
         <a href="index.html">&larr; Back to home</a>
       </div>
     </div>
-  
-    <footer class="footer">
-      <div class="footer-links">
-        <a href="privacy.html">Privacy</a>
-        <a href="terms.html">Terms</a>
-        <a href="early_access.html">Early Access</a>
-        <a href="version.html">Version</a>
-        <a href="feedback.html">Feedback</a>
-      </div>
-      <p>
-        White Box does not store your browsing history. Filtering happens on your device.
-        This is early-access software and may miss content or block incorrectly.
-      </p>
-      <p class="small">&copy; 2026 White Box. All rights reserved.</p>
-    </footer>
-</body>
+  </body>
 </html>

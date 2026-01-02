@@ -109,7 +109,11 @@
         background: #218838;
       }
 
-      /* Feedback button style */
+      
+      .cta-links{margin-top:1rem; display:flex; gap:1.25rem; justify-content:center; flex-wrap:wrap;}
+      .cta-links a{color:#0b3d91; font-weight:700; text-decoration:none;}
+      .cta-links a:hover{text-decoration:underline;}
+/* Feedback button style */
       .cta-feedback {
         background: #ffc107;
         color: #212529;
@@ -173,7 +177,39 @@
         background: #fff;
         box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
       }
-      .demo-visual svg {
+      
+
+      .demo-grid{
+        display:grid;
+        grid-template-columns: 1fr 1fr;
+        gap:1rem;
+        margin-top:1rem;
+      }
+      .demo-card{
+        background:#fff;
+        border:1px solid #e0e8f2;
+        border-radius:16px;
+        padding:0.75rem;
+        box-shadow: 0 10px 24px rgba(11, 61, 145, 0.08);
+      }
+      .demo-card h4{
+        margin:0.25rem 0 0.5rem;
+        color:#0b3d91;
+        font-size:1.05rem;
+      }
+      .demo-card img{
+        width:100%;
+        height:auto;
+        border-radius:14px;
+        border:1px solid #e6eef7;
+        display:block;
+        background: linear-gradient(135deg, #bde3ff 0%, #ffffff 100%);
+      }
+      @media (max-width: 820px){
+        .demo-grid{ grid-template-columns: 1fr; }
+      }
+
+.demo-visual svg {
         width: 100%;
         height: auto;
         display: block;
@@ -331,11 +367,13 @@
   </head>
   <body>
     <!-- Top navigation for account actions -->
+    
     <nav class="top-nav">
-      <a href="login.html">Login</a>
-      <a href="signup_free.html">Sign Up</a>
+      <a href="index.html">Home</a>
       <a href="version.html">Version</a>
       <a href="feedback.html">Feedback</a>
+      <a href="login.html">Login</a>
+      <a class="nav-cta" href="signup_free.html">Sign Up</a>
     </nav>
     <header class="hero">
       <!-- Logo and brand name -->
@@ -347,7 +385,7 @@
       <h1>White Box</h1>
       <p>
         Take back control from the internet. You decide what you see — not
-        algorithms, advertisers or strangers. Filter out inappropriate or sexual
+        algorithms, advertisers or strangers. Filter out inappropriate or unwanted
         content and browse with confidence knowing you’re in charge.
       </p>
       <div class="cta-buttons">
@@ -404,43 +442,32 @@
             </div>
           </div>
 
+          
           <div class="demo-wrap">
             <div class="demo-copy">
               <h3>See it in action</h3>
               <p>
-                Here’s a simple preview of what “white‑boxing” looks like.
+                Below are simple, cartoon-style previews of what “white‑boxing” looks like.
+                (You can swap these for real screenshots or a short demo video any time.)
               </p>
             </div>
 
-            <div class="demo-visual" aria-label="White Box preview example">
-              <svg viewBox="0 0 640 360" role="img" aria-label="Example page with white boxes">
-                <defs>
-                  <linearGradient id="bgGrad" x1="0" x2="1" y1="0" y2="1">
-                    <stop offset="0" stop-color="#bde3ff" />
-                    <stop offset="1" stop-color="#ffffff" />
-                  </linearGradient>
-                </defs>
-                <rect x="0" y="0" width="640" height="360" rx="18" fill="url(#bgGrad)" />
-                <rect x="24" y="22" width="592" height="44" rx="12" fill="#0b3d91" opacity="0.12" />
-                <rect x="24" y="84" width="360" height="18" rx="8" fill="#0b3d91" opacity="0.18" />
-                <rect x="24" y="112" width="520" height="12" rx="6" fill="#0b3d91" opacity="0.10" />
-                <rect x="24" y="132" width="480" height="12" rx="6" fill="#0b3d91" opacity="0.10" />
-
-                <rect x="24" y="168" width="240" height="140" rx="14" fill="#ffffff" opacity="0.95" />
-                <rect x="276" y="168" width="340" height="70" rx="14" fill="#ffffff" opacity="0.95" />
-                <rect x="276" y="246" width="340" height="62" rx="14" fill="#ffffff" opacity="0.95" />
-
-                <text x="144" y="245" text-anchor="middle" font-size="14" fill="#0b3d91" opacity="0.75">Blocked</text>
-                <text x="446" y="212" text-anchor="middle" font-size="14" fill="#0b3d91" opacity="0.75">Blocked</text>
-                <text x="446" y="282" text-anchor="middle" font-size="14" fill="#0b3d91" opacity="0.75">Blocked</text>
-              </svg>
+            <div class="demo-grid" aria-label="Moderate and Strict examples">
+              <div class="demo-card">
+                <h4>Moderate Mode</h4>
+                <img src="demo_moderate.png" alt="Cartoon preview showing Moderate mode white-boxing" />
+              </div>
+              <div class="demo-card">
+                <h4>Strict Mode</h4>
+                <img src="demo_strict.png" alt="Cartoon preview showing Strict mode white-boxing" />
+              </div>
             </div>
           </div>
 
           <div class="demo-note">
-            Want a real demo video here? Add a YouTube/Vimeo embed and we’ll place
-            it in this spot—clean, fast, and professional.
+            Want a real demo video on this page later? Drop in a YouTube/Vimeo embed and we’ll position it here—clean, fast, and professional.
           </div>
+
         </div>
       </section>
 
@@ -643,23 +670,20 @@
       </section>
     </main>
 
+    
     <footer class="footer">
+      <div class="footer-links">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a href="early_access.html">Early Access</a>
+        <a href="version.html">Version</a>
+        <a href="feedback.html">Feedback</a>
+      </div>
       <p>
-        &copy; 2026 White Box. All rights reserved.
-        White Box does not store your browsing data—filtering happens entirely
-        on your device. We respect your privacy. This software is provided
-        “as‑is” without warranties of any kind and is intended as a best
-        effort to help you take back control from the internet. Use at your
-        own discretion.
+        White Box does not store your browsing history. Filtering happens on your device.
+        Early access software may miss content or block incorrectly.
       </p>
-
-      <p class="small" style="margin-top: 0.75rem;">
-        <a href="privacy.html">Privacy Policy</a>
-        &nbsp;|&nbsp;
-        <a href="terms.html">Terms of Service</a>
-        &nbsp;|&nbsp;
-        <a href="early_access.html">Early Access Disclaimer</a>
-      </p>
+      <p class="small">&copy; 2026 White Box. All rights reserved.</p>
     </footer>
   </body>
 </html>
