@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>White Box – Pro Sign‑Up</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+        background: #f6f9fc;
+        color: #333;
+        line-height: 1.6;
+      }
+      .header {
+        background: #e6f0ff;
+        padding: 1.5rem;
+        border-bottom: 1px solid #d6e4f1;
+        text-align: center;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 2.5rem;
+        color: #0b3d91;
+      }
+      .container {
+        width: 90%;
+        max-width: 700px;
+        margin: 2rem auto;
+        background: #fff;
+        border-radius: 6px;
+        padding: 2rem;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      }
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+      }
+      input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"] {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ccd7e6;
+        border-radius: 4px;
+        margin-bottom: 1rem;
+        font-size: 1rem;
+      }
+      button {
+        display: inline-block;
+        background: #28a745;
+        color: #fff;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #218838;
+      }
+      .note {
+        margin-top: 1rem;
+        font-size: 0.9rem;
+        color: #666;
+        text-align: center;
+      }
+      .back-link {
+        display: block;
+        margin-top: 2rem;
+        text-align: center;
+      }
+      .back-link a {
+        color: #007bff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Sign up for the Pro Version</h1>
+    </div>
+    <div class="container">
+      <p>
+        Join as an early adopter and unlock advanced features. Pay just
+        <strong>$3 per month</strong> when you prepay for six months (regularly
+        $5/month). Create your account below and enter your payment
+        information to start your subscription.
+      </p>
+      <form>
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required />
+        <label for="email">Email address</label>
+        <input type="email" id="email" name="email" required />
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required />
+
+        <h3>Payment information</h3>
+        <label for="cardnumber">Card number</label>
+        <input type="tel" id="cardnumber" name="cardnumber" pattern="\d{16}" placeholder="1234 5678 9012 3456" required />
+        <label for="exp">Expiration date (MM/YY)</label>
+        <input type="text" id="exp" name="exp" placeholder="MM/YY" required />
+        <label for="cvv">CVV</label>
+        <input type="number" id="cvv" name="cvv" placeholder="123" required />
+        <button type="submit">Subscribe &amp; Download Pro</button>
+      </form>
+      <p class="note">
+        This payment form is a placeholder. Replace it with your secure payment
+        and subscription flow when you're ready.
+      </p>
+      <div class="back-link">
+        <a href="index.html">&larr; Back to home</a>
+      </div>
+    </div>
+  </body>
+</html>
