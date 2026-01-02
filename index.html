@@ -47,16 +47,18 @@
         align-items: center;
         justify-content: center;
         text-align: center;
-        background: linear-gradient(135deg, #e6f0ff, #ffffff);
+        /* Use a blue‑to‑white gradient inspired by the White Box logo */
+        background: linear-gradient(135deg, #bde3ff 0%, #eaf4ff 100%);
         padding: 3rem 1rem 4rem;
         border-bottom: 1px solid #e0e8f2;
+        position: relative;
       }
 
       /* Bigger branding to make the logo and name front and centre */
       .hero-logo {
-        width: 240px;
+        width: 600px;
         height: auto;
-        margin-bottom: 1.25rem;
+        margin-bottom: 0.5rem;
       }
 
       .hero h1 {
@@ -105,6 +107,25 @@
 
       .cta-paid:hover {
         background: #218838;
+      }
+
+      /* Top navigation bar */
+      .top-nav {
+        width: 90%;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 1rem 0;
+        display: flex;
+        justify-content: flex-end;
+        gap: 1.5rem;
+        font-size: 1rem;
+      }
+      .top-nav a {
+        color: #0b3d91;
+        font-weight: 600;
+      }
+      .top-nav a:hover {
+        text-decoration: underline;
       }
 
       /* Sections */
@@ -172,6 +193,11 @@
     </style>
   </head>
   <body>
+    <!-- Top navigation for account actions -->
+    <nav class="top-nav">
+      <a href="login.html">Login</a>
+      <a href="signup_free.html">Sign Up</a>
+    </nav>
     <header class="hero">
       <!-- Logo and brand name -->
       <img
@@ -182,13 +208,13 @@
       <h1>White Box</h1>
       <p>
         Take back control from the internet. You decide what you see — not
-        algorithms, advertisers or strangers. Filter out inappropriate or sexual
+        algorithms, advertisers or strangers. Filter out inappropriate or unwanted
         content and browse with confidence knowing you’re in charge.
       </p>
       <div class="cta-buttons">
         <a href="signup_free.html" class="cta-free">Get the Free Version</a>
-        <!-- Updated pricing: early adopters can lock in $3/month (regularly $5/month) -->
-        <a href="signup_paid.html" class="cta-paid">Get the Pro Version (from $3/mo)</a>
+        <!-- Updated pricing: early adopters can lock in $3/month (regularly $5/month).  -->
+        <a href="pro_step1.html" class="cta-paid">Get the Pro Version (from $3/mo)</a>
       </div>
     </header>
 
@@ -229,25 +255,17 @@
         <div class="instructions-content">
           <h3>Installing on Google Chrome</h3>
           <p>
-            1. Download the extension (free or pro) from the sign-up pages
-            above.<br />
-            2. Open <strong>chrome://extensions</strong> in your browser.<br />
-            3. Toggle <strong>Developer mode</strong> on in the top right.<br />
-            4. Click <strong>Load unpacked</strong> and select the folder where
-            you extracted the extension files.<br />
-            5. The extension will appear in your extension list; make sure it is
-            enabled.
+            1. Visit the White Box extension page on the
+            <a href="https://chrome.google.com/webstore">Chrome Web Store</a>.<br />
+            2. Click <strong>Add to Chrome</strong> and confirm the installation when prompted.<br />
+            3. After it installs, pin the White Box icon from the extensions menu for quick access.<br />
           </p>
           <h3>Installing on Microsoft Edge</h3>
           <p>
-            1. Download the extension from the sign-up pages.<br />
-            2. Navigate to <strong>edge://extensions</strong>.<br />
-            3. Enable <strong>Developer mode</strong> using the toggle in the
-            bottom left corner.<br />
-            4. Click <strong>Load unpacked</strong> and choose the folder with
-            the extension files.<br />
-            5. After loading, ensure the extension is turned on in your Edge
-            extensions list.
+            1. Go to the <a href="https://microsoftedge.microsoft.com/addons/">Microsoft Edge Add‑ons</a>
+            store and search for “White Box”.<br />
+            2. Click <strong>Get</strong> (or <strong>Add to Edge</strong>) and approve the prompts to install.<br />
+            3. Once installed, ensure White Box is enabled in your Edge extensions list.<br />
           </p>
           <p>
             Need help? Contact us at

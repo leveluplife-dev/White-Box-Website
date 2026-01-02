@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>White Box – Free Sign‑Up</title>
+    <title>White Box – Pro: Payment</title>
     <style>
       body {
         margin: 0;
@@ -38,7 +38,11 @@
         margin-bottom: 0.5rem;
         font-weight: 600;
       }
-      input[type="text"], input[type="email"], input[type="password"] {
+      input[type="text"],
+      input[type="email"],
+      input[type="password"],
+      input[type="tel"],
+      input[type="number"] {
         width: 100%;
         padding: 0.75rem;
         border: 1px solid #ccd7e6;
@@ -46,19 +50,21 @@
         margin-bottom: 1rem;
         font-size: 1rem;
       }
-      button {
+      .button {
         display: inline-block;
-        background: #007bff;
+        background: #28a745;
         color: #fff;
         padding: 0.75rem 1.5rem;
         border: none;
         border-radius: 4px;
         font-size: 1rem;
         font-weight: 600;
+        text-decoration: none;
+        text-align: center;
         cursor: pointer;
       }
-      button:hover {
-        background: #0062cc;
+      .button:hover {
+        background: #218838;
       }
       .note {
         margin-top: 1rem;
@@ -78,35 +84,33 @@
   </head>
   <body>
     <div class="header">
-      <h1>Sign up for the Free Version</h1>
+      <h1>Enter Payment Details</h1>
     </div>
     <div class="container">
       <p>
-        Create a free account to download the basic version of White Box. Get
-        started with core filtering features and take control of what you see.
-        After you sign up we’ll send a verification email. Please confirm your
-        email to activate your account and receive the download link along with
-        a welcome message.
+        You’re just one step away from unlocking White Box Pro! As an early
+        adopter you’ll be charged <strong>$3 per month</strong> when you
+        prepay for six months (regular price $5/month). Your subscription will
+        begin immediately after purchase.
       </p>
       <form>
-        <label for="name">Name</label>
-        <input type="text" id="name" name="name" required />
-        <label for="email">Email address</label>
-        <input type="email" id="email" name="email" required />
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required />
-        <!-- In a real application this button would submit the form and trigger an email verification -->
-        <button type="submit">Create Account &amp; Verify</button>
+        <label for="cardname">Name on card</label>
+        <input type="text" id="cardname" name="cardname" required />
+        <label for="cardnumber">Card number</label>
+        <input type="tel" id="cardnumber" name="cardnumber" pattern="\d{16}" placeholder="1234 5678 9012 3456" required />
+        <label for="exp">Expiration date (MM/YY)</label>
+        <input type="text" id="exp" name="exp" placeholder="MM/YY" required />
+        <label for="cvv">CVV</label>
+        <input type="number" id="cvv" name="cvv" placeholder="123" required />
+        <!-- In a real application this button would submit the payment to your payment processor -->
       </form>
-      <div class="note">
-        Already have an account? <a href="login.html">Log in here</a>.
-      </div>
+      <a href="index.html" class="button">Subscribe &amp; Download Pro</a>
       <p class="note">
-        This sign‑up form is a placeholder. Integrate it with your user
-        management system and email verification flow when you’re ready.
+        This payment form is a placeholder. Replace it with your secure
+        subscription and payment flow when you’re ready.
       </p>
       <div class="back-link">
-        <a href="index.html">&larr; Back to home</a>
+        <a href="pro_disclosure.html">&larr; Back to disclosure</a>
       </div>
     </div>
   </body>
