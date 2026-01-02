@@ -56,9 +56,9 @@
 
       /* Bigger branding to make the logo and name front and centre */
       .hero-logo {
-        width: 600px;
+        width: 300px;
         height: auto;
-        margin-bottom: 0.5rem;
+        margin-bottom: 1.25rem;
       }
 
       .hero h1 {
@@ -107,6 +107,15 @@
 
       .cta-paid:hover {
         background: #218838;
+      }
+
+      /* Feedback button style */
+      .cta-feedback {
+        background: #ffc107;
+        color: #212529;
+      }
+      .cta-feedback:hover {
+        background: #e0a800;
       }
 
       /* Top navigation bar */
@@ -250,6 +259,42 @@
         </div>
       </section>
 
+      <section id="unique">
+        <h2>What Sets White Box Apart</h2>
+        <div class="about-content">
+          <p>
+            Unlike traditional filters that rely solely on predefined blocklists of
+            domains or URLs, White Box actively scans the content of every
+            page you visit and makes intelligent decisions about what you see.
+            It uses a mix of heuristics and AI methods to detect and white‑box
+            unwanted content—including images and text—on sites that are not
+            blocked by normal filters. This means you’re protected even on
+            new or obscure sites, and you stay in control of your browsing
+            experience.
+          </p>
+        </div>
+      </section>
+
+      <section id="version-info">
+        <h2>Current Version</h2>
+        <div class="about-content">
+          <p>
+            White Box is currently in an early access beta. It offers three
+            filtering levels—<strong>None</strong>, <strong>Moderate</strong>
+            and <strong>Strict</strong>—so you can choose how much content you
+            want to block. Moderate mode balances protection and
+            experience, while Strict mode aggressively filters questionable
+            content for maximum safety. Future versions will add more
+            customization, smarter detection and a streamlined workflow. Learn
+            more about this release and our roadmap on the version page.
+          </p>
+          <p style="text-align:center; margin-top:1rem;">
+            <a href="version.html" class="cta-free">Learn About This Version</a>
+          </p>
+        </div>
+      </section>
+
+
       <section id="instructions" class="instructions">
         <h2>Installation &amp; Setup</h2>
         <div class="instructions-content">
@@ -274,12 +319,29 @@
           </p>
         </div>
       </section>
+      <section id="feedback">
+        <h2>We Value Your Feedback</h2>
+        <div class="about-content" style="text-align:center;">
+          <p>
+            Your insights help us improve White Box. Whether you have
+            suggestions, find a bug, or want to tell us how White Box works
+            for you, we’d love to hear from you.
+          </p>
+          <p style="margin-top:1rem;">
+            <a href="feedback.html" class="cta-feedback">Provide Feedback</a>
+          </p>
+        </div>
+      </section>
     </main>
 
     <footer class="footer">
       <p>
-        &copy; 2026 White Box. All rights reserved. Built with ❤️ to keep your
-        browsing safer.
+        &copy; 2026 White Box. All rights reserved.
+        White Box does not store your browsing data—filtering happens entirely
+        on your device. We respect your privacy. This software is provided
+        “as‑is” without warranties of any kind and is intended as a best
+        effort to help you take back control from the internet. Use at your
+        own discretion.
       </p>
     </footer>
   </body>

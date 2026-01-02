@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>White Box – Feedback</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+        background: #f6f9fc;
+        color: #333;
+        line-height: 1.6;
+      }
+      .header {
+        background: linear-gradient(135deg, #bde3ff 0%, #eaf4ff 100%);
+        padding: 1.5rem;
+        border-bottom: 1px solid #d6e4f1;
+        text-align: center;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 2.5rem;
+        color: #0b3d91;
+      }
+      .container {
+        width: 90%;
+        max-width: 800px;
+        margin: 2rem auto;
+        background: #fff;
+        border-radius: 6px;
+        padding: 2rem;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      }
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+      }
+      input[type="text"],
+      input[type="email"],
+      textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ccd7e6;
+        border-radius: 4px;
+        margin-bottom: 1rem;
+        font-size: 1rem;
+      }
+      textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+      .button {
+        display: inline-block;
+        background: #007bff;
+        color: #fff;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        font-weight: 600;
+        text-decoration: none;
+        text-align: center;
+        cursor: pointer;
+      }
+      .button:hover {
+        background: #0062cc;
+      }
+      .note {
+        margin-top: 1rem;
+        font-size: 0.9rem;
+        color: #666;
+        text-align: center;
+      }
+      .back-link {
+        text-align: center;
+        margin-top: 2rem;
+      }
+      .back-link a {
+        color: #007bff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Provide Feedback</h1>
+    </div>
+    <div class="container">
+      <p>
+        We appreciate your input! Use the form below to send us your thoughts,
+        report issues or suggest improvements. Your feedback helps shape the
+        future of White Box.
+      </p>
+      <form>
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" />
+        <label for="email">Email address</label>
+        <input type="email" id="email" name="email" />
+        <label for="message">Your feedback</label>
+        <textarea id="message" name="message"></textarea>
+      </form>
+      <!-- In a real application this button would submit the feedback to your back end or open a mail client -->
+      <a href="mailto:support@whitebox.com" class="button">Send Feedback</a>
+      <p class="note">
+        This feedback form is a placeholder. Integrate it with your preferred
+        method (email, database, etc.) when you’re ready.
+      </p>
+      <div class="back-link">
+        <a href="index.html">&larr; Back to home</a>
+      </div>
+    </div>
+  </body>
+</html>
