@@ -41,11 +41,15 @@
       input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"] {
         width: 100%;
         padding: 0.75rem;
+        box-sizing: border-box;
         border: 1px solid #ccd7e6;
         border-radius: 4px;
         margin-bottom: 1rem;
         font-size: 1rem;
       }
+
+      .error-text{color:#b00020;font-size:0.92rem;margin:0.35rem 0 0.75rem;}
+      .input-error{border:1.5px solid #b00020 !important;outline:none;}
       button {
         display: inline-block;
         background: #28a745;
@@ -74,10 +78,43 @@
       .back-link a {
         color: #007bff;
       }
-    </style>
+    
+      /* Top navigation bar (shared across pages) */
+      .top-nav {
+        width: 90%;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 1rem 0;
+        display: flex;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 1.25rem;
+        font-size: 1rem;
+      }
+      .top-nav a {
+        color: #0b3d91;
+        font-weight: 600;
+        text-decoration: none;
+              font-size: 1rem;
+      }
+      .top-nav a:hover {
+        text-decoration: underline;
+      }
+
+      /* Disabled primary buttons: noticeably different tint */
+      .button[disabled], button[disabled]{ background:#8fbaf7; opacity:1; cursor:not-allowed; }
+</style>
   </head>
   <body>
-    <div class="header">
+    
+    <nav class="top-nav">
+      <a href="index.html">Home</a>
+      <a href="version.html">Version</a>
+      <a href="feedback.html">Feedback</a>
+      <a href="login.html">Login</a>
+      <a href="signup_free.html">Sign Up</a>
+    </nav>
+<div class="header">
       <h1>Sign up for the Pro Version</h1>
     </div>
     <div class="container">
@@ -87,7 +124,7 @@
         $5/month). Create your account below and enter your payment
         information to start your subscription.
       </p>
-      <form>
+      <form id="paidSignupForm" novalidate>
         <label for="name">Name</label>
         <input type="text" id="name" name="name" required />
         <label for="email">Email address</label>
@@ -97,12 +134,12 @@
 
         <h3>Payment information</h3>
         <label for="cardnumber">Card number</label>
-        <input type="tel" id="cardnumber" name="cardnumber" pattern="\d{16}" placeholder="1234 5678 9012 3456" required />
+        <input type="tel" id="cardnumber" name="cardnumber" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456" required />
         <label for="exp">Expiration date (MM/YY)</label>
-        <input type="text" id="exp" name="exp" placeholder="MM/YY" required />
+        <input type="text" id="exp" name="exp" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY" required />
         <label for="cvv">CVV</label>
-        <input type="number" id="cvv" name="cvv" placeholder="123" required />
-        <button type="submit">Subscribe &amp; Download Pro</button>
+        <input type="tel" id="cvv" name="cvv" inputmode="numeric" autocomplete="cc-csc" placeholder="123" required />
+        <button class="button" type="submit" disabled>Subscribe &amp; Download Pro</button>
       </form>
       <p class="note">
         This payment form is a placeholder. Replace it with your secure payment
@@ -112,5 +149,137 @@
         <a href="index.html">&larr; Back to home</a>
       </div>
     </div>
+    <script>
+      function validateEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+      function setError(el,msg){
+        el.classList.add('input-error');
+        let err=el.nextElementSibling;
+        if(!err || !err.classList.contains('error-text')){
+          err=document.createElement('div');
+          err.className='error-text';
+          el.insertAdjacentElement('afterend', err);
+        }
+        err.textContent=msg;
+      }
+      function clearError(el){
+        el.classList.remove('input-error');
+        const err=el.nextElementSibling;
+        if(err && err.classList.contains('error-text')) err.remove();
+      }
+      function onlyDigits(s){ return (s||'').replace(/\D/g,''); }
+      function luhnCheck(num){
+        const digits=onlyDigits(num);
+        let sum=0, alt=false;
+        for(let i=digits.length-1;i>=0;i--){
+          let n=parseInt(digits[i],10);
+          if(alt){ n*=2; if(n>9) n-=9; }
+          sum+=n; alt=!alt;
+        }
+        return digits.length>=12 && sum%10===0;
+      }
+      function formatCardNumber(value){
+        const d=onlyDigits(value).slice(0,19);
+        return d.replace(/(.{4})/g,'$1 ').trim();
+      }
+      function formatExp(value){
+        const d=onlyDigits(value).slice(0,4);
+        if(d.length<=2) return d;
+        return d.slice(0,2)+'/'+d.slice(2);
+      }
+      function expIsValid(mmYY){
+        const m=mmYY.match(/^(0[1-9]|1[0-2])\/(\d{2})$/);
+        if(!m) return false;
+        const mm=parseInt(m[1],10);
+        const yy=parseInt(m[2],10);
+        const now=new Date();
+        const curYY=now.getFullYear()%100;
+        const curMM=now.getMonth()+1;
+        if(yy<curYY) return false;
+        if(yy===curYY && mm<curMM) return false;
+        return true;
+      }
+      function isStrongPassword(p){
+        return p.length>=8 && /[A-Z]/.test(p) && /[a-z]/.test(p) && /\d/.test(p);
+      }
+
+      const form=document.getElementById('paidSignupForm');
+      const name=document.getElementById('name');
+      const email=document.getElementById('email');
+      const password=document.getElementById('password');
+      const card=document.getElementById('cardnumber');
+      const exp=document.getElementById('exp');
+      const cvv=document.getElementById('cvv');
+      const btn=form.querySelector('button[type="submit"]');
+
+      // formatters
+      card.addEventListener('input', ()=>{ card.value=formatCardNumber(card.value); });
+      exp.addEventListener('input', ()=>{ exp.value=formatExp(exp.value); });
+      cvv.addEventListener('input', ()=>{ cvv.value=onlyDigits(cvv.value).slice(0,4); });
+
+      const touched=new Set();
+      function validateField(el){
+        clearError(el);
+        const v=(el.value||'').trim();
+        if(el===name){
+          if(v.length===0){ setError(el,'Name is required.'); return false; }
+          if(v.length<2){ setError(el,'Please enter your full name.'); return false; }
+          return true;
+        }
+        if(el===email){
+          if(v.length===0){ setError(el,'Email is required.'); return false; }
+          if(!validateEmail(v)){ setError(el,'Please enter a valid email address.'); return false; }
+          return true;
+        }
+        if(el===password){
+          if(password.value.length===0){ setError(el,'Password is required.'); return false; }
+          if(!isStrongPassword(password.value)){ setError(el,'Password must be 8+ chars and include upper, lower, and a number.'); return false; }
+          return true;
+        }
+        if(el===card){
+          const digits=onlyDigits(card.value);
+          if(digits.length<12){ setError(el,'Please enter a valid card number.'); return false; }
+          if(!luhnCheck(card.value)){ setError(el,'Card number appears invalid.'); return false; }
+          return true;
+        }
+        if(el===exp){
+          if(v.length===0){ setError(el,'Expiration is required.'); return false; }
+          if(!expIsValid(v)){ setError(el,'Please enter a valid, unexpired MM/YY.'); return false; }
+          return true;
+        }
+        if(el===cvv){
+          if(v.length===0){ setError(el,'CVV is required.'); return false; }
+          if(!/^\d{3,4}$/.test(v)){ setError(el,'CVV must be 3 or 4 digits.'); return false; }
+          return true;
+        }
+        return true;
+      }
+
+      function validateLive(){
+        const ok =
+          name.value.trim().length>=2 &&
+          validateEmail(email.value.trim()) &&
+          isStrongPassword(password.value) &&
+          luhnCheck(card.value) &&
+          expIsValid(exp.value.trim()) &&
+          /^\d{3,4}$/.test(cvv.value.trim());
+        btn.disabled=!ok;
+        return ok;
+      }
+
+      [name,email,password,card,exp,cvv].forEach(el=>{
+        el.addEventListener('blur', ()=>{ touched.add(el); validateField(el); validateLive(); });
+        el.addEventListener('input', ()=>{ if(touched.has(el) || el.value.length>0){ validateField(el);} else { clearError(el);} validateLive(); });
+      });
+
+      validateLive();
+
+      form.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        let ok=true;
+        [name,email,password,card,exp,cvv].forEach(el=>{ ok = validateField(el) && ok; });
+        if(!ok) return;
+        window.location.href='thank_you_pro.html';
+      });
+    </script>
   </body>
 </html>

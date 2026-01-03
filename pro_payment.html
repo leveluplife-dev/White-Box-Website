@@ -45,6 +45,7 @@
       input[type="number"] {
         width: 100%;
         padding: 0.75rem;
+        box-sizing: border-box;
         border: 1px solid #ccd7e6;
         border-radius: 4px;
         margin-bottom: 1rem;
@@ -83,10 +84,40 @@
       .error-text{color:#b00020;font-size:0.92rem;margin:0.35rem 0 0.75rem;}
       .input-error{border:1.5px solid #b00020 !important;outline:none;}
       .button[disabled]{opacity:.6;cursor:not-allowed;}
-    </style>
+    
+      /* Top navigation bar (shared across pages) */
+      .top-nav {
+        width: 90%;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 1rem 0;
+        display: flex;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 1.25rem;
+        font-size: 1rem;
+      }
+      .top-nav a {
+        color: #0b3d91;
+        font-weight: 600;
+        text-decoration: none;
+              font-size: 1rem;
+      }
+      .top-nav a:hover {
+        text-decoration: underline;
+      }
+</style>
   </head>
   <body>
-    <div class="header">
+    
+    <nav class="top-nav">
+      <a href="index.html">Home</a>
+      <a href="version.html">Version</a>
+      <a href="feedback.html">Feedback</a>
+      <a href="login.html">Login</a>
+      <a href="signup_free.html">Sign Up</a>
+    </nav>
+<div class="header">
       <h1>Enter Payment Details</h1>
     </div>
     <div class="container">
@@ -113,7 +144,7 @@
         <input type="tel" id="cvv" name="cvv" inputmode="numeric" autocomplete="cc-csc"
                placeholder="123" maxlength="4" required />
 
-        <button class="button" type="submit">Subscribe &amp; Download Pro</button>
+        <button class="button" type="submit" disabled>Subscribe &amp; Download Pro</button>
       </form>
 
       <p class="note">
@@ -132,6 +163,7 @@
       const cardNumber = document.getElementById('cardnumber');
       const exp = document.getElementById('exp');
       const cvv = document.getElementById('cvv');
+      const btn = form.querySelector('button[type="submit"]');
 
       function setError(el, msg){
         el.classList.add('input-error');
@@ -152,10 +184,14 @@
       function onlyDigits(s){ return (s || '').replace(/\D/g,''); }
 
       function formatCardNumber(value){
-        const digits = onlyDigits(value).slice(0,19); // allow up to 19 digits (some cards)
+        const digits = onlyDigits(value).slice(0,19);
         return digits.replace(/(\d{4})(?=\d)/g, '$1 ').trim();
       }
-
+      function formatExp(value){
+        const digits = onlyDigits(value).slice(0,4);
+        if(digits.length <= 2) return digits;
+        return digits.slice(0,2) + '/' + digits.slice(2);
+      }
       function luhnValid(num){
         const digits = onlyDigits(num);
         if(digits.length < 12) return false;
@@ -171,19 +207,11 @@
         }
         return sum % 10 === 0;
       }
-
-      function formatExp(value){
-        const d = onlyDigits(value).slice(0,4);
-        if(d.length <= 2) return d;
-        return d.slice(0,2) + '/' + d.slice(2);
-      }
-
-      function expValid(mmYY){
-        const m = mmYY.match(/^(\d{2})\/(\d{2})$/);
+      function expValid(value){
+        const m = value.match(/^(0[1-9]|1[0-2])\/(\d{2})$/);
         if(!m) return false;
         const mm = parseInt(m[1],10);
         const yy = parseInt(m[2],10);
-        if(mm < 1 || mm > 12) return false;
         const now = new Date();
         const curYY = now.getFullYear() % 100;
         const curMM = now.getMonth() + 1;
@@ -192,57 +220,63 @@
         return true;
       }
 
-      cardNumber.addEventListener('input', () => {
-        const caret = cardNumber.selectionStart;
-        cardNumber.value = formatCardNumber(cardNumber.value);
-        // best-effort caret handling
-        cardNumber.setSelectionRange(caret, caret);
-      });
+      // input formatting
+      cardNumber.addEventListener('input', () => { cardNumber.value = formatCardNumber(cardNumber.value); });
+      exp.addEventListener('input', () => { exp.value = formatExp(exp.value); });
+      cvv.addEventListener('input', () => { cvv.value = onlyDigits(cvv.value).slice(0,4); });
 
-      exp.addEventListener('input', () => {
-        const caret = exp.selectionStart;
-        exp.value = formatExp(exp.value);
-        exp.setSelectionRange(caret, caret);
-      });
-
-      cvv.addEventListener('input', () => {
-        cvv.value = onlyDigits(cvv.value).slice(0,4);
-      });
-
-      [cardName, cardNumber, exp, cvv].forEach(el => {
-        el.addEventListener('blur', () => validateField(el));
-      });
+      const touched = new Set();
 
       function validateField(el){
-        if(el === cardName){
-          if(!cardName.value.trim()){ setError(cardName, 'Please enter the name on the card.'); return false; }
-          clearError(cardName); return true;
+        clearError(el);
+        const v=(el.value||'').trim();
+        if(el===cardName){
+          if(v.length===0){ setError(el,'Name on card is required.'); return false; }
+          if(v.length<2){ setError(el,'Please enter the full name on the card.'); return false; }
+          return true;
         }
-        if(el === cardNumber){
-          const digits = onlyDigits(cardNumber.value);
-          if(!digits){ setError(cardNumber,'Please enter a card number.'); return false; }
-          if(!luhnValid(digits)){ setError(cardNumber,'That card number doesn’t look valid.'); return false; }
-          clearError(cardNumber); return true;
+        if(el===cardNumber){
+          if(onlyDigits(v).length===0){ setError(el,'Card number is required.'); return false; }
+          if(!luhnValid(v)){ setError(el,'Please enter a valid card number.'); return false; }
+          return true;
         }
-        if(el === exp){
-          if(!expValid(exp.value)){ setError(exp,'Enter a valid expiration date (MM/YY).'); return false; }
-          clearError(exp); return true;
+        if(el===exp){
+          if(v.length===0){ setError(el,'Expiration date is required.'); return false; }
+          if(!expValid(v)){ setError(el,'Please enter a valid, unexpired MM/YY.'); return false; }
+          return true;
         }
-        if(el === cvv){
-          const d = onlyDigits(cvv.value);
-          if(d.length < 3){ setError(cvv,'Enter a valid CVV (3–4 digits).'); return false; }
-          clearError(cvv); return true;
+        if(el===cvv){
+          if(v.length===0){ setError(el,'CVV is required.'); return false; }
+          if(!/^\d{3,4}$/.test(v)){ setError(el,'CVV must be 3 or 4 digits.'); return false; }
+          return true;
         }
         return true;
       }
 
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const ok = [cardName, cardNumber, exp, cvv].every(validateField);
-        if(!ok) return;
+      function validateLive(){
+        const ok =
+          cardName.value.trim().length>=2 &&
+          luhnValid(cardNumber.value) &&
+          expValid(exp.value.trim()) &&
+          /^\d{3,4}$/.test(cvv.value.trim());
+        btn.disabled = !ok;
+        return ok;
+      }
 
-        // Demo-only: redirect to thank you page.
-        window.location.href = 'thank_you_pro.html';
+      [cardName,cardNumber,exp,cvv].forEach(el=>{
+        el.addEventListener('blur', ()=>{ touched.add(el); validateField(el); validateLive(); });
+        el.addEventListener('input', ()=>{ if(touched.has(el) || el.value.length>0){ validateField(el);} else { clearError(el);} validateLive(); });
+      });
+
+      validateLive();
+
+      form.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        let ok=true;
+        [cardName,cardNumber,exp,cvv].forEach(el=>{ ok = validateField(el) && ok; });
+        if(ok){
+          window.location.href='thank_you_pro.html';
+        }
       });
     </script>
 

@@ -49,10 +49,40 @@
       .back-link a {
         color: #007bff;
       }
-    </style>
+    
+      /* Top navigation bar (shared across pages) */
+      .top-nav {
+        width: 90%;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 1rem 0;
+        display: flex;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 1.25rem;
+        font-size: 1rem;
+      }
+      .top-nav a {
+        color: #0b3d91;
+        font-weight: 600;
+        text-decoration: none;
+              font-size: 1rem;
+      }
+      .top-nav a:hover {
+        text-decoration: underline;
+      }
+</style>
   </head>
   <body>
-    <div class="header">
+    
+    <nav class="top-nav">
+      <a href="index.html">Home</a>
+      <a href="version.html">Version</a>
+      <a href="feedback.html">Feedback</a>
+      <a href="login.html">Login</a>
+      <a href="signup_free.html">Sign Up</a>
+    </nav>
+<div class="header">
       <h1>Version Information</h1>
     </div>
     <div class="container">

@@ -41,11 +41,17 @@
       input[type="text"], input[type="email"], input[type="password"] {
         width: 100%;
         padding: 0.75rem;
+        box-sizing: border-box;
         border: 1px solid #ccd7e6;
         border-radius: 4px;
         margin-bottom: 1rem;
         font-size: 1rem;
       }
+
+      /* Inline validation */
+      .error-text{color:#b00020;font-size:0.92rem;margin:0.35rem 0 0.75rem;}
+      .input-error{border:1.5px solid #b00020 !important;outline:none;}
+      .hint{color:#5b6f86;font-size:0.92rem;margin:0.25rem 0 0.75rem;}
       button {
         display: inline-block;
         background: #007bff;
@@ -74,10 +80,43 @@
       .back-link a {
         color: #007bff;
       }
-    </style>
+    
+      /* Top navigation bar (shared across pages) */
+      .top-nav {
+        width: 90%;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 1rem 0;
+        display: flex;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 1.25rem;
+        font-size: 1rem;
+      }
+      .top-nav a {
+        color: #0b3d91;
+        font-weight: 600;
+        text-decoration: none;
+              font-size: 1rem;
+      }
+      .top-nav a:hover {
+        text-decoration: underline;
+      }
+
+      /* Disabled primary buttons: noticeably different tint */
+      .button[disabled], button[disabled]{ background:#8fbaf7; opacity:1; cursor:not-allowed; }
+</style>
   </head>
   <body>
-    <div class="header">
+    
+    <nav class="top-nav">
+      <a href="index.html">Home</a>
+      <a href="version.html">Version</a>
+      <a href="feedback.html">Feedback</a>
+      <a href="login.html">Login</a>
+      <a href="signup_free.html">Sign Up</a>
+    </nav>
+<div class="header">
       <h1>Sign up for the Free Version</h1>
     </div>
     <div class="container">
@@ -86,14 +125,21 @@
         started with core filtering features and take control of what you see.
         After you sign up, we'll send you a link to download the extension.
       </p>
-      <form>
+      <form id="freeSignupForm" novalidate>
         <label for="name">Name</label>
-        <input type="text" id="name" name="name" required />
+        <input type="text" id="name" name="name" autocomplete="name" required />
+
         <label for="email">Email address</label>
-        <input type="email" id="email" name="email" required />
+        <input type="email" id="email" name="email" autocomplete="email" required />
+
         <label for="password">Password</label>
-        <input type="password" id="password" name="password" required />
-        <button type="submit">Create Account &amp; Download</button>
+        <input type="password" id="password" name="password" autocomplete="new-password" required />
+        <div class="hint">Use 8+ characters with an uppercase, lowercase, and a number.</div>
+
+        <label for="confirm_password">Confirm password</label>
+        <input type="password" id="confirm_password" name="confirm_password" autocomplete="new-password" required />
+
+        <button id="freeSignupBtn" type="submit" disabled>Create Account &amp; Download</button>
       </form>
       <p class="note">
         This sign‑up form is a placeholder. You can replace it with your
@@ -103,5 +149,125 @@
         <a href="index.html">&larr; Back to home</a>
       </div>
     </div>
+    <script>
+      function validateEmail(email){
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      }
+      function setError(el,msg){
+        el.classList.add('input-error');
+        let err=el.nextElementSibling;
+        if(!err || !err.classList.contains('error-text')){
+          err=document.createElement('div');
+          err.className='error-text';
+          el.insertAdjacentElement('afterend', err);
+        }
+        err.textContent=msg;
+      }
+      function clearError(el){
+        el.classList.remove('input-error');
+        const err=el.nextElementSibling;
+        if(err && err.classList.contains('error-text')) err.remove();
+      }
+      function isStrongPassword(pw){
+        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(pw);
+      }
+
+      const form=document.getElementById('freeSignupForm');
+      const btn=document.getElementById('freeSignupBtn');
+      const name=document.getElementById('name');
+      const email=document.getElementById('email');
+      const pass=document.getElementById('password');
+      const confirm=document.getElementById('confirm_password');
+
+      function validateLive(){
+        // Enable the button only when everything is valid
+        const ok =
+          name.value.trim().length >= 2 &&
+          validateEmail(email.value.trim()) &&
+          isStrongPassword(pass.value) &&
+          confirm.value.length > 0 &&
+          confirm.value === pass.value;
+        btn.disabled = !ok;
+        return ok;
+      }
+
+      // Show inline errors as the user types (after they've interacted with a field)
+      const touched = new Set();
+      function validateField(el){
+        const v = el.value.trim();
+        clearError(el);
+
+        if(el === name){
+          if(v.length === 0){ setError(el,'Name is required.'); return false; }
+          if(v.length < 2){ setError(el,'Please enter your full name.'); return false; }
+          return true;
+        }
+
+        if(el === email){
+          if(v.length === 0){ setError(el,'Email is required.'); return false; }
+          if(!validateEmail(v)){ setError(el,'Please enter a valid email address.'); return false; }
+          return true;
+        }
+
+        if(el === pass){
+          if(pass.value.length === 0){ setError(el,'Password is required.'); return false; }
+          if(!isStrongPassword(pass.value)){
+            setError(el,'Password must be 8+ chars and include upper, lower, and a number.');
+            return false;
+          }
+          return true;
+        }
+
+        if(el === confirm){
+          if(confirm.value.length === 0){ setError(el,'Please confirm your password.'); return false; }
+          if(confirm.value !== pass.value){ setError(el,'Passwords do not match.'); return false; }
+          return true;
+        }
+
+        return true;
+      }
+
+      [name,email,pass,confirm].forEach(el=>{
+        el.addEventListener('blur', ()=>{
+          touched.add(el);
+          validateField(el);
+          validateLive();
+        });
+        el.addEventListener('input', ()=>{
+          // Only show warnings once the user has interacted with the field
+          if(touched.has(el) || el.value.length > 0){
+            validateField(el);
+          } else {
+            clearError(el);
+          }
+          validateLive();
+        });
+      });
+      validateLive();
+
+      form.addEventListener('submit',(e)=>{
+        e.preventDefault();
+        let ok=true;
+
+        clearError(name);
+        if(name.value.trim().length<2){ setError(name,'Please enter your name.'); ok=false; }
+
+        clearError(email);
+        if(!validateEmail(email.value.trim())){ setError(email,'Please enter a valid email address.'); ok=false; }
+
+        clearError(pass);
+        if(!isStrongPassword(pass.value)){
+          setError(pass,'Password must be 8+ chars and include upper, lower, and a number.');
+          ok=false;
+        }
+
+        clearError(confirm);
+        if(confirm.value !== pass.value){ setError(confirm,'Passwords do not match.'); ok=false; }
+
+        if(ok){
+          window.location.href='thank_you_free.html';
+        }
+      });
+    </script>
   </body>
 </html>

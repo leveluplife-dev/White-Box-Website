@@ -43,11 +43,16 @@
       textarea {
         width: 100%;
         padding: 0.75rem;
+        box-sizing: border-box;
         border: 1px solid #ccd7e6;
         border-radius: 4px;
         margin-bottom: 1rem;
         font-size: 1rem;
       }
+
+      /* Inline validation */
+      .error-text{color:#b00020;font-size:0.92rem;margin:0.35rem 0 0.75rem;}
+      .input-error{border:1.5px solid #b00020 !important;outline:none;}
       textarea {
         min-height: 120px;
         resize: vertical;
@@ -81,10 +86,43 @@
       .back-link a {
         color: #007bff;
       }
-    </style>
+    
+      /* Top navigation bar (shared across pages) */
+      .top-nav {
+        width: 90%;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 1rem 0;
+        display: flex;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 1.25rem;
+        font-size: 1rem;
+      }
+      .top-nav a {
+        color: #0b3d91;
+        font-weight: 600;
+        text-decoration: none;
+              font-size: 1rem;
+      }
+      .top-nav a:hover {
+        text-decoration: underline;
+      }
+
+      /* Disabled primary buttons: noticeably different tint */
+      .button[disabled], button[disabled]{ background:#8fbaf7; opacity:1; cursor:not-allowed; }
+</style>
   </head>
   <body>
-    <div class="header">
+    
+    <nav class="top-nav">
+      <a href="index.html">Home</a>
+      <a href="version.html">Version</a>
+      <a href="feedback.html">Feedback</a>
+      <a href="login.html">Login</a>
+      <a href="signup_free.html">Sign Up</a>
+    </nav>
+<div class="header">
       <h1>Provide Feedback</h1>
     </div>
     <div class="container">
@@ -93,16 +131,15 @@
         report issues or suggest improvements. Your feedback helps shape the
         future of White Box.
       </p>
-      <form>
+      <form id="feedbackForm" novalidate>
         <label for="name">Name</label>
         <input type="text" id="name" name="name" />
         <label for="email">Email address</label>
-        <input type="email" id="email" name="email" />
+        <input type="email" id="email" name="email" required>
         <label for="message">Your feedback</label>
-        <textarea id="message" name="message"></textarea>
+        <textarea id="message" name="message" required></textarea>
+        <button class="button" type="submit" disabled>Send Feedback</button>
       </form>
-      <!-- In a real application this button would submit the feedback to your back end or open a mail client -->
-      <a href="mailto:support@whitebox.com" class="button">Send Feedback</a>
       <p class="note">
         This feedback form is a placeholder. Integrate it with your preferred
         method (email, database, etc.) when you’re ready.
@@ -111,5 +148,79 @@
         <a href="index.html">&larr; Back to home</a>
       </div>
     </div>
+    <script>
+      function validateEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+      function setError(el,msg){
+        el.classList.add('input-error');
+        let err=el.nextElementSibling;
+        if(!err || !err.classList.contains('error-text')){
+          err=document.createElement('div');
+          err.className='error-text';
+          el.insertAdjacentElement('afterend', err);
+        }
+        err.textContent=msg;
+      }
+      function clearError(el){
+        el.classList.remove('input-error');
+        const err=el.nextElementSibling;
+        if(err && err.classList.contains('error-text')) err.remove();
+      }
+
+      const form=document.getElementById('feedbackForm');
+      const name=document.getElementById('name');
+      const email=document.getElementById('email');
+      const message=document.getElementById('message');
+      const btn=form.querySelector('button[type="submit"]');
+
+      const touched=new Set();
+
+      function validateField(el){
+        clearError(el);
+        const v=(el.value||'').trim();
+        if(el===email){
+          if(v.length===0){ setError(el,'Email is required so we can follow up.'); return false; }
+          if(!validateEmail(v)){ setError(el,'Please enter a valid email address.'); return false; }
+          return true;
+        }
+        if(el===message){
+          if(v.length===0){ setError(el,'Please enter your feedback.'); return false; }
+          if(v.length<10){ setError(el,'Please add a bit more detail (at least 10 characters).'); return false; }
+          return true;
+        }
+        return true; // name optional
+      }
+
+      function validateLive(){
+        const ok = validateEmail(email.value.trim()) && (message.value.trim().length>=10);
+        btn.disabled = !ok;
+        return ok;
+      }
+
+      [name,email,message].forEach(el=>{
+        el.addEventListener('blur', ()=>{ touched.add(el); validateField(el); validateLive(); });
+        el.addEventListener('input', ()=>{ if(touched.has(el) || el.value.length>0){ validateField(el);} else { clearError(el);} validateLive(); });
+      });
+
+      validateLive();
+
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        let ok=true;
+        ok = validateField(email) && ok;
+        ok = validateField(message) && ok;
+        if(!ok) return;
+
+        const subject = encodeURIComponent('White Box Feedback');
+        const bodyLines = [
+          `Name: ${name.value.trim() || '(not provided)'}`,
+          `Email: ${email.value.trim()}`,
+          '',
+          'Feedback:',
+          message.value.trim()
+        ];
+        const body = encodeURIComponent(bodyLines.join('\n'));
+        window.location.href = `mailto:whitebox.feedback@gmail.com?subject=${subject}&body=${body}`;
+      });
+    </script>
   </body>
 </html>

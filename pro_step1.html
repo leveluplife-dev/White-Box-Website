@@ -43,6 +43,7 @@
       input[type="password"] {
         width: 100%;
         padding: 0.75rem;
+        box-sizing: border-box;
         border: 1px solid #ccd7e6;
         border-radius: 4px;
         margin-bottom: 1rem;
@@ -83,10 +84,40 @@
       .input-error{border:1.5px solid #b00020 !important; outline:none;}
       .hint{color:#5b6f86;font-size:0.92rem;margin:0.25rem 0 0.75rem;}
       .button[disabled]{opacity:.6;cursor:not-allowed;}
+
+      /* Top navigation bar (shared across pages) */
+      .top-nav {
+        width: 90%;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 1rem 0;
+        display: flex;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 1.25rem;
+        font-size: 1rem;
+      }
+      .top-nav a {
+        color: #0b3d91;
+        font-weight: 600;
+        text-decoration: none;
+              font-size: 1rem;
+      }
+      .top-nav a:hover {
+        text-decoration: underline;
+      }
 </style>
   </head>
   <body>
-    <div class="header">
+    
+    <nav class="top-nav">
+      <a href="index.html">Home</a>
+      <a href="version.html">Version</a>
+      <a href="feedback.html">Feedback</a>
+      <a href="login.html">Login</a>
+      <a href="signup_free.html">Sign Up</a>
+    </nav>
+<div class="header">
       <h1>Create Your Pro Account</h1>
     </div>
     <div class="container">
@@ -123,9 +154,8 @@
     </div>
   
     <script>
-      function validateEmail(email){
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-      }
+      function validateEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+      function isStrongPassword(p){ return p.length>=8 && /[A-Z]/.test(p) && /[a-z]/.test(p) && /\d/.test(p); }
       function setError(el, msg){
         el.classList.add('input-error');
         let err = el.nextElementSibling;
@@ -138,46 +168,67 @@
       }
       function clearError(el){
         el.classList.remove('input-error');
-        let err = el.nextElementSibling;
+        const err = el.nextElementSibling;
         if(err && err.classList.contains('error-text')) err.remove();
       }
-      function isStrongPassword(pw){
-        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(pw);
-      }
 
-      const form = document.getElementById('proSignupForm');
-      const btn = document.getElementById('continueBtn');
-      const name = document.getElementById('name');
-      const email = document.getElementById('email');
-      const pass = document.getElementById('password');
-      const confirm = document.getElementById('confirm_password');
+      const form=document.getElementById('proSignupForm');
+      const name=document.getElementById('name');
+      const email=document.getElementById('email');
+      const pass=document.getElementById('password');
+      const confirm=document.getElementById('confirm_password');
+      const btn=form.querySelector('button[type="submit"]');
+
+      const touched=new Set();
+
+      function validateField(el){
+        clearError(el);
+        const v=(el.value||'').trim();
+        if(el===name){
+          if(v.length===0){ setError(el,'Name is required.'); return false; }
+          if(v.length<2){ setError(el,'Please enter your full name.'); return false; }
+          return true;
+        }
+        if(el===email){
+          if(v.length===0){ setError(el,'Email is required.'); return false; }
+          if(!validateEmail(v)){ setError(el,'Please enter a valid email address.'); return false; }
+          return true;
+        }
+        if(el===pass){
+          if(pass.value.length===0){ setError(el,'Password is required.'); return false; }
+          if(!isStrongPassword(pass.value)){ setError(el,'Password must be 8+ chars and include upper, lower, and a number.'); return false; }
+          return true;
+        }
+        if(el===confirm){
+          if(confirm.value.length===0){ setError(el,'Please confirm your password.'); return false; }
+          if(confirm.value!==pass.value){ setError(el,'Passwords do not match.'); return false; }
+          return true;
+        }
+        return true;
+      }
 
       function validateLive(){
-        let ok=true;
-        if(name.value.trim().length < 2) ok=false;
-        if(!validateEmail(email.value.trim())) ok=false;
-        if(!isStrongPassword(pass.value)) ok=false;
-        if(confirm.value !== pass.value || confirm.value.length===0) ok=false;
-        btn.disabled = !ok;
+        const ok =
+          name.value.trim().length>=2 &&
+          validateEmail(email.value.trim()) &&
+          isStrongPassword(pass.value) &&
+          confirm.value.length>0 &&
+          confirm.value===pass.value;
+        btn.disabled=!ok;
+        return ok;
       }
-      [name,email,pass,confirm].forEach(el => el.addEventListener('input', validateLive));
+
+      [name,email,pass,confirm].forEach(el=>{
+        el.addEventListener('blur', ()=>{ touched.add(el); validateField(el); validateLive(); });
+        el.addEventListener('input', ()=>{ if(touched.has(el) || el.value.length>0){ validateField(el);} else { clearError(el);} validateLive(); });
+      });
+
+      validateLive();
 
       form.addEventListener('submit', (e)=>{
         e.preventDefault();
         let ok=true;
-
-        clearError(name);
-        if(name.value.trim().length < 2){ setError(name,'Please enter your name.'); ok=false; }
-
-        clearError(email);
-        if(!validateEmail(email.value.trim())){ setError(email,'Please enter a valid email address.'); ok=false; }
-
-        clearError(pass);
-        if(!isStrongPassword(pass.value)){ setError(pass,'Password must be 8+ chars and include upper, lower, and a number.'); ok=false; }
-
-        clearError(confirm);
-        if(confirm.value !== pass.value){ setError(confirm,'Passwords do not match.'); ok=false; }
-
+        [name,email,pass,confirm].forEach(el=>{ ok = validateField(el) && ok; });
         if(ok){
           window.location.href='pro_disclosure.html';
         }
