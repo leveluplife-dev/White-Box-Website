@@ -80,6 +80,9 @@
       .back-link a {
         color: #007bff;
       }
+      .error-text{color:#b00020;font-size:0.92rem;margin:0.35rem 0 0.75rem;}
+      .input-error{border:1.5px solid #b00020 !important;outline:none;}
+      .button[disabled]{opacity:.6;cursor:not-allowed;}
     </style>
   </head>
   <body>
@@ -93,18 +96,26 @@
         prepay for six months (regular price $5/month). Your subscription will
         begin immediately after purchase.
       </p>
-      <form>
+      
+      <form id="paymentForm" novalidate>
         <label for="cardname">Name on card</label>
-        <input type="text" id="cardname" name="cardname" required />
+        <input type="text" id="cardname" name="cardname" autocomplete="cc-name" required />
+
         <label for="cardnumber">Card number</label>
-        <input type="tel" id="cardnumber" name="cardnumber" pattern="\d{16}" placeholder="1234 5678 9012 3456" required />
+        <input type="tel" id="cardnumber" name="cardnumber" inputmode="numeric" autocomplete="cc-number"
+               placeholder="1234 5678 9012 3456" required />
+
         <label for="exp">Expiration date (MM/YY)</label>
-        <input type="text" id="exp" name="exp" placeholder="MM/YY" required />
+        <input type="text" id="exp" name="exp" inputmode="numeric" autocomplete="cc-exp"
+               placeholder="MM/YY" maxlength="5" required />
+
         <label for="cvv">CVV</label>
-        <input type="number" id="cvv" name="cvv" placeholder="123" required />
-        <!-- In a real application this button would submit the payment to your payment processor -->
+        <input type="tel" id="cvv" name="cvv" inputmode="numeric" autocomplete="cc-csc"
+               placeholder="123" maxlength="4" required />
+
+        <button class="button" type="submit">Subscribe &amp; Download Pro</button>
       </form>
-      <a href="index.html" class="button">Subscribe &amp; Download Pro</a>
+
       <p class="note">
         This payment form is a placeholder. Replace it with your secure
         subscription and payment flow when you’re ready.
@@ -113,5 +124,127 @@
         <a href="pro_disclosure.html">&larr; Back to disclosure</a>
       </div>
     </div>
+  
+    <script>
+      // Payment form validation and formatting (client-side demo only)
+      const form = document.getElementById('paymentForm');
+      const cardName = document.getElementById('cardname');
+      const cardNumber = document.getElementById('cardnumber');
+      const exp = document.getElementById('exp');
+      const cvv = document.getElementById('cvv');
+
+      function setError(el, msg){
+        el.classList.add('input-error');
+        let err = el.nextElementSibling;
+        if(!err || !err.classList.contains('error-text')){
+          err = document.createElement('div');
+          err.className = 'error-text';
+          el.insertAdjacentElement('afterend', err);
+        }
+        err.textContent = msg;
+      }
+      function clearError(el){
+        el.classList.remove('input-error');
+        const err = el.nextElementSibling;
+        if(err && err.classList.contains('error-text')) err.remove();
+      }
+
+      function onlyDigits(s){ return (s || '').replace(/\D/g,''); }
+
+      function formatCardNumber(value){
+        const digits = onlyDigits(value).slice(0,19); // allow up to 19 digits (some cards)
+        return digits.replace(/(\d{4})(?=\d)/g, '$1 ').trim();
+      }
+
+      function luhnValid(num){
+        const digits = onlyDigits(num);
+        if(digits.length < 12) return false;
+        let sum = 0, alt = false;
+        for(let i = digits.length - 1; i >= 0; i--){
+          let n = parseInt(digits[i], 10);
+          if(alt){
+            n *= 2;
+            if(n > 9) n -= 9;
+          }
+          sum += n;
+          alt = !alt;
+        }
+        return sum % 10 === 0;
+      }
+
+      function formatExp(value){
+        const d = onlyDigits(value).slice(0,4);
+        if(d.length <= 2) return d;
+        return d.slice(0,2) + '/' + d.slice(2);
+      }
+
+      function expValid(mmYY){
+        const m = mmYY.match(/^(\d{2})\/(\d{2})$/);
+        if(!m) return false;
+        const mm = parseInt(m[1],10);
+        const yy = parseInt(m[2],10);
+        if(mm < 1 || mm > 12) return false;
+        const now = new Date();
+        const curYY = now.getFullYear() % 100;
+        const curMM = now.getMonth() + 1;
+        if(yy < curYY) return false;
+        if(yy === curYY && mm < curMM) return false;
+        return true;
+      }
+
+      cardNumber.addEventListener('input', () => {
+        const caret = cardNumber.selectionStart;
+        cardNumber.value = formatCardNumber(cardNumber.value);
+        // best-effort caret handling
+        cardNumber.setSelectionRange(caret, caret);
+      });
+
+      exp.addEventListener('input', () => {
+        const caret = exp.selectionStart;
+        exp.value = formatExp(exp.value);
+        exp.setSelectionRange(caret, caret);
+      });
+
+      cvv.addEventListener('input', () => {
+        cvv.value = onlyDigits(cvv.value).slice(0,4);
+      });
+
+      [cardName, cardNumber, exp, cvv].forEach(el => {
+        el.addEventListener('blur', () => validateField(el));
+      });
+
+      function validateField(el){
+        if(el === cardName){
+          if(!cardName.value.trim()){ setError(cardName, 'Please enter the name on the card.'); return false; }
+          clearError(cardName); return true;
+        }
+        if(el === cardNumber){
+          const digits = onlyDigits(cardNumber.value);
+          if(!digits){ setError(cardNumber,'Please enter a card number.'); return false; }
+          if(!luhnValid(digits)){ setError(cardNumber,'That card number doesn’t look valid.'); return false; }
+          clearError(cardNumber); return true;
+        }
+        if(el === exp){
+          if(!expValid(exp.value)){ setError(exp,'Enter a valid expiration date (MM/YY).'); return false; }
+          clearError(exp); return true;
+        }
+        if(el === cvv){
+          const d = onlyDigits(cvv.value);
+          if(d.length < 3){ setError(cvv,'Enter a valid CVV (3–4 digits).'); return false; }
+          clearError(cvv); return true;
+        }
+        return true;
+      }
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const ok = [cardName, cardNumber, exp, cvv].every(validateField);
+        if(!ok) return;
+
+        // Demo-only: redirect to thank you page.
+        window.location.href = 'thank_you_pro.html';
+      });
+    </script>
+
   </body>
 </html>

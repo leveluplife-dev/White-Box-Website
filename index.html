@@ -113,6 +113,18 @@
       .cta-links{margin-top:1rem; display:flex; gap:1.25rem; justify-content:center; flex-wrap:wrap;}
       .cta-links a{color:#0b3d91; font-weight:700; text-decoration:none;}
       .cta-links a:hover{text-decoration:underline;}
+
+      /* Secondary action links (avoid CTA button styling) */
+      .info-link{
+        color:#0b3d91;
+        font-weight:700;
+        text-decoration:underline;
+        background:transparent;
+        padding:0;
+        border:0;
+      }
+      .info-link:hover{opacity:0.85;}
+
 /* Feedback button style */
       .cta-feedback {
         background: #ffc107;
@@ -519,7 +531,7 @@
             more about this release and our roadmap on the version page.
           </p>
           <p style="text-align:center; margin-top:1rem;">
-            <a href="version.html" class="cta-free">Learn About This Version</a>
+            <a href="version.html" class="info-link">Learn About This Version</a>
           </p>
         </div>
       </section>
@@ -664,7 +676,7 @@
             for you, we’d love to hear from you.
           </p>
           <p style="margin-top:1rem;">
-            <a href="feedback.html" class="cta-feedback">Provide Feedback</a>
+            <a href="feedback.html" class="info-link">Provide Feedback</a>
           </p>
         </div>
       </section>
