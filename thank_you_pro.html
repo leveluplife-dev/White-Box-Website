@@ -117,23 +117,89 @@
         .top-nav-inner{ padding: 0.9rem 1rem; }
       }
 
-/* Mobile header fix: move Sign Up to second row */
-@media (max-width: 640px) {
-  .nav-right {
-    flex-wrap: wrap;
-    align-items: center;
-  }
+      .nav-right a:not(.nav-cta){
+          margin-bottom: 0.2rem;
+        }
+        .nav-cta{
+          flex: 1 0 100%;
+          width: 100%;
+          margin-left: 0 !important;
+          text-align: center;
+        }
+      }
 
-  .nav-right a:not(.nav-cta) {
-    margin-bottom: 0.25rem;
-  }
+      .top-nav-inner{
+          width: 100%;
+        }
 
-  .nav-cta {
-    width: 100%;
-    margin-top: 0.5rem;
-    text-align: center;
-  }
-}
+        /* Use a 3-column grid so links are neatly arranged */
+        .nav-right{
+          display: grid !important;
+          grid-template-columns: repeat(3, auto);
+          justify-content: end;
+          align-items: center;
+          column-gap: 0.85rem;
+          row-gap: 0.55rem;
+        }
+
+        /* Remove desktop left-margins so grid spacing is consistent */
+        .nav-right a{
+          margin-left: 0 !important;
+          white-space: nowrap;
+          font-size: 0.98rem;
+        }
+
+        /* Put Sign Up on row 2 and let it sit on the right side (not full-width) */
+        .nav-cta{
+          grid-column: 2 / 4;      /* right two columns */
+          justify-self: end;
+          width: auto;
+          margin-top: 0;
+          padding: 0.55rem 0.95rem;
+          border-radius: 10px;
+        }
+      }
+
+      /* Mobile header layout (v2): stack nav under brand to avoid cramped links at ~390px */
+      @media (max-width: 760px){
+        .top-nav{
+          padding: 0.85rem 1rem;
+        }
+
+        /* Stack brand + links */
+        .top-nav-inner{
+          display: flex !important;
+          flex-direction: column !important;
+          align-items: flex-start !important;
+          gap: 0.55rem;
+        }
+
+        .nav-left{
+          width: 100%;
+        }
+
+        .nav-right{
+          width: 100%;
+          display: flex !important;
+          flex-wrap: wrap !important;
+          justify-content: flex-end;
+          align-items: center;
+          gap: 0.7rem;
+        }
+
+        /* Normalize spacing on mobile */
+        .nav-right a{
+          margin-left: 0 !important;
+          white-space: nowrap;
+          font-size: 0.98rem;
+        }
+
+        /* Make the CTA a bit smaller so it doesn't dominate */
+        .nav-cta{
+          padding: 0.45rem 0.8rem;
+          border-radius: 10px;
+        }
+      }
 </style>
 </head>
 <body>
