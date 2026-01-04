@@ -93,7 +93,7 @@
       <a href="version.html">Version</a>
       <a href="feedback.html">Feedback</a>
       <a href="login.html">Login</a>
-      <a href="signup_free.html">Sign Up</a>
+      <a href="choose_plan.html">Sign Up</a>
     </nav>
 <div class="header">
       <h1>Early Access Disclosure</h1>
@@ -121,10 +121,27 @@
         </label>
         <div class="hint">You must acknowledge this to continue.</div>
       </div>
-<a href="pro_payment.html" class="button">I Understand &amp; Continue</a>
+<button id="continueButton" class="button" disabled>I Understand &amp; Continue</button>
       <div class="back-link">
         <a href="pro_step1.html">&larr; Back to account creation</a>
       </div>
     </div>
+  
+    <script>
+      const ack = document.getElementById('ack');
+      const contBtn = document.getElementById('continueButton');
+      const plan = new URLSearchParams(window.location.search).get('plan') || '6mo';
+
+      function update(){
+        contBtn.disabled = !ack.checked;
+      }
+      ack.addEventListener('change', update);
+      update();
+
+      contBtn.addEventListener('click', ()=>{
+        window.location.href = 'pro_payment.html?plan=' + encodeURIComponent(plan);
+      });
+    </script>
+
   </body>
 </html>

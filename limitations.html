@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>White Box – Limitations & Roadmap</title>
+    <style>
+      body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; background:#f5f7fb; color:#0b2b4b; }
+      .top-nav{ display:flex; justify-content:space-between; align-items:center; padding:1rem 2rem; background:rgba(255,255,255,0.9); border-bottom:1px solid #e5ecf5; position:sticky; top:0; z-index:10; backdrop-filter: blur(8px); }
+      .top-nav a{ color:#0b3d91; text-decoration:none; font-weight:600; margin-left:1.25rem; font-size:1rem; }
+      .top-nav a:hover{ text-decoration: underline; }
+      .nav-left a{ margin-left:0; display:flex; align-items:center; gap:0.65rem; }
+      .nav-left img{ height:36px; width:auto; }
+      .nav-left span{ font-weight:800; color:#0b2b4b; font-size:1.1rem; }
+      .nav-cta{ padding:0.55rem 0.9rem; border-radius:999px; background:#0b3d91; color:white !important; text-decoration:none !important; }
+      .nav-cta:hover{ filter: brightness(1.05); text-decoration:none !important; }
+
+      .wrap{ max-width: 920px; margin:0 auto; padding: 2.25rem 1.25rem 3.25rem; }
+      .card{ background:white; border:1px solid #e5ecf5; border-radius: 18px; padding: 1.5rem; box-shadow: 0 10px 30px rgba(13,38,76,0.08); }
+      h1{ margin:0; font-size: 2rem; letter-spacing:-0.02em; }
+      h2{ margin:1.25rem 0 0.5rem; font-size:1.25rem; }
+      p{ color:#4b6078; line-height:1.6; }
+      ul{ color:#223b57; line-height:1.6; }
+      li{ margin:0.35rem 0; }
+      .muted{ color:#4b6078; }
+      .callout{ background:#f4fbf7; border:1px solid #cfe7d8; padding:1rem; border-radius: 14px; margin-top: 1.25rem; }
+      .small{ font-size:0.92rem; color:#4b6078; }
+      @media (max-width: 900px){ .top-nav{ padding:0.9rem 1rem; } }
+    </style>
+  </head>
+  <body>
+    <nav class="top-nav">
+      <div class="nav-left">
+        <a href="index.html">
+          <img src="white-box-logo.png" alt="White Box logo" />
+          <span>White Box</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="index.html">Home</a>
+        <a href="version.html">Version</a>
+        <a href="feedback.html">Feedback</a>
+        <a href="login.html">Login</a>
+        <a class="nav-cta" href="choose_plan.html">Sign Up</a>
+      </div>
+    </nav>
+
+    <div class="wrap">
+      <div class="card">
+        <h1>Limitations & roadmap</h1>
+        <p>
+          White Box is currently built and maintained by <strong>one person</strong>. That means I move fast, but I also
+          have to prioritize the most impactful improvements first. Pro subscribers directly fund the runway to expand
+          coverage, reduce misses, and ultimately hire help.
+        </p>
+
+        <h2>What White Box may miss today</h2>
+        <ul>
+          <li><strong>Some GIFs</strong>, depending on how they’re embedded</li>
+          <li><strong>Some embedded video players</strong> and complex in‑page media</li>
+          <li>Content that is very small, heavily stylized, or rapidly changing</li>
+          <li>Rare site layouts that break normal page patterns</li>
+        </ul>
+
+        <div class="callout">
+          <strong>Good news:</strong>
+          <div class="muted" style="margin-top:0.35rem;">
+            The roadmap is expandable. With enough supporters, this evolves into broader media protection, smarter models,
+            fewer false positives, and stronger coverage across the modern web.
+          </div>
+        </div>
+
+        <h2>Roadmap direction</h2>
+        <ul>
+          <li>Better GIF and embedded video coverage</li>
+          <li>Improved detection accuracy (fewer misses)</li>
+          <li>Stronger handling for edge cases and tricky layouts</li>
+          <li>More user controls (whitelists, sensitivity tuning, reporting tools)</li>
+          <li>Optional device and family‑friendly controls (long‑term)</li>
+        </ul>
+
+        <h2>How you can help</h2>
+        <ul>
+          <li>Try Pro to fund development</li>
+          <li>Use the feedback page to report misses or false positives</li>
+          <li>Share White Box with a friend who wants more control online</li>
+        </ul>
+
+        <p class="small">
+          If you ever feel stuck or something isn’t working as expected, please reach out via the feedback page — I read every submission.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

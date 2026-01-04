@@ -115,18 +115,25 @@
       <a href="version.html">Version</a>
       <a href="feedback.html">Feedback</a>
       <a href="login.html">Login</a>
-      <a href="signup_free.html">Sign Up</a>
+      <a href="choose_plan.html">Sign Up</a>
     </nav>
 <div class="header">
       <h1>Enter Payment Details</h1>
     </div>
     <div class="container">
       <p>
-        You’re just one step away from unlocking White Box Pro! As an early
-        adopter you’ll be charged <strong>$3 per month</strong> when you
-        prepay for six months (regular price $5/month). Your subscription will
-        begin immediately after purchase.
+        Choose your billing plan, enter payment details, and you’ll be ready to install White Box Pro.
+        <span id="planSummary" style="font-weight:700;"></span>
+        <br />
+        <span style="color:#5b6f86;">Early‑adopter pricing helps fund rapid improvements and expanded coverage.</span>
       </p>
+      <div class="hint" id="planHint" style="margin-top:-0.5rem;">
+        Selected plan: <span id="planLabel" style="font-weight:700;color:#0b3d91;"></span>
+        <span style="margin-left:0.6rem;">
+          <a href="choose_plan.html" style="color:#0b3d91;font-weight:700;">Change</a>
+        </span>
+      </div>
+
       
       <form id="paymentForm" novalidate>
         <label for="cardname">Name on card</label>
@@ -157,6 +164,19 @@
     </div>
   
     <script>
+
+      // Plan selection (from querystring)
+      const plan = new URLSearchParams(window.location.search).get('plan') || '6mo';
+      const planMap = {
+        monthly: { label: '$4.99 / month', amount: 4.99 },
+        '6mo':   { label: '$24.99 / 6 months (recommended)', amount: 24.99 },
+        '12mo':  { label: '$49.98 / 12 months (best value)', amount: 49.98 }
+      };
+      const planInfo = planMap[plan] || planMap['6mo'];
+      const planLabelEl = document.getElementById('planLabel');
+      const planSummaryEl = document.getElementById('planSummary');
+      if(planLabelEl) planLabelEl.textContent = planInfo.label;
+      if(planSummaryEl) planSummaryEl.textContent = ' (' + planInfo.label + ')';
       // Payment form validation and formatting (client-side demo only)
       const form = document.getElementById('paymentForm');
       const cardName = document.getElementById('cardname');

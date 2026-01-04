@@ -115,7 +115,7 @@
       <a href="version.html">Version</a>
       <a href="feedback.html">Feedback</a>
       <a href="login.html">Login</a>
-      <a href="signup_free.html">Sign Up</a>
+      <a href="choose_plan.html">Sign Up</a>
     </nav>
 <div class="header">
       <h1>Create Your Pro Account</h1>
@@ -230,7 +230,8 @@
         let ok=true;
         [name,email,pass,confirm].forEach(el=>{ ok = validateField(el) && ok; });
         if(ok){
-          window.location.href='pro_disclosure.html';
+          const plan = new URLSearchParams(window.location.search).get('plan') || '6mo';
+          window.location.href='pro_disclosure.html?plan=' + encodeURIComponent(plan);
         }
       });
     </script>
