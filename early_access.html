@@ -1,19 +1,21 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>White Box – Early Access Disclaimer</title>
+<title>WhiteBox Agency – Early Access Disclaimer</title>
 <style>body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:#f6f9fc;color:#222}.header{background:linear-gradient(135deg,#bde3ff 0%,#eaf4ff 100%);padding:22px 16px;text-align:center;border-bottom:1px solid #d6e4f1}.card{max-width:880px;margin:22px auto;padding:18px;background:#fff;border:1px solid #e3e9f0;border-radius:14px}.small{color:#555;font-size:.95rem}a{color:#0b3d91;font-weight:600;text-decoration:none}a:hover{text-decoration:underline}
       /* Top navigation bar (shared across pages) */
       .top-nav {
-        width: 90%;
-        max-width: 900px;
-        margin: 0 auto;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
         padding: 1rem 0;
         display: flex;
         justify-content: flex-end;
         flex-wrap: wrap;
         gap: 1.25rem;
         font-size: 1rem;
-      }
+        left: 0;
+  right: 0;
+}
       .top-nav a {
         color: #0b3d91;
         font-weight: 600;
@@ -23,21 +25,116 @@
       .top-nav a:hover {
         text-decoration: underline;
       }
+
+      /* Shared top navigation */
+      .top-nav{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        padding: 1rem 2rem;
+        background: rgba(255,255,255,0.9);
+        border-bottom:1px solid #e5ebf5;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        backdrop-filter: blur(10px);
+      }
+      .brand-link{
+        display:flex;
+        align-items:center;
+        gap:0.75rem;
+        text-decoration:none;
+        color:#0b2b4b;
+      }
+      .top-nav img{
+        height: 44px;
+        width: auto;
+        display:block;
+      }
+      .brand-stack{
+        display:flex;
+        flex-direction:column;
+        line-height:1.05;
+      }
+      .brand-name{
+        font-weight:800;
+        letter-spacing:-0.02em;
+        font-size: 1.05rem;
+        color: #0b2b4b;
+}
+      .brand-tagline{
+        font-size: 0.88rem;
+        color:#3b5872;
+        font-weight:600;
+      }
+      .nav-right a{
+        margin-left: 1.25rem;
+        text-decoration:none;
+        color:#0b2b4b;
+        font-weight:600;
+        font-size: 1rem;
+      }
+      .nav-right a:hover{ text-decoration: underline; }
+      .nav-cta{
+        padding: 0.55rem 1rem;
+        border-radius: 6px;
+        background:#007bff;
+        color:white !important;
+        text-decoration:none;
+      }
+      .nav-cta:hover{ filter: brightness(0.95); text-decoration:none; }
+      @media (max-width: 760px){
+        .top-nav{ padding: 0.9rem 1rem; }
+        .brand-tagline{ display:none; }
+        .nav-right a{ margin-left: 0.75rem; }
+      }
+
+
+      /* Constrain nav content while keeping full-width background */
+      .top-nav{ 
+        padding: 0;
+      }
+      .top-nav-inner{
+        width: 100%;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 1rem 2rem;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+      }
+      @media (max-width: 760px){
+        .top-nav-inner{ padding: 0.9rem 1rem; }
+      }
+
 </style></head>
 <body>
 
-    <nav class="top-nav">
-      <a href="index.html">Home</a>
-      <a href="version.html">Version</a>
-      <a href="feedback.html">Feedback</a>
-      <a href="login.html">Login</a>
-      <a href="choose_plan.html">Sign Up</a>
+        <nav class="top-nav">
+      <div class="top-nav-inner">
+<div class="nav-left">
+        <a href="index.html" class="brand-link">
+          <img src="white-box-logo.png" alt="WhiteBox Agency logo" />
+          <span class="brand-stack">
+            <span class="brand-name">WhiteBox Agency</span>
+            <span class="brand-tagline">You decide what the internet shows you.</span>
+          </span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="index.html">Home</a>
+        <a href="version.html">Version</a>
+        <a href="feedback.html">Feedback</a>
+        <a href="login.html">Login</a>
+        <a class="nav-cta" href="choose_plan.html">Sign Up</a>
+      </div>
+      </div>
     </nav>
 <div class="header"><h1 style="margin:0;">Early Access Disclaimer</h1><p class="small" style="margin:8px 0 0;">Beta software with real‑world variability.</p></div>
 <div class="card">
 <h2>Important</h2>
 <ul>
-<li>White Box is an early access product. It may miss content or block content incorrectly.</li>
+<li>WhiteBox Agency is an early access product. It may miss content or block content incorrectly.</li>
 <li>Do not rely on it as your only safeguard. Use good judgment and supervision when needed.</li>
 <li>We welcome feedback and use it to improve detection and reduce false positives.</li>
 </ul>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>White Box – Choose Your Plan</title>
+    <title>WhiteBox Agency – Choose Your Plan</title>
     <style>
       body {
         margin: 0;
@@ -22,7 +22,11 @@
         top: 0;
         z-index: 10;
         backdrop-filter: blur(8px);
-      }
+        width: 100%;
+  left: 0;
+  right: 0;
+  margin: 0;
+}
       .top-nav a{
         color:#0b3d91;
         text-decoration:none;
@@ -37,8 +41,8 @@
         gap:0.75rem;
       }
       .nav-left img{ height:36px; width:auto; }
-      .nav-left span{ font-weight:800; color:#0b2b4b; font-size:1.1rem; }
-      .nav-cta{
+      .nav-left .brand-name{ font-weight:800; color:#0b2b4b; font-size:1.05rem; }
+.nav-cta{
         padding:0.55rem 0.9rem;
         border-radius:999px;
         background:#0b3d91;
@@ -148,14 +152,96 @@
       }
       .pill-links a:hover{ text-decoration: underline; }
       .small{ font-size:0.92rem; color:#4b6078; }
-    </style>
+    
+      /* Shared top navigation */
+      .top-nav{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        padding: 1rem 2rem;
+        background: rgba(255,255,255,0.9);
+        border-bottom:1px solid #e5ebf5;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        backdrop-filter: blur(10px);
+      }
+      .brand-link{
+        display:flex;
+        align-items:center;
+        gap:0.75rem;
+        text-decoration:none;
+        color:#0b2b4b;
+      }
+      .top-nav img{
+        height: 44px;
+        width: auto;
+        display:block;
+      }
+      .brand-stack{
+        display:flex;
+        flex-direction:column;
+        line-height:1.05;
+      }
+      .brand-name{
+        font-weight:800;
+        letter-spacing:-0.02em;
+        font-size: 1.05rem;
+        color: #0b2b4b;
+}
+      .brand-tagline{ font-size: 0.88rem; color:#3b5872; font-weight:600; }
+      .nav-right a{
+        margin-left: 1.25rem;
+        text-decoration:none;
+        color:#0b2b4b;
+        font-weight:600;
+        font-size: 1rem;
+      }
+      .nav-right a:hover{ text-decoration: underline; }
+      .nav-cta{
+        padding: 0.55rem 1rem;
+        border-radius: 6px;
+        background:#007bff;
+        color:white !important;
+        text-decoration:none;
+      }
+      .nav-cta:hover{ filter: brightness(0.95); text-decoration:none; }
+      @media (max-width: 760px){
+        .top-nav{ padding: 0.9rem 1rem; }
+        .brand-tagline{ display:none; }
+        .nav-right a{ margin-left: 0.75rem; }
+      }
+
+
+      /* Constrain nav content while keeping full-width background */
+      .top-nav{ 
+        padding: 0;
+      }
+      .top-nav-inner{
+        width: 100%;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 1rem 2rem;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+      }
+      @media (max-width: 760px){
+        .top-nav-inner{ padding: 0.9rem 1rem; }
+      }
+
+</style>
   </head>
   <body>
-    <nav class="top-nav">
-      <div class="nav-left">
-        <a href="index.html" style="margin-left:0; display:flex; align-items:center; gap:0.65rem;">
-          <img src="white-box-logo.png" alt="White Box logo" />
-          <span>White Box</span>
+        <nav class="top-nav">
+      <div class="top-nav-inner">
+<div class="nav-left">
+        <a href="index.html" class="brand-link">
+          <img src="white-box-logo.png" alt="WhiteBox Agency logo" />
+          <span class="brand-stack">
+            <span class="brand-name">WhiteBox Agency</span>
+            <span class="brand-tagline">You decide what the internet shows you.</span>
+          </span>
         </a>
       </div>
       <div class="nav-right">
@@ -164,6 +250,7 @@
         <a href="feedback.html">Feedback</a>
         <a href="login.html">Login</a>
         <a class="nav-cta" href="choose_plan.html">Sign Up</a>
+      </div>
       </div>
     </nav>
 
@@ -179,7 +266,7 @@
           <div class="card">
             <h2 style="margin:0; font-size:1.25rem;">Free</h2>
             <div class="price">$0</div>
-            <p class="muted">Great for getting started and seeing White Box in action.</p>
+            <p class="muted">Great for getting started and seeing WhiteBox Agency in action.</p>
             <ul>
               <li>Text‑based content filtering</li>
               <li>Basic page scanning</li>
@@ -249,7 +336,7 @@
       <div class="callout">
         <h2>Expectation‑leveling (what this does <em>not</em> do yet)</h2>
         <p class="muted" style="margin-top:0.4rem;">
-          White Box is built by a <strong>solo founder</strong>. It’s already powerful, but it’s not perfect yet —
+          WhiteBox Agency is built by a <strong>solo founder</strong>. It’s already powerful, but it’s not perfect yet —
           and some content types are still on the roadmap.
         </p>
         <ul>
