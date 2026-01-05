@@ -305,6 +305,7 @@
 
         <button class="button" type="submit" disabled>Log In</button>
       </form>
+      <div id="statusMsg" style="margin-top:0.75rem;"></div>
       <div class="link-row">
         <p>
           <a href="forgot_password.html">Forgot your password?</a>
@@ -315,6 +316,12 @@
         </p>
       </div>
     </div>
+
+    <!-- Supabase (client-side) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Configure these values in: js/supabase-config.js -->
+    <script src="js/supabase-config.js"></script>
+    <script src="js/supabase-client.js"></script>
     <script>
       function validateEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
       function setError(el,msg){
@@ -337,6 +344,13 @@
       const email=document.getElementById('email');
       const password=document.getElementById('password');
       const btn=form.querySelector('button[type="submit"]');
+      const statusMsg=document.getElementById('statusMsg');
+
+      function setStatus(msg, type){
+        statusMsg.innerHTML = msg
+          ? `<div style="padding:0.75rem 1rem;border-radius:6px;${type==='error' ? 'background:#fff1f3;border:1px solid #fecdd3;color:#9f1239' : 'background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8'}">${msg}</div>`
+          : '';
+      }
 
       const touched=new Set();
       function validateField(el){
@@ -372,9 +386,42 @@
         let ok=true;
         ok = validateField(email) && ok;
         ok = validateField(password) && ok;
-        if(ok){
-          window.location.href='index.html';
-        }
+        if(!ok) return;
+
+        // Supabase login
+        (async ()=>{
+          try{
+            btn.disabled = true;
+            setStatus('Signing you in…', 'info');
+
+            const supabase = window.whiteboxSupabase;
+            if(!supabase){
+              setStatus('Supabase is not configured yet. Please edit <code>js/supabase-config.js</code>.', 'error');
+              btn.disabled = false;
+              return;
+            }
+
+            const { data, error } = await supabase.auth.signInWithPassword({
+              email: email.value.trim(),
+              password: password.value
+            });
+
+            if(error){
+              // Common cases: invalid login or email not confirmed
+              setStatus(error.message || 'Unable to sign in. Please try again.', 'error');
+              btn.disabled = false;
+              return;
+            }
+
+            // Success
+            setStatus('Signed in. Redirecting…', 'info');
+            window.location.href = 'index.html';
+          }catch(err){
+            console.error(err);
+            setStatus('Unexpected error while signing in. Please try again.', 'error');
+            btn.disabled = false;
+          }
+        })();
       });
     </script>
   </body>

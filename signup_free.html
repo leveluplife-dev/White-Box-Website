@@ -321,6 +321,7 @@
 
         <button id="freeSignupBtn" type="submit" disabled>Create Account &amp; Download</button>
       </form>
+      <div id="statusMsg" style="margin-top:0.75rem;"></div>
       <p class="note">
         This sign‑up form is a placeholder. You can replace it with your
         preferred account creation and download workflow.
@@ -329,7 +330,23 @@
         <a href="index.html">&larr; Back to home</a>
       </div>
     </div>
+    <!-- Supabase (client-side) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Configure these values in: js/supabase-config.js -->
+    <script src="js/supabase-config.js"></script>
+    <script src="js/supabase-client.js"></script>
+
     <script>
+      function setStatus(msg, type){
+        const el = document.getElementById('statusMsg');
+        if(!el) return;
+        const styles = {
+          info: 'padding:0.75rem 0.9rem;border-radius:6px;background:#eef6ff;border:1px solid #cfe6ff;color:#0b3d91;',
+          error: 'padding:0.75rem 0.9rem;border-radius:6px;background:#fff2f2;border:1px solid #ffd0d0;color:#8a0000;'
+        };
+        el.style.cssText = styles[type] || styles.info;
+        el.innerHTML = msg;
+      }
       function validateEmail(email){
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
       }
@@ -444,9 +461,45 @@
         clearError(confirm);
         if(confirm.value !== pass.value){ setError(confirm,'Passwords do not match.'); ok=false; }
 
-        if(ok){
-          window.location.href='thank_you_free.html';
-        }
+        if(!ok) return;
+
+        // Supabase signup (email confirmation enabled)
+        (async ()=>{
+          try{
+            btn.disabled = true;
+            setStatus('Creating your account…', 'info');
+
+            const supabase = window.whiteboxSupabase;
+            if(!supabase){
+              setStatus('Supabase is not configured yet. Please edit <code>js/supabase-config.js</code>.', 'error');
+              btn.disabled = false;
+              return;
+            }
+
+            const { data, error } = await supabase.auth.signUp({
+              email: email.value.trim(),
+              password: pass.value,
+              options: {
+                data: { full_name: name.value.trim() }
+              }
+            });
+
+            if(error){
+              setStatus(error.message || 'Unable to create account. Please try again.', 'error');
+              btn.disabled = false;
+              return;
+            }
+
+            // With email confirmation enabled, the user must confirm before first sign-in.
+            setStatus('Account created! Please check your email to confirm your account. After confirming, you can log in.', 'info');
+            // Keep the user on the page so they can read the message, then redirect.
+            setTimeout(()=>{ window.location.href='thank_you_free.html'; }, 1500);
+          }catch(err){
+            console.error(err);
+            setStatus('Unexpected error while creating your account. Please try again.', 'error');
+            btn.disabled = false;
+          }
+        })();
       });
     </script>
   </body>

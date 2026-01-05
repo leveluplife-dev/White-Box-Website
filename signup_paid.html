@@ -321,6 +321,7 @@
         <input type="tel" id="cvv" name="cvv" inputmode="numeric" autocomplete="cc-csc" placeholder="123" required />
         <button class="button" type="submit" disabled>Subscribe &amp; Download Pro</button>
       </form>
+      <div id="statusMsg" style="margin-top:0.75rem;"></div>
       <p class="note">
         This payment form is a placeholder. Replace it with your secure payment
         and subscription flow when you're ready.
@@ -329,7 +330,23 @@
         <a href="index.html">&larr; Back to home</a>
       </div>
     </div>
+    <!-- Supabase (client-side) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Configure these values in: js/supabase-config.js -->
+    <script src="js/supabase-config.js"></script>
+    <script src="js/supabase-client.js"></script>
+
     <script>
+      function setStatus(msg, type){
+        const el = document.getElementById('statusMsg');
+        if(!el) return;
+        const styles = {
+          info: 'padding:0.75rem 0.9rem;border-radius:6px;background:#eef6ff;border:1px solid #cfe6ff;color:#0b3d91;',
+          error: 'padding:0.75rem 0.9rem;border-radius:6px;background:#fff2f2;border:1px solid #ffd0d0;color:#8a0000;'
+        };
+        el.style.cssText = styles[type] || styles.info;
+        el.innerHTML = msg;
+      }
       function validateEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
       function setError(el,msg){
         el.classList.add('input-error');
@@ -458,7 +475,46 @@
         let ok=true;
         [name,email,password,card,exp,cvv].forEach(el=>{ ok = validateField(el) && ok; });
         if(!ok) return;
-        window.location.href='thank_you_pro.html';
+
+        // Supabase signup (email confirmation enabled)
+        (async ()=>{
+          try{
+            btn.disabled = true;
+            setStatus('Creating your account…', 'info');
+
+            const supabase = window.whiteboxSupabase;
+            if(!supabase){
+              setStatus('Supabase is not configured yet. Please edit <code>js/supabase-config.js</code>.', 'error');
+              btn.disabled = false;
+              return;
+            }
+
+            const { data, error } = await supabase.auth.signUp({
+              email: email.value.trim(),
+              password: password.value,
+              options: {
+                data: {
+                  full_name: name.value.trim()
+                }
+              }
+            });
+
+            if(error){
+              setStatus(error.message || 'Unable to create your account. Please try again.', 'error');
+              btn.disabled = false;
+              return;
+            }
+
+            // If email confirmation is enabled, Supabase will send a confirmation email.
+            setStatus('Account created. Please check your email to confirm your account, then return to log in.', 'info');
+            // Send user to the next step of your Pro flow (Stripe will be integrated later)
+            window.location.href = 'choose_plan.html';
+          }catch(err){
+            console.error(err);
+            setStatus('Unexpected error while creating your account. Please try again.', 'error');
+            btn.disabled = false;
+          }
+        })();
       });
     </script>
   </body>
