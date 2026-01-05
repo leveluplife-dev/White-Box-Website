@@ -201,6 +201,7 @@
         }
       }
 </style>
+  <link rel="stylesheet" href="css/whitebox.css">
 </head>
 <body>
   
@@ -224,6 +225,7 @@
       </div>
       </div>
     </nav>
+  <div class="container" id="wb-userbar"></div>
 <div class="header"><h1>Welcome to Pro ⭐</h1></div>
   <main class="container">
     <p>Thanks for supporting WhiteBox Agency. Your Pro download should begin automatically.</p>
@@ -234,5 +236,9 @@
   <script>
     window.addEventListener('load', () => { const a=document.getElementById('dl'); if(a) a.click(); });
   </script>
+
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/whitebox-ui.js"></script>
 </body>
 </html>

@@ -208,6 +208,7 @@
         }
       }
 </style>
+  <link rel="stylesheet" href="css/whitebox.css">
 </head>
 <body>
   
@@ -231,6 +232,7 @@
       </div>
       </div>
     </nav>
+  <div class="container" id="wb-userbar"></div>
 <div class="header">
     <h1>Pricing</h1>
     <div class="muted">Choose the level of protection that fits your needs.</div>
@@ -257,6 +259,9 @@
         <p class="muted"><strong>Early adopters:</strong> lock in <strong>$4.99/mo</strong> when prepaying 6 months.</p>
         <ul>
           <li>Everything in Free</li>
+          <li><strong>Video filtering</strong> (blocks risky videos, not just pages)</li>
+          <li><strong>AI-powered blocking</strong> for tricky / evasive content</li>
+          <li><strong>Report Miss</strong> button (one-click feedback when something slips through)</li>
           <li>Faster improvements &amp; priority feedback loop</li>
           <li>Future Pro features as they roll out</li>
         </ul>
@@ -268,5 +273,9 @@
       Pricing may evolve as the product matures. Early adopters help shape the future of WhiteBox Agency.
     </p>
   </main>
+
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/whitebox-ui.js"></script>
 </body>
 </html>

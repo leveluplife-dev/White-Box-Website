@@ -270,8 +270,13 @@
           border-radius: 10px;
         }
       }
+
+.checkbox{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.3}
+.checkbox input{margin-top:3px}
+.helper{font-size:13px;color:#4b5563}
 </style>
-  </head>
+    <link rel="stylesheet" href="css/whitebox.css">
+</head>
   <body>
     
         <nav class="top-nav">
@@ -294,6 +299,7 @@
       </div>
       </div>
     </nav>
+  <div class="container" id="wb-userbar"></div>
 <div class="header">
       <h1>Sign up for the Pro Version</h1>
     </div>
@@ -517,5 +523,6 @@
         })();
       });
     </script>
-  </body>
+    <script src="js/whitebox-ui.js"></script>
+</body>
 </html>

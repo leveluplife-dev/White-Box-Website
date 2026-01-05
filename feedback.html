@@ -279,7 +279,8 @@
         }
       }
 </style>
-  </head>
+    <link rel="stylesheet" href="css/whitebox.css">
+</head>
   <body>
     
         <nav class="top-nav">
@@ -302,6 +303,7 @@
       </div>
       </div>
     </nav>
+  <div class="container" id="wb-userbar"></div>
 <div class="header">
       <h1>Provide Feedback</h1>
     </div>
@@ -402,5 +404,9 @@
         window.location.href = `mailto:whitebox.feedback@gmail.com?subject=${subject}&body=${body}`;
       });
     </script>
-  </body>
+  
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/whitebox-ui.js"></script>
+</body>
 </html>

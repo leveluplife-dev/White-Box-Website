@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WhiteBox Agency — Account</title>
+  <link rel="stylesheet" href="css/whitebox.css">
+  <style>
+    body{font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin:0; background:#fff; color:#111827;}
+    .container{max-width:1000px; margin:0 auto; padding:20px;}
+    nav{border-bottom:1px solid #e5e7eb; background:#fff;}
+    .nav-inner{display:flex; align-items:center; justify-content:space-between; gap:16px;}
+    .logo{font-weight:900; text-decoration:none; color:#111827;}
+    .btn{display:inline-flex; align-items:center; justify-content:center; padding:10px 14px; border-radius:10px; border:1px solid rgba(0,0,0,0.12); text-decoration:none; color:#111827; background:#fff; cursor:pointer;}
+    .btn-primary{background:#111827;color:#fff;border-color:#111827;}
+    .btn-danger{background:#fee2e2;color:#991b1b;border-color:#fecaca;}
+    .card{border:1px solid #e5e7eb; border-radius:16px; padding:16px; background:#fff;}
+    .grid{display:grid; grid-template-columns: 1fr; gap:16px;}
+    @media(min-width:900px){ .grid{grid-template-columns: 1.2fr 0.8fr;} }
+    .muted{color:#6b7280;}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+    .field{margin-top:10px;}
+    label{display:block; font-weight:700; margin-bottom:6px;}
+    input[type="checkbox"]{transform: translateY(1px);}
+    .msg{margin-top:10px; padding:10px 12px; border-radius:12px; font-size:14px;}
+    .msg.ok{background:#ecfdf5; border:1px solid #a7f3d0; color:#065f46;}
+    .msg.err{background:#fef2f2; border:1px solid #fecaca; color:#991b1b;}
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container nav-inner">
+      <a class="logo" href="index.html">WhiteBox Agency</a>
+      <div class="nav-cta" id="wb-nav-auth"></div>
+    </div>
+  </nav>
+  <div class="container" id="wb-userbar"></div>
+
+  <div class="container">
+    <h1>Account</h1>
+    <p class="muted">Manage your login, email preferences, and subscription status.</p>
+
+    <div class="grid">
+      <div class="card">
+        <h2 style="margin-top:0;">Profile</h2>
+        <div id="acct-summary" class="muted">Loading…</div>
+
+        <div class="field">
+          <label>Email preferences</label>
+          <div class="row">
+            <label style="font-weight:600;">
+              <input type="checkbox" id="consent_notifications"> Account notifications & version updates
+            </label>
+          </div>
+          <div class="row" style="margin-top:8px;">
+            <label style="font-weight:600;">
+              <input type="checkbox" id="consent_promotions"> Promotions (optional)
+            </label>
+          </div>
+          <div class="row" style="margin-top:12px;">
+            <button class="btn btn-primary" id="save-prefs">Save preferences</button>
+          </div>
+          <div id="prefs-msg"></div>
+        </div>
+
+        <hr style="border:none;border-top:1px solid #e5e7eb; margin:16px 0;">
+
+        <div class="row">
+          <button class="btn" id="reset-password">Send password reset</button>
+          <button class="btn" id="logout">Log out</button>
+        </div>
+
+        <div id="action-msg"></div>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0;">Subscription</h2>
+        <div id="sub-status" class="muted">Loading…</div>
+
+        <div class="row" style="margin-top:12px;">
+          <a class="btn btn-primary" href="pricing.html" id="upgrade-btn" style="display:none;">Upgrade to Pro</a>
+          <button class="btn" id="manage-btn" disabled title="Coming soon">Manage billing (coming soon)</button>
+        </div>
+
+        <p class="muted" style="margin-top:14px;">
+          Need help, want to cancel, or want your account deleted? Email
+          <a href="mailto:support@whitebox-agency.com">support@whitebox-agency.com</a>.
+        </p>
+
+        <button class="btn btn-danger" id="delete-info">Delete my account (instructions)</button>
+        <div id="delete-msg"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/whitebox-ui.js"></script>
+
+  <script>
+    function showMsg(el, text, ok){
+      el.innerHTML = '<div class="msg '+(ok?'ok':'err')+'">'+text+'</div>';
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const supabase = window.getSupabaseClient();
+      const { data: sessionData } = await supabase.auth.getSession();
+      const session = sessionData?.session || null;
+      if (!session) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData?.user;
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      // Pull status from profiles if present
+      let status = user.user_metadata?.subscription_status || "free";
+      try {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("subscription_status")
+          .eq("id", user.id)
+          .maybeSingle();
+        if (profile?.subscription_status) status = profile.subscription_status;
+      } catch (_) {}
+
+      const pretty = (status === "pro" || status === "active" || status === "subscribed") ? "Pro" : "Free";
+      document.getElementById("acct-summary").innerHTML = `
+        <div><strong>Email:</strong> ${user.email}</div>
+        <div><strong>User ID:</strong> <span class="muted">${user.id}</span></div>
+      `;
+      document.getElementById("sub-status").innerHTML = `
+        <div><strong>Status:</strong> ${pretty}</div>
+      `;
+      if (pretty === "Free") document.getElementById("upgrade-btn").style.display = "inline-flex";
+
+      // Prefill consent checkboxes from metadata (defaults)
+      document.getElementById("consent_notifications").checked = user.user_metadata?.consent_notifications ?? true;
+      document.getElementById("consent_promotions").checked = user.user_metadata?.consent_promotions ?? false;
+
+      document.getElementById("save-prefs").addEventListener("click", async () => {
+        const consent_notifications = !!document.getElementById("consent_notifications").checked;
+        const consent_promotions = !!document.getElementById("consent_promotions").checked;
+        const out = document.getElementById("prefs-msg");
+        out.innerHTML = "";
+        const { error } = await supabase.auth.updateUser({
+          data: { consent_notifications, consent_promotions }
+        });
+        if (error) showMsg(out, error.message, false);
+        else showMsg(out, "Saved!", true);
+      });
+
+      document.getElementById("logout").addEventListener("click", async () => {
+        await supabase.auth.signOut();
+        window.location.href = "index.html";
+      });
+
+      document.getElementById("reset-password").addEventListener("click", async () => {
+        const out = document.getElementById("action-msg");
+        out.innerHTML = "";
+        const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
+          redirectTo: window.location.origin + "/reset_password.html"
+        });
+        if (error) showMsg(out, error.message, false);
+        else showMsg(out, "Password reset email sent.", true);
+      });
+
+      document.getElementById("delete-info").addEventListener("click", () => {
+        const out = document.getElementById("delete-msg");
+        showMsg(out, "For now, email support@whitebox-agency.com from your account email and we’ll delete your account. (Self-serve deletion can be added later.)", true);
+      });
+    });
+  </script>
+</body>
+</html>
