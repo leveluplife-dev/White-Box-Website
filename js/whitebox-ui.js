@@ -12,6 +12,10 @@
 (function () {
   function el(id) { return document.getElementById(id); }
 
+  function setNavReady() {
+    document.documentElement.classList.add("wb-nav-ready");
+  }
+
   async function getUserAndStatus(supabase) {
     const { data: sessionData } = await supabase.auth.getSession();
     const session = sessionData?.session || null;
@@ -56,8 +60,13 @@
 
     const btn = el("wb-logout");
     if (btn) btn.addEventListener("click", async () => {
+      // Switch UI immediately
+      renderNav({ user: null, status: "free" });
+      renderWelcome({ user: null, status: "free" });
+      setNavReady();
       try { await window.getSupabaseClient().auth.signOut(); } catch (_) {}
-      window.location.href = "index.html";
+      // Optional: keep user on the current page; if you prefer redirect, uncomment next line
+      // window.location.href = "index.html";
     });
   }
 
@@ -80,7 +89,6 @@
     host.innerHTML = `
       <div class="wb-userbar-inner">
         <span>Welcome, <strong>${escapeHtml(display)}</strong></span>
-        <span class="wb-status-pill ${label === "Pro" ? "wb-status-pro" : "wb-status-free"}">${label}</span>
       </div>
     `;
   }
@@ -107,7 +115,12 @@
     const supabase = window.getSupabaseClient();
     const info = await getUserAndStatus(supabase);
 
-    if (info.user) await ensureProfileExists(supabase, info.user);
+    
+    // Render immediately to avoid a brief logged-out flash
+    renderNav({ user: info.user, status: info.status || "free" });
+    renderWelcome({ user: info.user, status: info.status || "free" });
+    setNavReady();
+if (info.user) await ensureProfileExists(supabase, info.user);
 
     renderNav({ user: info.user, status: info.status });
     renderWelcome({ user: info.user, status: info.status });
