@@ -27,4 +27,13 @@
       storageKey: 'whitebox.auth',
     },
   });
+
+  // Backwards-compatible helper used throughout the site.
+  // Several pages call window.getSupabaseClient(); keep this stable.
+  window.getSupabaseClient = function getSupabaseClient(){
+    return window.whiteboxSupabase;
+  };
+
+  // Optional: expose a simple readiness flag
+  window.WHITEBOX_SUPABASE_READY = true;
 })();

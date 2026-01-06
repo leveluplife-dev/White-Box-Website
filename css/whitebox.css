@@ -36,6 +36,11 @@
 
 /* Responsive top header nav: desktop links + mobile hamburger */
 .nav-right{ display:flex; align-items:center; gap:14px; }
+
+/* Desktop link row (Home / Version / Feedback) */
+.nav-links-desktop{ display:flex; align-items:center; gap:16px; }
+.nav-links-desktop a{ font-weight:700; color:#0d2b4d; text-decoration:none; }
+.nav-links-desktop a:hover{ text-decoration:underline; }
 .nav-links{ display:flex; align-items:center; gap:18px; }
 .nav-toggle{
   display:none;
@@ -58,6 +63,9 @@
 @media (max-width: 820px){
   /* Keep logo + hamburger aligned on one row */
   .top-nav-inner{ flex-wrap:nowrap; align-items:center; gap:10px; }
+
+  /* IMPORTANT: hide the desktop link row on real mobile Safari */
+  .nav-links-desktop{ display:none !important; }
 
   .nav-right{
     width:auto;
