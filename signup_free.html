@@ -402,159 +402,160 @@
       }
 
       const form=document.getElementById('freeSignupForm');
-      const btn=document.getElementById('freeSignupBtn');
-      const name=document.getElementById('name');
-      const email=document.getElementById('email');
-      const pass=document.getElementById('password');
-      const confirm=document.getElementById('confirm_password');
+const statusEl=document.getElementById('status');
+const btn=document.getElementById('createFreeBtn');
 
-      function validateLive(){
-        // Enable the button only when everything is valid
-        const ok =
-          name.value.trim().length >= 2 &&
-          validateEmail(email.value.trim()) &&
-          isStrongPassword(pass.value) &&
-          confirm.value.length > 0 &&
-          confirm.value === pass.value;
-        btn.disabled = !ok;
-        return ok;
+function setStatus(msg,type='info'){
+  statusEl.textContent=msg;
+  statusEl.className='status '+type;
+}
+function setError(input,msg){
+  const el=document.getElementById(input.id+'-error');
+  if(!el) return;
+  el.textContent=msg;
+  el.style.display='block';
+  input.setAttribute('aria-invalid','true');
+}
+function clearError(input){
+  const el=document.getElementById(input.id+'-error');
+  if(!el) return;
+  el.textContent='';
+  el.style.display='none';
+  input.removeAttribute('aria-invalid');
+}
+
+const nameInput=document.getElementById('name');
+const emailInput=document.getElementById('email');
+const passInput=document.getElementById('password');
+const pass2Input=document.getElementById('confirmPassword');
+
+const touched=new Set();
+
+function isValidEmail(v){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v||'').trim());
+}
+function passwordMeetsRequirements(v){
+  if(!v || v.length < 8) return false;
+  const hasUpper=/[A-Z]/.test(v);
+  const hasLower=/[a-z]/.test(v);
+  const hasNum=/[0-9]/.test(v);
+  return hasUpper && hasLower && hasNum;
+}
+function validateField(input){
+  const id=input.id;
+  const value=(input.value||'').trim();
+  clearError(input);
+
+  if(id==='name'){
+    if(!value) setError(input,'Please enter your name.');
+    return;
+  }
+  if(id==='email'){
+    if(!value) setError(input,'Please enter an email address.');
+    else if(!isValidEmail(value)) setError(input,'Please enter a valid email address (example@domain.com).');
+    return;
+  }
+  if(id==='password'){
+    if(!value) setError(input,'Please enter a password.');
+    else if(!passwordMeetsRequirements(value)) setError(input,'Password must be 8+ characters and include an uppercase letter, lowercase letter, and a number.');
+    return;
+  }
+  if(id==='confirmPassword'){
+    if(!value) setError(input,'Please confirm your password.');
+    else if(value !== passInput.value) setError(input,'Passwords do not match.');
+    return;
+  }
+}
+function validateAll(){
+  [nameInput,emailInput,passInput,pass2Input].forEach(validateField);
+  const hasAnyError=[nameInput,emailInput,passInput,pass2Input].some(i=> i.getAttribute('aria-invalid')==='true');
+  const allFilled = nameInput.value.trim() && emailInput.value.trim() && passInput.value && pass2Input.value;
+  return allFilled && !hasAnyError;
+}
+function validateLive(){
+  // Only show errors after a field has been touched
+  [nameInput,emailInput,passInput,pass2Input].forEach((input)=>{
+    if(touched.has(input)){
+      validateField(input);
+    } else {
+      clearError(input);
+    }
+  });
+
+  btn.disabled = !validateAll();
+}
+
+// If the user already has a Supabase session token, they are logged in.
+// In that case: hide the signup form and direct them to Account/Upgrade.
+const hasAuthToken = Object.keys(localStorage || {}).some((k) => k.startsWith('sb-') && k.endsWith('-auth-token'));
+if(hasAuthToken){
+  form.style.display='none';
+  btn.disabled=true;
+  setStatus("You're already logged in. Go to Account or Upgrade to continue.", 'info');
+} else {
+  [nameInput,emailInput,passInput,pass2Input].forEach((input)=>{
+    input.addEventListener('input', ()=>{ touched.add(input); validateLive(); });
+    input.addEventListener('blur',  ()=>{ touched.add(input); validateField(input); validateLive(); });
+  });
+
+  // Initial state
+  btn.disabled=true;
+
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    setStatus('', 'info');
+
+    // Force validation with errors shown
+    touched.add(nameInput); touched.add(emailInput); touched.add(passInput); touched.add(pass2Input);
+    [nameInput,emailInput,passInput,pass2Input].forEach(validateField);
+    if(!validateAll()){
+      setStatus('Please fix the highlighted fields and try again.', 'error');
+      return;
+    }
+
+    btn.disabled=true;
+    btn.textContent='Creating...';
+
+    try{
+      // Use the already-initialized supabase client from js/supabase-client.js
+      if(!window.supabase){
+        throw new Error('Supabase client not initialized. Check js/supabase-client.js and config.');
       }
 
-      // Show inline errors as the user types (after they've interacted with a field)
-      const touched = new Set();
-      function validateField(el){
-        const v = el.value.trim();
-        clearError(el);
-
-        if(el === name){
-          if(v.length === 0){ setError(el,'Name is required.'); return false; }
-          if(v.length < 2){ setError(el,'Please enter your full name.'); return false; }
-          return true;
+      const { data, error } = await window.supabase.auth.signUp({
+        email: emailInput.value.trim(),
+        password: passInput.value,
+        options: {
+          data: { full_name: nameInput.value.trim() }
         }
-
-        if(el === email){
-          if(v.length === 0){ setError(el,'Email is required.'); return false; }
-          if(!validateEmail(v)){ setError(el,'Please enter a valid email address.'); return false; }
-          return true;
-        }
-
-        if(el === pass){
-          if(pass.value.length === 0){ setError(el,'Password is required.'); return false; }
-          if(!isStrongPassword(pass.value)){
-            setError(el,'Password must be 8+ chars and include upper, lower, and a number.');
-            return false;
-          }
-          return true;
-        }
-
-        if(el === confirm){
-          if(confirm.value.length === 0){ setError(el,'Please confirm your password.'); return false; }
-          if(confirm.value !== pass.value){ setError(el,'Passwords do not match.'); return false; }
-          return true;
-        }
-
-        return true;
-      }
-
-      [name,email,pass,confirm].forEach(el=>{
-        el.addEventListener('blur', ()=>{
-          touched.add(el);
-          validateField(el);
-          validateLive();
-
-      // If the user is already logged in, hide the free sign-up form (they already have an account).
-      const hasAuthToken = (() => {
-        try {
-          return Object.keys(localStorage).some(k => k.startsWith('sb-') && k.includes('-auth-token') && localStorage.getItem(k));
-        } catch { return false; }
-      })();
-
-      if (hasAuthToken) {
-        form.style.display = 'none';
-        setStatus('You're already logged in. Go to <a href="choose_plan.html">Choose Plan</a> to upgrade to Pro.', 'info');
-        return;
-      }
-
-        });
-        el.addEventListener('input', ()=>{
-          // Only show warnings once the user has interacted with the field
-          if(touched.has(el) || el.value.length > 0){
-            validateField(el);
-          } else {
-            clearError(el);
-          }
-          validateLive();
-        });
       });
-      validateLive();
 
-      form.addEventListener('submit',(e)=>{
-        e.preventDefault();
-        let ok=true;
-
-        clearError(name);
-        if(name.value.trim().length<2){ setError(name,'Please enter your name.'); ok=false; }
-
-        clearError(email);
-        if(!validateEmail(email.value.trim())){ setError(email,'Please enter a valid email address.'); ok=false; }
-
-        clearError(pass);
-        if(!isStrongPassword(pass.value)){
-          setError(pass,'Password must be 8+ chars and include upper, lower, and a number.');
-          ok=false;
+      if(error){
+        const msg=String(error.message||'').toLowerCase();
+        if(msg.includes('already registered') || msg.includes('already exists') || msg.includes('user already registered')){
+          setStatus("It looks like you already have an account. Please log in instead.", 'error');
+          btn.textContent='Account exists';
+          btn.disabled=true;
+          return;
         }
+        throw error;
+      }
 
-        clearError(confirm);
-        if(confirm.value !== pass.value){ setError(confirm,'Passwords do not match.'); ok=false; }
+      setStatus('Account created! Redirecting…', 'success');
+      // If email confirmations are enabled, Supabase may return null session.
+      // Still send them to the thank-you page.
+      window.location.href='thank_you_free.html';
+    } catch(err){
+      console.error(err);
+      setStatus((err && err.message) ? err.message : 'Something went wrong. Please try again.', 'error');
+      btn.textContent='Create Account & Download';
+      btn.disabled=false;
+    }
+  });
 
-        if(!ok) return;
-
-        // Supabase signup (email confirmation enabled)
-        (async ()=>{
-          try{
-            btn.disabled = true;
-            setStatus('Creating your account…', 'info');
-
-            const supabase = window.whiteboxSupabase;
-            if(!supabase){
-              setStatus('Supabase is not configured yet. Please edit <code>js/supabase-config.js</code>.', 'error');
-              btn.disabled = false;
-              return;
-            }
-
-            const { data, error } = await supabase.auth.signUp({
-              email: email.value.trim(),
-              password: pass.value,
-              options: {
-                data: { full_name: name.value.trim() }
-              }
-            });
-
-            if(error){
-              const msg = (error.message || '').toLowerCase();
-              if (msg.includes('already') && (msg.includes('registered') || msg.includes('exists'))) {
-                // Account already exists
-                setStatus('An account with this email already exists. Please <a href="login.html">log in</a> instead.', 'error');
-                btn.disabled = true; // prevent repeated attempts
-                return;
-              }
-              setStatus(error.message || 'Unable to create account. Please try again.', 'error');
-              btn.disabled = false;
-              return;
-            }
-
-            // With email confirmation enabled, the user must confirm before first sign-in.
-            setStatus('Account created! Please check your email to confirm your account. After confirming, you can log in.', 'info');
-            // Keep the user on the page so they can read the message, then redirect.
-            setTimeout(()=>{ window.location.href='thank_you_free.html'; }, 1500);
-          }catch(err){
-            console.error(err);
-            setStatus('Unexpected error while creating your account. Please try again.', 'error');
-            btn.disabled = false;
-          }
-        })();
-      });
-    </script>
+  validateLive();
+}
+</script>
     <script src="/js/whitebox-ui.js"></script>
 
   <script src="/js/nav.js"></script>
