@@ -17,10 +17,7 @@
 */
 #wb-nav-auth { min-height: 36px; }
 #wb-userbar { min-height: 24px; }
-html.wb-has-session:not(.wb-nav-ready) #wb-nav-auth,
-html.wb-has-session:not(.wb-nav-ready) #wb-userbar {
-  visibility: hidden;
-}
+/* Stable header: do not hide auth controls while JS loads. */
 .wb-badge-free{ background:#f3f4f6; color:#111827; }
 .wb-badge-pro{ background:#111827; color:#ffffff; border-color:#111827; }
 

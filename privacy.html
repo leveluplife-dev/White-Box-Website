@@ -200,7 +200,7 @@ a{color:#0b3d91;font-weight:600;text-decoration:none}a:hover{text-decoration:und
         }
       }
 </style>
-  <link rel="stylesheet" href="css/whitebox.css">
+  <link rel="stylesheet" href="/css/whitebox.css">
 
 <script>
 (function(){
@@ -211,7 +211,7 @@ a{color:#0b3d91;font-weight:600;text-decoration:none}a:hover{text-decoration:und
       if (k && k.indexOf("sb-")===0 && k.indexOf("-auth-token")>0){ has = true; break; }
     }
     if (!has && localStorage.getItem("whitebox.auth")) has = true;
-    if (has) document.documentElement.classList.add("wb-has-session");
+    if (has) { document.documentElement.classList.add("wb-has-session"); document.documentElement.classList.add("wb-nav-ready"); }
   }catch(e){}
 })();
 </script>
@@ -223,7 +223,7 @@ a{color:#0b3d91;font-weight:600;text-decoration:none}a:hover{text-decoration:und
       <div class="top-nav-inner">
 <div class="nav-left">
         <a href="index.html" class="brand-link">
-          <img src="white-box-logo.png" alt="WhiteBox Agency logo" />
+          <img src="/white-box-logo.png" alt="WhiteBox Agency logo" />
           <span class="brand-stack">
             <span class="brand-name">WhiteBox Agency</span>
             <span class="brand-tagline">You decide what the internet shows you.</span>
@@ -242,7 +242,13 @@ a{color:#0b3d91;font-weight:600;text-decoration:none}a:hover{text-decoration:und
     </div>
       </div>
     </nav>
-  <div class="container" id="wb-userbar"></div>
+  <div class="container" id="wb-userbar">
+  <span class="wb-welcome" id="wb-welcome">Welcome, <span id="wb-user-name">there</span></span>
+  <span class="wb-status-pill" id="wb-plan-pill">Free</span>
+  <a class="nav-link" href="account.html" id="wb-account-link">Account</a>
+  <a class="nav-link" href="choose_plan.html" id="wb-upgrade-link">Upgrade</a>
+  <button class="btn" id="wb-logout-btn" type="button">Log out</button>
+</div>
 <div class="header">
   <h1 style="margin:0;">Privacy Policy</h1>
   <p class="small" style="margin:8px 0 0;">Plain‑English summary of how WhiteBox Agency handles data.</p>
@@ -265,10 +271,10 @@ a{color:#0b3d91;font-weight:600;text-decoration:none}a:hover{text-decoration:und
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
-  <script src="js/supabase-config.js"></script>
-  <script src="js/supabase-client.js"></script>
-  <script src="js/whitebox-ui.js"></script>
+  <script src="/js/supabase-config.js"></script>
+  <script src="/js/supabase-client.js"></script>
+  <script src="/js/whitebox-ui.js"></script>
 
-  <script src="js/nav.js"></script>
+  <script src="/js/nav.js"></script>
 </body>
 </html>

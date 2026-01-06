@@ -54,7 +54,7 @@
     const label = (status === "pro" || status === "active" || status === "subscribed") ? "Pro" : "Free";
     host.innerHTML = `
       <a class="btn btn-secondary btn-sm" href="${accountHref}">Account</a>
-      ${label === "Free" ? `<a class="btn btn-primary btn-sm" href="pricing.html">Upgrade</a>` : ``}
+      ${label === "Free" ? `<a class="btn btn-primary btn-sm" href="choose_plan.html">Upgrade</a>` : ``}
       <button class="btn btn-ghost btn-sm" id="wb-logout">Log out</button>
     `;
 
@@ -113,33 +113,54 @@
   async function init() {
     if (!window.getSupabaseClient) return;
     const supabase = window.getSupabaseClient();
-    
-    try{ wireSignupGuards(supabase); }catch(_e){}
-const info = await getUserAndStatus(supabase);
 
-    
-    // Render immediately to avoid a brief logged-out flash
+    // Bootstrapped header to avoid any "logged-out" flash while we fetch session/user.
+    const cachedStatus = localStorage.getItem("wb_cached_status") || "free";
+    const cachedName = localStorage.getItem("wb_cached_name") || "";
+    const cachedEmail = localStorage.getItem("wb_cached_email") || "";
+    const hasSession = document.documentElement.classList.contains("wb-has-session");
+
+    if (hasSession) {
+      renderNav({ user: { email: cachedEmail, user_metadata: { full_name: cachedName } }, status: cachedStatus });
+      renderWelcome({ user: { email: cachedEmail, user_metadata: { full_name: cachedName } }, status: cachedStatus });
+    } else {
+      renderNav({ user: null, status: "free" });
+      renderWelcome({ user: null, status: "free" });
+    }
+    setNavReady();
+
+    // Page-specific guards (safe no-op on pages that don't have the expected elements)
+    try { wireSignupGuards(supabase); } catch (_) {}
+
+    // Now resolve the real session/user
+    const info = await getUserAndStatus(supabase);
+
+    // Cache for faster bootstraps on next navigation
+    try {
+      if (info.user) {
+        const name = info.user.user_metadata?.full_name || info.user.user_metadata?.name || "";
+        localStorage.setItem("wb_cached_status", info.status || "free");
+        localStorage.setItem("wb_cached_email", info.user.email || "");
+        localStorage.setItem("wb_cached_name", name);
+      } else {
+        localStorage.removeItem("wb_cached_status");
+        localStorage.removeItem("wb_cached_email");
+        localStorage.removeItem("wb_cached_name");
+      }
+    } catch (_) {}
+
+    // If logged in, ensure profile row exists (optional) then re-render with authoritative data
+    if (info.user) {
+      await ensureProfileExists(supabase, info.user);
+    }
+
     renderNav({ user: info.user, status: info.status || "free" });
     renderWelcome({ user: info.user, status: info.status || "free" });
     setNavReady();
-if (info.user) await ensureProfileExists(supabase, info.user);
-
-    renderNav({ user: info.user, status: info.status });
-    renderWelcome({ user: info.user, status: info.status });
-    // Prevent "logged-out" header flash on page loads.
-    document.documentElement.classList.add('wb-nav-ready');
-
-    // Keep UI in sync if auth changes (login/logout in another tab)
-    supabase.auth.onAuthStateChange(async () => {
-      const updated = await getUserAndStatus(supabase);
-      if (updated.user) await ensureProfileExists(supabase, updated.user);
-      renderNav({ user: updated.user, status: updated.status });
-      renderWelcome({ user: updated.user, status: updated.status });
-      document.documentElement.classList.add('wb-nav-ready');
-    });
   }
 
   document.addEventListener("DOMContentLoaded", init);
+("DOMContentLoaded", init);
 })();
 
 
@@ -154,7 +175,7 @@ function wireSignupGuards(supabase){
   // If already logged in, prevent creating another account
   supabase.auth.getUser().then(({data})=>{
     if (data && data.user){
-      if (msg) msg.innerHTML = 'You are already logged in. <a href="account.html">Go to Account</a> or <a href="pricing.html">Upgrade to Pro</a>.';
+      if (msg) msg.innerHTML = 'You are already logged in. <a href="account.html">Go to Account</a> or <a href="choose_plan.html">Upgrade to Pro</a>.';
       // Disable obvious signup submit buttons
       document.querySelectorAll("form button[type='submit'], form input[type='submit']").forEach(btn=>{
         btn.setAttribute("disabled","disabled");
