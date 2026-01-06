@@ -113,3 +113,15 @@
 
 /* Footer version stamp */
 .wb-version{font-size:12px;color:#9aa6b2;margin-top:6px;}
+
+/* Form validation helpers */
+.field-error{
+  display:none;
+  margin-top:6px;
+  font-size:12px;
+  color:#c0392b;
+}
+.input-error{
+  border-color:#c0392b !important;
+  box-shadow:0 0 0 3px rgba(192,57,43,0.12) !important;
+}

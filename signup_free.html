@@ -339,16 +339,21 @@
 <div id="wb-signup-msg" style="margin:10px 0;color:#b45309;"></div>
         <label for="name">Name</label>
         <input type="text" id="name" name="name" autocomplete="name" required />
+	        <div class="field-error" id="name_error"></div>
 
         <label for="email">Email address</label>
         <input type="email" id="email" name="email" autocomplete="email" required />
+	        <div class="field-error" id="email_error"></div>
+	        <div class="field-error" id="email_error"></div>
 
         <label for="password">Password</label>
         <input type="password" id="password" name="password" autocomplete="new-password" required />
-        <div class="hint">Use 8+ characters with an uppercase, lowercase, and a number.</div>
+	        <div class="field-error" id="password_error"></div>
+	        <div class="hint">Use 8+ characters with an uppercase, lowercase, and a number.</div>
 
         <label for="confirm_password">Confirm password</label>
-        <input type="password" id="confirm_password" name="confirm_password" autocomplete="new-password" required />
+	        <input type="password" id="confirm_password" name="confirm_password" autocomplete="new-password" required />
+	        <div class="field-error" id="confirm_password_error"></div>
 
         <button id="freeSignupBtn" type="submit" disabled>Create Account &amp; Download</button>
       </form>
@@ -370,7 +375,8 @@
 
     <script>
   function setStatus(msg, type) {
-    const el = document.getElementById('status');
+    const el = document.getElementById('statusMsg');
+    if (!el) return;
     el.textContent = msg || '';
     el.className = 'status ' + (type || '');
     el.style.display = msg ? 'block' : 'none';
@@ -455,8 +461,12 @@
       // ignore
     }
 
-    const btn = document.getElementById('create_account_btn');
-    const form = document.getElementById('signup_form');
+	const btn = document.getElementById('freeSignupBtn');
+	const form = document.getElementById('freeSignupForm');
+	if (!btn || !form) {
+	  console.error('Signup Free: missing required DOM elements.');
+	  return;
+	}
 
     const refreshButtonState = () => {
       const ok = validateAll(false);
@@ -466,7 +476,8 @@
 
     ['name','email','password','confirm_password'].forEach(id => {
       const el = document.getElementById(id);
-      el.addEventListener('input', () => {
+	  if (!el) return;
+	  el.addEventListener('input', () => {
         // Live validate (show errors only if user has interacted)
         refreshButtonState();
       });
