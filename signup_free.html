@@ -521,14 +521,19 @@
 
         if (error) {
           const msg = (error.message || '').toLowerCase();
-          if (msg.includes('already registered') || msg.includes('already been registered') || msg.includes('user already')) {
-            setStatus('You already have an account. Please log in instead.', 'error');
-            // Disable button to prevent repeat spam
-            btn.disabled = true;
-            btn.classList.add('disabled');
+          if (
+            msg.includes('already registered') ||
+            msg.includes('already been registered') ||
+            msg.includes('user already') ||
+            (msg.includes('email') && msg.includes('already'))
+          ) {
+            setStatus('You already have an account with this email. Please log in instead.', 'error');
+            btn.disabled = false;
+            btn.classList.remove('disabled');
+            refreshButtonState();
             return;
           }
-          setStatus('Error creating account: ' + error.message, 'error');
+          setStatus('Error creating account: ' + (error.message || 'Unknown error'), 'error');
           btn.disabled = false;
           btn.classList.remove('disabled');
           refreshButtonState();
@@ -554,7 +559,12 @@
           window.location.href = '/welcome_free.html';
         }, 600);
       } catch (err) {
-        setStatus('Unexpected error: ' + (err?.message || err), 'error');
+        const raw = (err?.message || String(err || '')).toLowerCase();
+        if (raw.includes('already registered') || raw.includes('already been registered') || raw.includes('user already') || (raw.includes('email') && raw.includes('already'))) {
+          setStatus('You already have an account with this email. Please log in instead.', 'error');
+        } else {
+          setStatus('Something went wrong. Please try again. If you already have an account, please log in instead.', 'error');
+        }
         btn.disabled = false;
         btn.classList.remove('disabled');
         refreshButtonState();
