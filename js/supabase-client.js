@@ -28,6 +28,29 @@
     },
   });
 
+  // Session bootstrap (fixes cases where a page loads before the SDK hydrates from storage).
+  // We intentionally keep this defensive and silent.
+  (async () => {
+    try {
+      const { data } = await window.whiteboxSupabase.auth.getSession();
+      if (data?.session) return; // already hydrated
+
+      // Try to recover from our configured storageKey.
+      const raw = window.localStorage?.getItem('whitebox.auth');
+      if (!raw) return;
+
+      const parsed = JSON.parse(raw);
+      const session = parsed?.currentSession || parsed?.session || parsed;
+      const access_token = session?.access_token;
+      const refresh_token = session?.refresh_token;
+      if (!access_token || !refresh_token) return;
+
+      await window.whiteboxSupabase.auth.setSession({ access_token, refresh_token });
+    } catch (_) {
+      // no-op
+    }
+  })();
+
   // Backwards-compatible helper used throughout the site.
   // Several pages call window.getSupabaseClient(); keep this stable.
   window.getSupabaseClient = function getSupabaseClient(){
