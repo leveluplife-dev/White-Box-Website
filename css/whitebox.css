@@ -10,6 +10,17 @@
   text-decoration:none;
   border:1px solid rgba(0,0,0,0.12);
 }
+
+/* --- Auth/nav bootstrap ---
+   Avoid a brief "logged out" header flash while Supabase restores the session.
+   Keep header layout stable, but hide auth controls until JS finishes init.
+*/
+#wb-nav-auth { min-height: 36px; }
+#wb-userbar { min-height: 24px; }
+html:not(.wb-nav-ready) #wb-nav-auth,
+html:not(.wb-nav-ready) #wb-userbar {
+  visibility: hidden;
+}
 .wb-badge-free{ background:#f3f4f6; color:#111827; }
 .wb-badge-pro{ background:#111827; color:#ffffff; border-color:#111827; }
 

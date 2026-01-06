@@ -48,9 +48,7 @@
     }
 
     const label = (status === "pro" || status === "active" || status === "subscribed") ? "Pro" : "Free";
-    const badgeClass = (label === "Pro") ? "wb-badge-pro" : "wb-badge-free";
     host.innerHTML = `
-      <a class="wb-badge ${badgeClass}" href="${accountHref}" title="Account">${label}</a>
       <a class="btn btn-secondary btn-sm" href="${accountHref}">Account</a>
       ${label === "Free" ? `<a class="btn btn-primary btn-sm" href="pricing.html">Upgrade</a>` : ``}
       <button class="btn btn-ghost btn-sm" id="wb-logout">Log out</button>
@@ -113,6 +111,8 @@
 
     renderNav({ user: info.user, status: info.status });
     renderWelcome({ user: info.user, status: info.status });
+    // Prevent "logged-out" header flash on page loads.
+    document.documentElement.classList.add('wb-nav-ready');
 
     // Keep UI in sync if auth changes (login/logout in another tab)
     supabase.auth.onAuthStateChange(async () => {
@@ -120,6 +120,7 @@
       if (updated.user) await ensureProfileExists(supabase, updated.user);
       renderNav({ user: updated.user, status: updated.status });
       renderWelcome({ user: updated.user, status: updated.status });
+      document.documentElement.classList.add('wb-nav-ready');
     });
   }
 
