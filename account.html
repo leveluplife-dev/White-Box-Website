@@ -26,14 +26,46 @@
     .msg.ok{background:#ecfdf5; border:1px solid #a7f3d0; color:#065f46;}
     .msg.err{background:#fef2f2; border:1px solid #fecaca; color:#991b1b;}
   </style>
+
+<script>
+(function(){
+  try{
+    var has = false;
+    for (var i=0;i<localStorage.length;i++){
+      var k = localStorage.key(i);
+      if (k && k.indexOf("sb-")===0 && k.indexOf("-auth-token")>0){ has = true; break; }
+    }
+    if (!has && localStorage.getItem("whitebox.auth")) has = true;
+    if (has) document.documentElement.classList.add("wb-has-session");
+  }catch(e){}
+})();
+</script>
+
 </head>
 <body>
-  <nav>
-    <div class="container nav-inner">
-      <a class="logo" href="index.html">WhiteBox Agency</a>
-      <div class="nav-cta" id="wb-nav-auth"></div>
+  <nav class="top-nav">
+      <div class="top-nav-inner">
+<div class="nav-left">
+        <a href="index.html" class="brand-link">
+          <img src="white-box-logo.png" alt="WhiteBox Agency logo" />
+          <span class="brand-stack">
+            <span class="brand-name">WhiteBox Agency</span>
+            <span class="brand-tagline">You decide what the internet shows you.</span>
+          </span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <button class="nav-toggle" id="wb-nav-toggle" aria-label="Menu" aria-expanded="false">☰</button>
+        <div class="nav-links" id="wb-nav-links">
+<a href="index.html">Home</a>
+        <a href="version.html">Version</a>
+        <a href="feedback.html">Feedback</a>
+        <span id="wb-nav-auth"><a href="login.html">Login</a>
+        <a class="nav-cta" href="choose_plan.html">Sign Up</a></span>
+        </div>
     </div>
-  </nav>
+      </div>
+    </nav>
   <div class="container" id="wb-userbar"></div>
 
   <div class="container">

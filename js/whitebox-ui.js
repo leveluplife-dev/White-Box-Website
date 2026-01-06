@@ -113,7 +113,9 @@
   async function init() {
     if (!window.getSupabaseClient) return;
     const supabase = window.getSupabaseClient();
-    const info = await getUserAndStatus(supabase);
+    
+    try{ wireSignupGuards(supabase); }catch(_e){}
+const info = await getUserAndStatus(supabase);
 
     
     // Render immediately to avoid a brief logged-out flash
@@ -139,3 +141,44 @@ if (info.user) await ensureProfileExists(supabase, info.user);
 
   document.addEventListener("DOMContentLoaded", init);
 })();
+
+
+// --- Signup UX guards ---
+function wireSignupGuards(supabase){
+  const path = (window.location.pathname || "").toLowerCase();
+  const isSignupPage = path.includes("signup_") || path.includes("choose_plan");
+  if (!isSignupPage) return;
+
+  const msg = document.getElementById("wb-signup-msg");
+
+  // If already logged in, prevent creating another account
+  supabase.auth.getUser().then(({data})=>{
+    if (data && data.user){
+      if (msg) msg.innerHTML = 'You are already logged in. <a href="account.html">Go to Account</a> or <a href="pricing.html">Upgrade to Pro</a>.';
+      // Disable obvious signup submit buttons
+      document.querySelectorAll("form button[type='submit'], form input[type='submit']").forEach(btn=>{
+        btn.setAttribute("disabled","disabled");
+        btn.style.opacity="0.6";
+        btn.title="You are already logged in.";
+      });
+      // Disable any "Create free account" style buttons if present
+      const freeBtn = document.getElementById("create-free") || document.getElementById("createFree");
+      if (freeBtn){
+        freeBtn.setAttribute("disabled","disabled");
+        freeBtn.style.opacity="0.6";
+        freeBtn.title="You are already logged in.";
+      }
+    }
+  });
+
+  // Helper to show "already registered" message on signup submit
+  window.__wbHandleSignupError = function(err){
+    const msg2 = document.getElementById("wb-signup-msg");
+    const text = (err && (err.message || err.error_description || err.error)) ? (err.message || err.error_description || err.error) : String(err||"");
+    if (/already|exists|registered/i.test(text)){
+      if (msg2) msg2.innerHTML = 'It looks like you already have an account. <a href="login.html">Log in instead</a>.';
+      return true;
+    }
+    return false;
+  }
+}

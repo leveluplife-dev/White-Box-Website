@@ -278,6 +278,21 @@
 .helper{font-size:13px;color:#4b5563}
 </style>
     <link rel="stylesheet" href="css/whitebox.css">
+
+<script>
+(function(){
+  try{
+    var has = false;
+    for (var i=0;i<localStorage.length;i++){
+      var k = localStorage.key(i);
+      if (k && k.indexOf("sb-")===0 && k.indexOf("-auth-token")>0){ has = true; break; }
+    }
+    if (!has && localStorage.getItem("whitebox.auth")) has = true;
+    if (has) document.documentElement.classList.add("wb-has-session");
+  }catch(e){}
+})();
+</script>
+
 </head>
   <body>
     
@@ -315,6 +330,7 @@
         After you sign up, we'll send you a link to download the extension.
       </p>
       <form id="freeSignupForm" novalidate>
+<div id="wb-signup-msg" style="margin:10px 0;color:#b45309;"></div>
         <label for="name">Name</label>
         <input type="text" id="name" name="name" autocomplete="name" required />
 
@@ -330,6 +346,7 @@
 
         <button id="freeSignupBtn" type="submit" disabled>Create Account &amp; Download</button>
       </form>
+<p style="margin-top:10px;font-size:14px;">Already have an account? <a href="login.html">Log in</a>.</p>
       <div id="statusMsg" style="margin-top:0.75rem;"></div>
       <p class="note">
         This sign‑up form is a placeholder. You can replace it with your

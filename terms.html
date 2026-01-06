@@ -199,6 +199,21 @@ ul{padding-left:1.2rem}
         }
       }
 </style>  <link rel="stylesheet" href="css/whitebox.css">
+
+<script>
+(function(){
+  try{
+    var has = false;
+    for (var i=0;i<localStorage.length;i++){
+      var k = localStorage.key(i);
+      if (k && k.indexOf("sb-")===0 && k.indexOf("-auth-token")>0){ has = true; break; }
+    }
+    if (!has && localStorage.getItem("whitebox.auth")) has = true;
+    if (has) document.documentElement.classList.add("wb-has-session");
+  }catch(e){}
+})();
+</script>
+
 </head>
 <body>
 

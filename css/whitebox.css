@@ -17,8 +17,8 @@
 */
 #wb-nav-auth { min-height: 36px; }
 #wb-userbar { min-height: 24px; }
-html:not(.wb-nav-ready) #wb-nav-auth,
-html:not(.wb-nav-ready) #wb-userbar {
+html.wb-has-session:not(.wb-nav-ready) #wb-nav-auth,
+html.wb-has-session:not(.wb-nav-ready) #wb-userbar {
   visibility: hidden;
 }
 .wb-badge-free{ background:#f3f4f6; color:#111827; }

@@ -545,6 +545,21 @@
       }
 </style>
     <link rel="stylesheet" href="css/whitebox.css">
+
+<script>
+(function(){
+  try{
+    var has = false;
+    for (var i=0;i<localStorage.length;i++){
+      var k = localStorage.key(i);
+      if (k && k.indexOf("sb-")===0 && k.indexOf("-auth-token")>0){ has = true; break; }
+    }
+    if (!has && localStorage.getItem("whitebox.auth")) has = true;
+    if (has) document.documentElement.classList.add("wb-has-session");
+  }catch(e){}
+})();
+</script>
+
 </head>
   <body>
     <!-- Top navigation for account actions -->
@@ -877,8 +892,8 @@
         Early access software may miss content or block incorrectly.
       </p>
       <p class="small">&copy; 2026 WhiteBox Agency. All rights reserved.</p>
-  <div class="wb-version">WhiteBox Agency Version 0.0.1</div>
-    </footer>
+  <div class="wb-version">WhiteBox Agency Version 0.0.2</div>
+  </footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   
