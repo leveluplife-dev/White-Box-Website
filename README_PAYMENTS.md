@@ -23,7 +23,7 @@ Suggested fields:
 - `plan` text: `free` or `pro`
 - `stripe_customer_id` text (nullable)
 - `stripe_subscription_id` text (nullable)
-- `subscription_status` text (nullable: `active`, `trialing`, `canceled`, etc.)
+- `is_pro` text (nullable: `active`, `trialing`, `canceled`, etc.)
 - `current_period_end` timestamptz (nullable)
 
 ## 3) Supabase Edge Functions (required)

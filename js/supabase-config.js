@@ -15,3 +15,14 @@ window.WHITEBOX_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3
 // Extension store URLs (placeholders)
 window.WHITEBOX_CHROME_STORE_URL = "https://chromewebstore.google.com/detail/...";
 window.WHITEBOX_EDGE_STORE_URL = "https://microsoftedge.microsoft.com/addons/detail/...";
+
+
+// Stripe (Pro subscriptions) — set these to your Stripe Price IDs
+window.WHITEBOX_STRIPE_PRICE_MONTHLY = "price_1SmiZE0k44qhvLJP3AOqvwzp";
+window.WHITEBOX_STRIPE_PRICE_6MONTH  = "price_1Smmcz0k44qhvLJP5rlVOz7N";
+window.WHITEBOX_STRIPE_PRICE_ANNUAL  = "price_1SmmdV0k44qhvLJPDdku5KMg";
+
+// Supabase Edge Function endpoint for Stripe Checkout
+// Example: https://<project-ref>.functions.supabase.co/stripe-checkout
+window.WHITEBOX_EDGE_STRIPE_CHECKOUT_URL = "https://<project-ref>.functions.supabase.co/stripe-checkout";
+

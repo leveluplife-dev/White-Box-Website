@@ -25,14 +25,14 @@
     const user = userData?.user || null;
 
     // Preferred: profile table (RLS-protected), fallback: user metadata
-    let status = user?.user_metadata?.subscription_status || "free";
+    let status = user?.user_metadata?.is_pro || "free";
     try {
       const { data: profile, error } = await supabase
         .from("profiles")
-        .select("subscription_status")
+        .select("is_pro")
         .eq("id", user.id)
         .maybeSingle();
-      if (!error && profile?.subscription_status) status = profile.subscription_status;
+      if (!error && profile?.is_pro) status = profile.is_pro;
     } catch (_) {}
 
     return { session, user, status };
@@ -105,7 +105,7 @@
       await supabase.from("profiles").upsert({
         id: user.id,
         email: user.email,
-        subscription_status: user.user_metadata?.subscription_status || "free",
+        is_pro: user.user_metadata?.is_pro || "free",
       }, { onConflict: "id" });
     } catch (_) {}
   }

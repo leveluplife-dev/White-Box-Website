@@ -341,29 +341,14 @@
       </div>
 
       
-      <form id="paymentForm" novalidate>
-        <label for="cardname">Name on card</label>
-        <input type="text" id="cardname" name="cardname" autocomplete="cc-name" required />
+      <div class="card" style="margin-top:0.8rem;">
+        <p class="note" style="margin-top:0;">
+          You’ll be redirected to a secure Stripe checkout to complete your subscription.
+        </p>
+        <button class="button" id="startCheckoutBtn" type="button">Continue to Stripe Checkout</button>
+        <div class="error" id="checkoutError" style="display:none;margin-top:0.8rem;"></div>
+      </div>
 
-        <label for="cardnumber">Card number</label>
-        <input type="tel" id="cardnumber" name="cardnumber" inputmode="numeric" autocomplete="cc-number"
-               placeholder="1234 5678 9012 3456" required />
-
-        <label for="exp">Expiration date (MM/YY)</label>
-        <input type="text" id="exp" name="exp" inputmode="numeric" autocomplete="cc-exp"
-               placeholder="MM/YY" maxlength="5" required />
-
-        <label for="cvv">CVV</label>
-        <input type="tel" id="cvv" name="cvv" inputmode="numeric" autocomplete="cc-csc"
-               placeholder="123" maxlength="4" required />
-
-        <button class="button" type="submit" disabled>Subscribe &amp; Download Pro</button>
-      </form>
-
-      <p class="note">
-        This payment form is a placeholder. Replace it with your secure
-        subscription and payment flow when you’re ready.
-      </p>
       <div class="back-link">
         <a href="pro_disclosure.html">&larr; Back to disclosure</a>
       </div>
@@ -514,5 +499,6 @@
   <script src="/js/whitebox-ui.js"></script>
 
   <script src="/js/nav.js"></script>
+  <script src="js/payments.js"></script>
 </body>
 </html>

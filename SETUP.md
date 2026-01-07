@@ -33,8 +33,8 @@ If you don’t add INSERT, the website will still work, but the `profiles` row m
 
 ## 3) Subscription status source of truth (v1)
 For now, the website will:
-- try to read `profiles.subscription_status`
-- fall back to `user.user_metadata.subscription_status` if needed
+- try to read `profiles.is_pro`
+- fall back to `user.user_metadata.is_pro` if needed
 
 Later, when Stripe is wired up, we’ll update this automatically.
 

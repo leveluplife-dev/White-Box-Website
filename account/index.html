@@ -126,7 +126,7 @@
         <div id="sub-status" class="muted">Loading…</div>
 
         <div class="row" style="margin-top:12px;">
-          <a class="btn btn-primary" href="pricing.html" id="upgrade-btn" style="display:none;">Upgrade to Pro</a>
+          <a class="btn btn-primary" href="choose_plan.html" id="upgrade-btn" style="display:none;">Upgrade to Pro</a>
           <button class="btn" id="manage-btn" disabled title="Coming soon">Manage billing (coming soon)</button>
         </div>
 
@@ -169,14 +169,14 @@
       }
 
       // Pull status from profiles if present
-      let status = user.user_metadata?.subscription_status || "free";
+      let status = user.user_metadata?.is_pro || "free";
       try {
         const { data: profile } = await supabase
           .from("profiles")
-          .select("subscription_status")
+          .select("is_pro")
           .eq("id", user.id)
           .maybeSingle();
-        if (profile?.subscription_status) status = profile.subscription_status;
+        if (profile?.is_pro) status = profile.is_pro;
       } catch (_) {}
 
       const pretty = (status === "pro" || status === "active" || status === "subscribed") ? "Pro" : "Free";

@@ -514,7 +514,7 @@
               full_name: name,
               email_prefs_updates: true,
               email_prefs_promotions: false,
-              subscription_status: 'free'
+              is_pro: 'free'
             }
           }
         });
@@ -547,7 +547,7 @@
             await supabase.from('profiles').upsert({
               id: user.id,
               full_name: name,
-              subscription_status: 'free',
+              is_pro: 'free',
               email_prefs_updates: true,
               email_prefs_promotions: false
             });
