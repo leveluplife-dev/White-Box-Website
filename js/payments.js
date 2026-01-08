@@ -25,12 +25,19 @@
 
   async function startCheckout() {
     try {
-      if (!window.supabase) {
-        showError('Supabase client not initialized. Check js/supabase-config.js.');
+      // IMPORTANT:
+      // window.supabase is the *library* from the CDN.
+      // The initialized client is created in js/supabase-client.js.
+      const supabase = (typeof window.getSupabaseClient === 'function')
+        ? window.getSupabaseClient()
+        : window.whiteboxSupabase;
+
+      if (!supabase || !supabase.auth) {
+        showError('Supabase client not initialized. Make sure js/supabase-client.js is loaded before payments.js.');
         return;
       }
 
-      const { data: { session }, error: sessErr } = await window.supabase.auth.getSession();
+      const { data: { session }, error: sessErr } = await supabase.auth.getSession();
       if (sessErr) throw sessErr;
       if (!session || !session.access_token) {
         // Redirect to login and come back here with same plan

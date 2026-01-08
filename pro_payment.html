@@ -368,8 +368,11 @@
       const planSummaryEl = document.getElementById('planSummary');
       if(planLabelEl) planLabelEl.textContent = planInfo.label;
       if(planSummaryEl) planSummaryEl.textContent = ' (' + planInfo.label + ')';
-      // Payment form validation and formatting (client-side demo only)
+      // Legacy card-entry form validation (this page now uses Stripe Checkout).
+      // The form is no longer present, but keep the code guarded to avoid runtime errors.
       const form = document.getElementById('paymentForm');
+      if (!form) return;
+
       const cardName = document.getElementById('cardname');
       const cardNumber = document.getElementById('cardnumber');
       const exp = document.getElementById('exp');
