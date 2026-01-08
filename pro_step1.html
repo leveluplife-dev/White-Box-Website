@@ -449,5 +449,22 @@
   <script src="/js/whitebox-ui.js"></script>
 
   <script src="/js/nav.js"></script>
+
+<script>
+  // If already signed in, skip Pro sign-up form and go directly to checkout page.
+  (async () => {
+    try {
+      if (!window.getSupabaseClient) return;
+      const supabase = window.getSupabaseClient();
+      const { data } = await supabase.auth.getSession();
+      if (data?.session) {
+        const params = new URLSearchParams(window.location.search);
+        const plan = params.get("plan") || "monthly";
+        window.location.replace(`pro_payment.html?plan=${encodeURIComponent(plan)}`);
+      }
+    } catch (e) {}
+  })();
+</script>
+
 </body>
 </html>

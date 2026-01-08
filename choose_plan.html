@@ -602,18 +602,32 @@
     </div>
   </div>
 
-  <script>
-    // Keep the Pro continue link synced with the selected plan.
+  <script>// Keep the Pro continue link synced with the selected plan.
     const proLink = document.getElementById('proContinue');
     const radios = Array.from(document.querySelectorAll('input[name="proPlan"]'));
+
+    let isLoggedIn = false;
+    (async () => {
+      try {
+        if (!window.getSupabaseClient) return;
+        const supabase = window.getSupabaseClient();
+        const { data } = await supabase.auth.getSession();
+        isLoggedIn = !!data?.session;
+      } catch (e) {
+        isLoggedIn = false;
+      } finally {
+        updateLink();
+      }
+    })();
+
     function updateLink() {
       const sel = radios.find(r => r.checked);
       const plan = sel ? sel.value : '6mo';
-      proLink.href = 'pro_step1.html?plan=' + encodeURIComponent(plan);
+      proLink.href = (isLoggedIn ? 'pro_payment.html' : 'pro_step1.html') + '?plan=' + encodeURIComponent(plan);
     }
+
     radios.forEach(r => r.addEventListener('change', updateLink));
-    updateLink();
-  </script>
+    updateLink();</script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
