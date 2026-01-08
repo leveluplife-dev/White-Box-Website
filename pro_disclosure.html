@@ -334,9 +334,18 @@
     </div>
   
     <script>
+      // Simple "early access" acknowledgement gate.
+      // We store a boolean in localStorage so a user doesn't get stuck repeating this every time.
+      const ACK_KEY = 'wb_pro_early_access_ack_v1';
+
       const ack = document.getElementById('ack');
       const contBtn = document.getElementById('continueButton');
       const plan = new URLSearchParams(window.location.search).get('plan') || '6mo';
+
+      // If previously acknowledged, pre-check.
+      if (localStorage.getItem(ACK_KEY) === 'true') {
+        ack.checked = true;
+      }
 
       function update(){
         contBtn.disabled = !ack.checked;
@@ -345,6 +354,8 @@
       update();
 
       contBtn.addEventListener('click', ()=>{
+        // Persist acknowledgement and continue.
+        localStorage.setItem(ACK_KEY, ack.checked ? 'true' : 'false');
         window.location.href = 'pro_payment.html?plan=' + encodeURIComponent(plan);
       });
     </script>

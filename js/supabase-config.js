@@ -23,6 +23,9 @@ window.WHITEBOX_STRIPE_PRICE_6MONTH  = "price_1Smmcz0k44qhvLJP5rlVOz7N";
 window.WHITEBOX_STRIPE_PRICE_ANNUAL  = "price_1SmmdV0k44qhvLJPDdku5KMg";
 
 // Supabase Edge Function endpoint for Stripe Checkout
-// Example: https://<project-ref>.functions.supabase.co/stripe-checkout
-window.WHITEBOX_EDGE_STRIPE_CHECKOUT_URL = "https://<project-ref>.functions.supabase.co/stripe-checkout";
+// This should point to your deployed Edge Function (create-checkout).
+// You can copy the Endpoint URL from Supabase Dashboard -> Edge Functions -> create-checkout.
+// Example: https://<project-ref>.supabase.co/functions/v1/create-checkout
+window.WHITEBOX_EDGE_FUNCTIONS_BASE_URL = "https://nojljuqfdzclxhggfbvc.supabase.co/functions/v1";
+window.WHITEBOX_EDGE_STRIPE_CHECKOUT_URL = `${window.WHITEBOX_EDGE_FUNCTIONS_BASE_URL}/create-checkout`;
 

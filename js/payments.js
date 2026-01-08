@@ -97,6 +97,14 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    // Require the early-access disclosure acknowledgment before showing payment.
+    const ACK_KEY = 'wb_pro_early_access_ack_v1';
+    const plan = qs('plan') || '6mo';
+    if (localStorage.getItem(ACK_KEY) !== 'true') {
+      window.location.replace(`pro_disclosure.html?plan=${encodeURIComponent(plan)}`);
+      return;
+    }
+
     const btn = document.getElementById('startCheckoutBtn');
     if (btn) btn.addEventListener('click', startCheckout);
   });

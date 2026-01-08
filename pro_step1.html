@@ -460,7 +460,8 @@
       if (data?.session) {
         const params = new URLSearchParams(window.location.search);
         const plan = params.get("plan") || "monthly";
-        window.location.replace(`pro_payment.html?plan=${encodeURIComponent(plan)}`);
+        // After account creation, show early-access disclosure before payment.
+        window.location.replace(`pro_disclosure.html?plan=${encodeURIComponent(plan)}`);
       }
     } catch (e) {}
   })();

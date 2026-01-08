@@ -623,7 +623,8 @@
     function updateLink() {
       const sel = radios.find(r => r.checked);
       const plan = sel ? sel.value : '6mo';
-      proLink.href = (isLoggedIn ? 'pro_payment.html' : 'pro_step1.html') + '?plan=' + encodeURIComponent(plan);
+      // Always show the early-access disclosure before payment.
+      proLink.href = (isLoggedIn ? 'pro_disclosure.html' : 'pro_step1.html') + '?plan=' + encodeURIComponent(plan);
     }
 
     radios.forEach(r => r.addEventListener('change', updateLink));
