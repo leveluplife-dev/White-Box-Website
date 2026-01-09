@@ -322,6 +322,16 @@
       // Small UX touch: highlight the button that matches the current browser.
       const ua = navigator.userAgent || '';
       const isEdge = ua.includes('Edg/');
+
+      // Microsoft Edge Add-ons sometimes returns 404 when opened from non-Edge browsers.
+      // When the user is not in Edge, use the `microsoft-edge:` protocol to launch Edge
+      // directly to the add-on page.
+      if (!isEdge && !edgeBtn.classList.contains('is-disabled') && edgeBtn.href && edgeBtn.href.startsWith('https://')) {
+        edgeBtn.href = `microsoft-edge:${edgeBtn.href}`;
+        edgeBtn.target = '_self';
+        edgeBtn.rel = '';
+      }
+
       if (isEdge && !edgeBtn.classList.contains('is-disabled')) {
         edgeBtn.textContent = 'Install for Edge (recommended)';
       } else if (!isEdge && !chromeBtn.classList.contains('is-disabled')) {
