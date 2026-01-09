@@ -217,6 +217,13 @@
 })();
 </script>
 
+
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180x180.png">
+
 </head>
 <body>
   
@@ -281,9 +288,18 @@
       const chromeUrl = (window.WHITEBOX_CHROME_STORE_URL || '').trim();
       const edgeUrl = (window.WHITEBOX_EDGE_STORE_URL || '').trim();
 
+      function normalizeUrl(url) {
+        const u = (url || '').trim();
+        if (!u) return '';
+        if (/^https?:\/\//i.test(u)) return u;
+        if (u.startsWith('//')) return `https:${u}`;
+        return `https://${u}`;
+      }
+
       function configure(btn, url){
-        if (url && !url.includes('example.com') && !url.includes('<') && !url.includes('YOUR_')) {
-          btn.href = url;
+        const normalized = normalizeUrl(url);
+        if (normalized && !normalized.includes('example.com') && !normalized.includes('<') && !normalized.includes('YOUR_')) {
+          btn.href = normalized;
           btn.target = '_blank';
           btn.setAttribute('aria-disabled', 'false');
         } else {
