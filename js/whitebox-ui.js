@@ -16,6 +16,26 @@
     document.documentElement.classList.add("wb-nav-ready");
   }
 
+  function updatePlanPill(status) {
+    const pill = el("wb-plan-pill");
+    if (!pill) return;
+    const isPro = (status === "pro" || status === "active" || status === "subscribed" || status === true);
+    pill.textContent = isPro ? "Pro" : "Free";
+    pill.classList.toggle("pro", isPro);
+  }
+
+  function updateStaticUpgradeLink({ user, status }) {
+    const link = el("wb-upgrade-link");
+    if (!link) return;
+    // If you're not logged in, keep Upgrade visible.
+    if (!user) {
+      link.style.display = "";
+      return;
+    }
+    const isPro = (status === "pro" || status === "active" || status === "subscribed" || status === true);
+    link.style.display = isPro ? "none" : "";
+  }
+
   async function getUserAndStatus(supabase) {
     const { data: sessionData } = await supabase.auth.getSession();
     const session = sessionData?.session || null;
@@ -24,16 +44,24 @@
     const { data: userData } = await supabase.auth.getUser();
     const user = userData?.user || null;
 
-    // Preferred: profile table (RLS-protected), fallback: user metadata
-    let status = user?.user_metadata?.is_pro || "free";
+    // Preferred: profiles table (RLS-protected), fallback: user metadata.
+    // NOTE: is_pro may be a boolean (true/false) depending on how it was written.
+    let status = (user?.user_metadata?.is_pro ?? "free");
     try {
       const { data: profile, error } = await supabase
         .from("profiles")
         .select("is_pro")
         .eq("id", user.id)
         .maybeSingle();
-      if (!error && profile?.is_pro) status = profile.is_pro;
+      if (!error && profile && typeof profile.is_pro !== "undefined" && profile.is_pro !== null) {
+        status = profile.is_pro;
+      }
     } catch (_) {}
+
+    // Normalize to a string status we can consistently use across the UI.
+    if (typeof status === "boolean") {
+      status = status ? "pro" : "free";
+    }
 
     return { session, user, status };
   }
@@ -51,7 +79,7 @@
       return;
     }
 
-    const label = (status === "pro" || status === "active" || status === "subscribed") ? "Pro" : "Free";
+    const label = (status === "pro" || status === "active" || status === "subscribed" || status === true) ? "Pro" : "Free";
     host.innerHTML = `
       <a class="btn btn-secondary btn-sm" href="${accountHref}">Account</a>
       ${label === "Free" ? `<a class="btn btn-primary btn-sm" href="choose_plan.html">Upgrade</a>` : ``}
@@ -85,7 +113,7 @@
       user.email ||
       "there";
 
-    const label = (status === "pro" || status === "active" || status === "subscribed") ? "Pro" : "Free";
+    const label = (status === "pro" || status === "active" || status === "subscribed" || status === true) ? "Pro" : "Free";
     host.innerHTML = `
       <div class="wb-userbar-inner">
         <span>Welcome, <strong>${escapeHtml(display)}</strong></span>
@@ -123,9 +151,13 @@
     if (hasSession) {
       renderNav({ user: { email: cachedEmail, user_metadata: { full_name: cachedName } }, status: cachedStatus });
       renderWelcome({ user: { email: cachedEmail, user_metadata: { full_name: cachedName } }, status: cachedStatus });
+      updatePlanPill(cachedStatus);
+      updateStaticUpgradeLink({ user: { email: cachedEmail, user_metadata: { full_name: cachedName } }, status: cachedStatus });
     } else {
       renderNav({ user: null, status: "free" });
       renderWelcome({ user: null, status: "free" });
+      updatePlanPill("free");
+      updateStaticUpgradeLink({ user: null, status: "free" });
     }
     setNavReady();
 
@@ -154,13 +186,15 @@
       await ensureProfileExists(supabase, info.user);
     }
 
-    renderNav({ user: info.user, status: info.status || "free" });
-    renderWelcome({ user: info.user, status: info.status || "free" });
+    const finalStatus = info.status || "free";
+    renderNav({ user: info.user, status: finalStatus });
+    renderWelcome({ user: info.user, status: finalStatus });
+    updatePlanPill(finalStatus);
+    updateStaticUpgradeLink({ user: info.user, status: finalStatus });
     setNavReady();
   }
 
   document.addEventListener("DOMContentLoaded", init);
-("DOMContentLoaded", init);
 })();
 
 

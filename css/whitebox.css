@@ -125,3 +125,42 @@
   border-color:#c0392b !important;
   box-shadow:0 0 0 3px rgba(192,57,43,0.12) !important;
 }
+
+/* Authenticated header actions should look like normal nav links */
+.wb-nav-auth .btn,
+.wb-nav-auth a.btn,
+.wb-nav-auth button.btn{
+  background: transparent !important;
+  border: none !important;
+  color: #0b5bd3 !important;
+  padding: 0 !important;
+  font-weight: 600 !important;
+  border-radius: 0 !important;
+}
+
+.wb-nav-auth .btn:hover,
+.wb-nav-auth a.btn:hover,
+.wb-nav-auth button.btn:hover{
+  text-decoration: underline;
+  filter: none !important;
+}
+
+.wb-nav-auth .btn:focus,
+.wb-nav-auth a.btn:focus,
+.wb-nav-auth button.btn:focus{
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Thank-you Pro install buttons */
+.pro-install{
+  display:flex;
+  gap: 12px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin-top: 18px;
+}
+.pro-install .btn.is-disabled{
+  opacity: 0.55;
+  cursor: not-allowed;
+}

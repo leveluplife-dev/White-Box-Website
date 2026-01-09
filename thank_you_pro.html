@@ -252,14 +252,16 @@
 </div>
 <div class="header"><h1>Welcome to Pro ⭐</h1></div>
   <main class="container">
-    <p>Thanks for supporting WhiteBox Agency. Your Pro download should begin automatically.</p>
-    <p class="muted">If it doesn’t start, use the button below.</p>
-    <p><a id="dl" class="btn" href="downloads/whitebox_pro.zip" download>Download WhiteBox Agency (Pro)</a></p>
-    <p class="muted" style="margin-top:1.25rem;">Replace this download link with your final Chrome/Edge store links when you go live.</p>
+    <p>Thanks for supporting WhiteBox Agency. To install, we’ll send you to the browser store listing.</p>
+    <p class="muted">The store will ask you to click its install button (for Edge, that’s <strong>Get</strong>).</p>
+
+    <div class="pro-install">
+      <a id="installChrome" class="btn" href="#" rel="noopener">Install for Chrome</a>
+      <a id="installEdge" class="btn" href="#" rel="noopener">Install for Edge</a>
+    </div>
+
+    <p id="installNote" class="muted" style="margin-top:1.25rem;"></p>
   </main>
-  <script>
-    window.addEventListener('load', () => { const a=document.getElementById('dl'); if(a) a.click(); });
-  </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
@@ -268,5 +270,50 @@
   <script src="/js/whitebox-ui.js"></script>
 
   <script src="/js/nav.js"></script>
+
+  <script>
+    (function(){
+      const chromeBtn = document.getElementById('installChrome');
+      const edgeBtn = document.getElementById('installEdge');
+      const note = document.getElementById('installNote');
+
+      // These are configured in js/supabase-config.js
+      const chromeUrl = (window.WHITEBOX_CHROME_STORE_URL || '').trim();
+      const edgeUrl = (window.WHITEBOX_EDGE_STORE_URL || '').trim();
+
+      function configure(btn, url){
+        if (url && !url.includes('example.com') && !url.includes('<') && !url.includes('YOUR_')) {
+          btn.href = url;
+          btn.target = '_blank';
+          btn.setAttribute('aria-disabled', 'false');
+        } else {
+          btn.href = '#';
+          btn.setAttribute('aria-disabled', 'true');
+          btn.addEventListener('click', (e) => e.preventDefault());
+          btn.classList.add('is-disabled');
+        }
+      }
+
+      configure(chromeBtn, chromeUrl);
+      configure(edgeBtn, edgeUrl);
+
+      const bothDisabled = chromeBtn.classList.contains('is-disabled') && edgeBtn.classList.contains('is-disabled');
+      if (bothDisabled) {
+        note.textContent = 'Store install links aren\'t configured yet. When you have your Chrome Web Store and Edge Add-ons URLs, paste them into js/supabase-config.js (WHITEBOX_CHROME_STORE_URL / WHITEBOX_EDGE_STORE_URL).';
+        return;
+      }
+
+      // Small UX touch: highlight the button that matches the current browser.
+      const ua = navigator.userAgent || '';
+      const isEdge = ua.includes('Edg/');
+      if (isEdge && !edgeBtn.classList.contains('is-disabled')) {
+        edgeBtn.textContent = 'Install for Edge (recommended)';
+      } else if (!isEdge && !chromeBtn.classList.contains('is-disabled')) {
+        chromeBtn.textContent = 'Install for Chrome (recommended)';
+      }
+
+      note.textContent = 'Install opens in a new tab. After the store says it\'s installed, refresh your browser and the WhiteBox extension should show Pro.';
+    })();
+  </script>
 </body>
 </html>

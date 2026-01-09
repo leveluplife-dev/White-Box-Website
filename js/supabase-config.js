@@ -12,9 +12,11 @@ window.WHITEBOX_SUPABASE_URL = "https://nojljuqfdzclxhggfbvc.supabase.co";
 window.WHITEBOX_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5vamxqdXFmZHpjbHhoZ2dmYnZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1Njk2MjAsImV4cCI6MjA4MzE0NTYyMH0.epr5gsgYhw8BDcEC-RVVUlEJlig1FrUGxYCpqzTo1sw";
 
 
-// Extension store URLs (placeholders)
-window.WHITEBOX_CHROME_STORE_URL = "https://chromewebstore.google.com/detail/...";
-window.WHITEBOX_EDGE_STORE_URL = "https://microsoftedge.microsoft.com/addons/detail/...";
+// Extension store URLs
+// NOTE: Store pages don't "download" automatically. Users are taken to the store listing and then
+// click the store's install button (e.g., "Get" on Edge).
+window.WHITEBOX_CHROME_STORE_URL = ""; // pending Google review
+window.WHITEBOX_EDGE_STORE_URL = "https://microsoftedge.microsoft.com/addons/detail/whitebox/facndlhcibibolgjnmjlddenjbjdnpbd";
 
 
 // Stripe (Pro subscriptions) — set these to your Stripe Price IDs
