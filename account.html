@@ -63,7 +63,7 @@
   <nav class="top-nav">
       <div class="top-nav-inner">
 <div class="nav-left">
-        <a href="index.html" class="brand-link">
+        <a href="/index.html" class="brand-link">
           <img src="/white-box-logo.png" alt="WhiteBox Agency logo" />
           <span class="brand-stack">
             <span class="brand-name">WhiteBox Agency</span>
@@ -74,11 +74,11 @@
       <div class="nav-right">
         <button class="nav-toggle" id="wb-nav-toggle" aria-label="Menu" aria-expanded="false">☰</button>
         <div class="nav-links" id="wb-nav-links">
-<a href="index.html">Home</a>
-        <a href="version.html">Version</a>
-        <a href="feedback.html">Feedback</a>
-        <span id="wb-nav-auth"><a href="login.html">Login</a>
-        <a class="nav-cta" href="choose_plan.html">Sign Up</a></span>
+<a href="/index.html">Home</a>
+        <a href="/version.html">Version</a>
+        <a href="/feedback.html">Feedback</a>
+        <span id="wb-nav-auth"><a href="/login.html">Login</a>
+        <a class="nav-cta" href="/choose_plan.html">Sign Up</a></span>
         </div>
     </div>
       </div>
@@ -87,8 +87,8 @@
   <span class="wb-welcome" id="wb-welcome">Welcome, <span id="wb-user-name">there</span></span>
   <span class="wb-status-pill" id="wb-plan-pill">Free</span>
   <span class="wb-badge wb-badge-pro" id="wb-pro-badge" style="display:none;">PRO</span>
-  <a class="nav-link" href="account.html" id="wb-account-link">Account</a>
-  <a class="nav-link" href="choose_plan.html" id="wb-upgrade-link">Upgrade</a>
+  <a class="nav-link" href="/account/" id="wb-account-link">Account</a>
+  <a class="nav-link" href="/choose_plan.html" id="wb-upgrade-link">Upgrade</a>
   <button class="btn" id="wb-logout-btn" type="button">Log out</button>
 </div>
 
@@ -171,13 +171,13 @@
       const { data: sessionData } = await supabase.auth.getSession();
       const session = sessionData?.session || null;
       if (!session) {
-        window.location.href = "login.html";
+        window.location.href = "/login.html";
         return;
       }
 
       const { user, status, profile } = await getUserAndStatus(supabase);
       if (!user) {
-        window.location.href = "login.html";
+        window.location.href = "/login.html";
         return;
       }
 
@@ -250,7 +250,7 @@
               "apikey": window.WHITEBOX_SUPABASE_ANON_KEY,
             },
             body: JSON.stringify({
-              returnUrl: window.location.origin + "/account.html",
+              returnUrl: window.location.origin + "/account/",
             }),
           });
 
@@ -284,7 +284,7 @@
 
       document.getElementById("logout").addEventListener("click", async () => {
         await supabase.auth.signOut();
-        window.location.href = "index.html";
+        window.location.href = "/index.html";
       });
 
       document.getElementById("reset-password").addEventListener("click", async () => {

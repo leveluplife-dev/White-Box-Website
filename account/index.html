@@ -63,7 +63,7 @@
   <nav class="top-nav">
       <div class="top-nav-inner">
 <div class="nav-left">
-        <a href="index.html" class="brand-link">
+        <a href="/index.html" class="brand-link">
           <img src="/white-box-logo.png" alt="WhiteBox Agency logo" />
           <span class="brand-stack">
             <span class="brand-name">WhiteBox Agency</span>
@@ -74,11 +74,11 @@
       <div class="nav-right">
         <button class="nav-toggle" id="wb-nav-toggle" aria-label="Menu" aria-expanded="false">☰</button>
         <div class="nav-links" id="wb-nav-links">
-<a href="index.html">Home</a>
-        <a href="version.html">Version</a>
-        <a href="feedback.html">Feedback</a>
-        <span id="wb-nav-auth"><a href="login.html">Login</a>
-        <a class="nav-cta" href="choose_plan.html">Sign Up</a></span>
+<a href="/index.html">Home</a>
+        <a href="/version.html">Version</a>
+        <a href="/feedback.html">Feedback</a>
+        <span id="wb-nav-auth"><a href="/login.html">Login</a>
+        <a class="nav-cta" href="/choose_plan.html">Sign Up</a></span>
         </div>
     </div>
       </div>
@@ -86,8 +86,8 @@
   <div class="container" id="wb-userbar">
   <span class="wb-welcome" id="wb-welcome">Welcome, <span id="wb-user-name">there</span></span>
   <span class="wb-status-pill" id="wb-plan-pill">Free</span>
-  <a class="nav-link" href="account.html" id="wb-account-link">Account</a>
-  <a class="nav-link" href="choose_plan.html" id="wb-upgrade-link">Upgrade</a>
+  <a class="nav-link" href="/account/" id="wb-account-link">Account</a>
+  <a class="nav-link" href="/choose_plan.html" id="wb-upgrade-link">Upgrade</a>
   <button class="btn" id="wb-logout-btn" type="button">Log out</button>
 </div>
 
@@ -133,9 +133,14 @@
         <div id="sub-status" class="muted">Loading…</div>
 
         <div class="row" style="margin-top:12px;">
-          <a class="btn btn-primary" href="choose_plan.html" id="upgrade-btn" style="display:none;">Upgrade to Pro</a>
-          <button class="btn" id="manage-btn" disabled title="Coming soon">Manage billing (coming soon)</button>
+          <a class="btn btn-primary" href="/choose_plan.html" id="upgrade-btn" style="display:none;">Upgrade to Pro</a>
+          <button class="btn" id="manage-btn" style="display:none;">Manage billing / Cancel subscription</button>
         </div>
+
+        <p class="muted" id="billing-help" style="margin-top:14px; display:none;">
+          You'll be taken to a secure Stripe portal where you can update your payment method or cancel.
+          If you cancel, you keep Pro until the end of your paid period.
+        </p>
 
         <p class="muted" style="margin-top:14px;">
           Need help, want to cancel, or want your account deleted? Email
@@ -164,29 +169,23 @@
       const { data: sessionData } = await supabase.auth.getSession();
       const session = sessionData?.session || null;
       if (!session) {
-        window.location.href = "login.html";
+        window.location.href = "/login.html";
         return;
       }
 
       const { data: userData } = await supabase.auth.getUser();
       const user = userData?.user;
       if (!user) {
-        window.location.href = "login.html";
+        window.location.href = "/login.html";
         return;
       }
 
-      // Pull status from profiles if present
-      let status = user.user_metadata?.is_pro || "free";
-      try {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("is_pro")
-          .eq("id", user.id)
-          .maybeSingle();
-        if (profile?.is_pro) status = profile.is_pro;
-      } catch (_) {}
-
-      const pretty = (status === "pro" || status === "active" || status === "subscribed") ? "Pro" : "Free";
+      // Get subscription status from profiles (if present) with a schema-resilient helper.
+      const userAndStatus = await window.getUserAndStatus?.(supabase);
+      const status = userAndStatus?.status ?? (user.user_metadata?.subscription_status ?? user.user_metadata?.is_pro ?? "free");
+      const norm = String(status || "free").toLowerCase();
+      const isPro = ["pro", "active", "subscribed", "trialing", "paid"].includes(norm) || status === true;
+      const pretty = isPro ? "Pro" : "Free";
       document.getElementById("acct-summary").innerHTML = `
         <div><strong>Email:</strong> ${user.email}</div>
         <div><strong>User ID:</strong> <span class="muted">${user.id}</span></div>
@@ -194,7 +193,18 @@
       document.getElementById("sub-status").innerHTML = `
         <div><strong>Status:</strong> ${pretty}</div>
       `;
-      if (pretty === "Free") document.getElementById("upgrade-btn").style.display = "inline-flex";
+      const upgradeBtn = document.getElementById("upgrade-btn");
+      const manageBtn = document.getElementById("manage-btn");
+      const billingHelp = document.getElementById("billing-help");
+      if (!isPro) {
+        upgradeBtn.style.display = "inline-flex";
+        manageBtn.style.display = "none";
+        billingHelp.style.display = "none";
+      } else {
+        upgradeBtn.style.display = "none";
+        manageBtn.style.display = "inline-flex";
+        billingHelp.style.display = "block";
+      }
 
       // Prefill consent checkboxes from metadata (defaults)
       document.getElementById("consent_notifications").checked = user.user_metadata?.consent_notifications ?? true;
@@ -214,7 +224,50 @@
 
       document.getElementById("logout").addEventListener("click", async () => {
         await supabase.auth.signOut();
-        window.location.href = "index.html";
+        window.location.href = "/index.html";
+      });
+
+      // Open Stripe Customer Portal (manage billing / cancel subscription)
+      manageBtn.addEventListener("click", async () => {
+        const out = document.getElementById("action-msg");
+        out.innerHTML = "";
+
+        const portalUrl = window.WHITEBOX_EDGE_STRIPE_PORTAL_URL;
+        if (!portalUrl) {
+          showMsg(out, "Stripe billing portal is not configured on this site.", false);
+          return;
+        }
+
+        const { data: sessionData } = await supabase.auth.getSession();
+        const token = sessionData?.session?.access_token;
+        if (!token) {
+          showMsg(out, "Please sign in again and retry.", false);
+          return;
+        }
+
+        try {
+          const resp = await fetch(portalUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`,
+              "apikey": window.WHITEBOX_SUPABASE_ANON_KEY,
+            },
+            body: JSON.stringify({
+              returnUrl: window.location.origin + "/account/",
+            }),
+          });
+
+          const data = await resp.json().catch(() => ({}));
+          if (!resp.ok) {
+            showMsg(out, data?.error || `Billing portal error (${resp.status})`, false);
+            return;
+          }
+          if (data?.url) window.location.href = data.url;
+          else showMsg(out, "Billing portal did not return a redirect URL.", false);
+        } catch (e) {
+          showMsg(out, e?.message || "Failed to open billing portal.", false);
+        }
       });
 
       document.getElementById("reset-password").addEventListener("click", async () => {

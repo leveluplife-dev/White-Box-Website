@@ -36,6 +36,8 @@
     link.style.display = isPro ? "none" : "";
   }
 
+  // NOTE: This helper is used by multiple pages (including account.html).
+  // It must be available globally to avoid "ReferenceError: getUserAndStatus is not defined".
   async function getUserAndStatus(supabase) {
     const { data: sessionData } = await supabase.auth.getSession();
     const session = sessionData?.session || null;
@@ -43,21 +45,26 @@
 
     const { data: userData } = await supabase.auth.getUser();
     const user = userData?.user || null;
+    if (!user) return { session, user: null, status: "free" };
 
     // Preferred: profiles table (RLS-protected), fallback: user metadata.
-    // NOTE: is_pro may be a boolean (true/false) depending on how it was written.
+    // NOTE: On Supabase/PostgREST, selecting columns that do not exist can yield a 400.
+    // To be resilient across schema iterations, select(*) and then read fields if present.
+    // Also note: is_pro may be a boolean (true/false) depending on how it was written.
     let status = (user?.user_metadata?.subscription_status ?? user?.user_metadata?.is_pro ?? "free");
     let profile = null;
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("subscription_status, subscription_end, cancel_at_period_end, stripe_customer_id, stripe_subscription_id")
+        .select("*")
         .eq("id", user.id)
         .maybeSingle();
       if (!error && data) {
         profile = data;
         if (typeof data.subscription_status !== "undefined" && data.subscription_status !== null) {
           status = data.subscription_status;
+        } else if (typeof data.is_pro !== "undefined" && data.is_pro !== null) {
+          status = data.is_pro;
         }
       }
     } catch (_) {}
@@ -72,15 +79,19 @@
     return { session, user, status, profile };
   }
 
+  // Expose helpers needed by standalone pages.
+  window.getUserAndStatus = getUserAndStatus;
+
   function renderNav({ user, status }) {
     const host = el("wb-nav-auth");
     if (!host) return;
 
-    const accountHref = "account.html";
+    // Use an absolute path so it works from /account/ and any nested routes.
+    const accountHref = "/account/";
     if (!user) {
       host.innerHTML = `
-        <a class="btn btn-secondary btn-sm" href="login.html">Log In</a>
-        <a class="btn btn-primary btn-sm" href="choose_plan.html">Sign Up</a>
+        <a class="btn btn-secondary btn-sm" href="/login.html">Log In</a>
+        <a class="btn btn-primary btn-sm" href="/choose_plan.html">Sign Up</a>
       `;
       return;
     }
@@ -88,7 +99,7 @@
     const label = (status === "pro" || status === "active" || status === "subscribed" || status === true) ? "Pro" : "Free";
     host.innerHTML = `
       <a class="btn btn-secondary btn-sm" href="${accountHref}">Account</a>
-      ${label === "Free" ? `<a class="btn btn-primary btn-sm" href="choose_plan.html">Upgrade</a>` : ``}
+      ${label === "Free" ? `<a class="btn btn-primary btn-sm" href="/choose_plan.html">Upgrade</a>` : ``}
       <button class="btn btn-ghost btn-sm" id="wb-logout">Log out</button>
     `;
 
