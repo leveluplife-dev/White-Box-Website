@@ -69,6 +69,38 @@
       }
     } catch (_) {}
 
+    // If we still look Free, optionally ask a server-side Edge Function that
+    // checks Stripe and returns the authoritative status.
+    // This avoids false "Free" UI when webhooks didn't update profiles yet.
+    try {
+      const isAlreadyPro = (String(status ?? "").toLowerCase() === "pro") || (status === true);
+      const fnUrl = window.WHITEBOX_EDGE_SELECT_SUBSCRIPTION_URL;
+      if (!isAlreadyPro && fnUrl && session?.access_token) {
+        const resp = await fetch(fnUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session.access_token}`,
+            "apikey": window.WHITEBOX_SUPABASE_ANON_KEY,
+          },
+          body: JSON.stringify({ returnRaw: false }),
+        });
+        const payload = await resp.json().catch(() => ({}));
+        if (resp.ok) {
+          const edgeStatus = payload?.status ?? payload?.subscription_status ?? payload?.plan ?? payload?.tier;
+          if (typeof edgeStatus !== "undefined" && edgeStatus !== null) {
+            status = edgeStatus;
+          }
+          // Best-effort: sync to profiles for future fast loads.
+          if (payload?.status && user?.id) {
+            try {
+              await supabase.from("profiles").update({ subscription_status: String(payload.status) }).eq("id", user.id);
+            } catch (_) {}
+          }
+        }
+      }
+    } catch (_) {}
+
     // Normalize to a string status we can consistently use across the UI.
     if (typeof status === "boolean") {
       status = status ? "pro" : "free";
@@ -226,7 +258,7 @@ function wireSignupGuards(supabase){
   // If already logged in, prevent creating another account
   supabase.auth.getUser().then(({data})=>{
     if (data && data.user){
-      if (msg) msg.innerHTML = 'You are already logged in. <a href="account.html">Go to Account</a> or <a href="choose_plan.html">Upgrade to Pro</a>.';
+      if (msg) msg.innerHTML = 'You are already logged in. <a href="/account/">Go to Account</a> or <a href="/choose_plan.html">Upgrade to Pro</a>.';
       // Disable obvious signup submit buttons
       document.querySelectorAll("form button[type='submit'], form input[type='submit']").forEach(btn=>{
         btn.setAttribute("disabled","disabled");

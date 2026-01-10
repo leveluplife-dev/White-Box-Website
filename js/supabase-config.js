@@ -35,3 +35,8 @@ window.WHITEBOX_EDGE_STRIPE_CHECKOUT_URL = `${window.WHITEBOX_EDGE_FUNCTIONS_BAS
 // If you deploy an Edge Function named "create-portal-session", it will be used here.
 window.WHITEBOX_EDGE_STRIPE_PORTAL_URL = `${window.WHITEBOX_EDGE_FUNCTIONS_BASE_URL}/create-portal-session`;
 
+// Optional: Edge Function to read the user's current subscription status from Stripe.
+// If you deploy an Edge Function named "select-subscription", the site can use it
+// to show Pro/Free correctly even if the profiles table hasn't been updated yet.
+window.WHITEBOX_EDGE_SELECT_SUBSCRIPTION_URL = `${window.WHITEBOX_EDGE_FUNCTIONS_BASE_URL}/select-subscription`;
+
