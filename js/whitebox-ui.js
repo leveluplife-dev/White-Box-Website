@@ -46,15 +46,19 @@
 
     // Preferred: profiles table (RLS-protected), fallback: user metadata.
     // NOTE: is_pro may be a boolean (true/false) depending on how it was written.
-    let status = (user?.user_metadata?.is_pro ?? "free");
+    let status = (user?.user_metadata?.subscription_status ?? user?.user_metadata?.is_pro ?? "free");
+    let profile = null;
     try {
-      const { data: profile, error } = await supabase
+      const { data, error } = await supabase
         .from("profiles")
-        .select("is_pro")
+        .select("subscription_status, subscription_end, cancel_at_period_end, stripe_customer_id, stripe_subscription_id")
         .eq("id", user.id)
         .maybeSingle();
-      if (!error && profile && typeof profile.is_pro !== "undefined" && profile.is_pro !== null) {
-        status = profile.is_pro;
+      if (!error && data) {
+        profile = data;
+        if (typeof data.subscription_status !== "undefined" && data.subscription_status !== null) {
+          status = data.subscription_status;
+        }
       }
     } catch (_) {}
 
@@ -62,8 +66,10 @@
     if (typeof status === "boolean") {
       status = status ? "pro" : "free";
     }
+    if (typeof status !== "string") status = String(status ?? "free");
+    status = status.toLowerCase();
 
-    return { session, user, status };
+    return { session, user, status, profile };
   }
 
   function renderNav({ user, status }) {
@@ -133,7 +139,7 @@
       await supabase.from("profiles").upsert({
         id: user.id,
         email: user.email,
-        is_pro: user.user_metadata?.is_pro || "free",
+        subscription_status: user.user_metadata?.subscription_status || "free",
       }, { onConflict: "id" });
     } catch (_) {}
   }

@@ -31,3 +31,7 @@ window.WHITEBOX_STRIPE_PRICE_ANNUAL  = "price_1SmmdV0k44qhvLJPDdku5KMg";
 window.WHITEBOX_EDGE_FUNCTIONS_BASE_URL = "https://nojljuqfdzclxhggfbvc.supabase.co/functions/v1";
 window.WHITEBOX_EDGE_STRIPE_CHECKOUT_URL = `${window.WHITEBOX_EDGE_FUNCTIONS_BASE_URL}/create-checkout`;
 
+// Optional: Stripe Customer Portal (manage billing / cancel subscription)
+// If you deploy an Edge Function named "create-portal-session", it will be used here.
+window.WHITEBOX_EDGE_STRIPE_PORTAL_URL = `${window.WHITEBOX_EDGE_FUNCTIONS_BASE_URL}/create-portal-session`;
+
