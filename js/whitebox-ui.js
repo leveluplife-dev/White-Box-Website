@@ -36,7 +36,7 @@
     link.style.display = isPro ? "none" : "";
   }
 
-  // NOTE: This helper is used by multiple pages (including account.html).
+  // NOTE: This helper is used by multiple pages (including /account/).
   // It must be available globally to avoid "ReferenceError: getUserAndStatus is not defined".
   async function getUserAndStatus(supabase) {
     const { data: sessionData } = await supabase.auth.getSession();
@@ -61,42 +61,14 @@
         .maybeSingle();
       if (!error && data) {
         profile = data;
-        if (typeof data.subscription_status !== "undefined" && data.subscription_status !== null) {
+
+        // If is_pro is true, treat the user as Pro even if subscription_status is stale.
+        if (data.is_pro === true) {
+          status = "pro";
+        } else if (typeof data.subscription_status !== "undefined" && data.subscription_status !== null) {
           status = data.subscription_status;
         } else if (typeof data.is_pro !== "undefined" && data.is_pro !== null) {
           status = data.is_pro;
-        }
-      }
-    } catch (_) {}
-
-    // If we still look Free, optionally ask a server-side Edge Function that
-    // checks Stripe and returns the authoritative status.
-    // This avoids false "Free" UI when webhooks didn't update profiles yet.
-    try {
-      const isAlreadyPro = (String(status ?? "").toLowerCase() === "pro") || (status === true);
-      const fnUrl = window.WHITEBOX_EDGE_SELECT_SUBSCRIPTION_URL;
-      if (!isAlreadyPro && fnUrl && session?.access_token) {
-        const resp = await fetch(fnUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${session.access_token}`,
-            "apikey": window.WHITEBOX_SUPABASE_ANON_KEY,
-          },
-          body: JSON.stringify({ returnRaw: false }),
-        });
-        const payload = await resp.json().catch(() => ({}));
-        if (resp.ok) {
-          const edgeStatus = payload?.status ?? payload?.subscription_status ?? payload?.plan ?? payload?.tier;
-          if (typeof edgeStatus !== "undefined" && edgeStatus !== null) {
-            status = edgeStatus;
-          }
-          // Best-effort: sync to profiles for future fast loads.
-          if (payload?.status && user?.id) {
-            try {
-              await supabase.from("profiles").update({ subscription_status: String(payload.status) }).eq("id", user.id);
-            } catch (_) {}
-          }
         }
       }
     } catch (_) {}
@@ -182,8 +154,6 @@
       await supabase.from("profiles").upsert({
         id: user.id,
         email: user.email,
-        subscription_status: user.user_metadata?.subscription_status || "free",
-      }, { onConflict: "id" });
     } catch (_) {}
   }
 
