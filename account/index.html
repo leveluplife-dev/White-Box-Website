@@ -186,12 +186,23 @@
       const norm = String(status || "free").toLowerCase();
       const isPro = ["pro", "active", "subscribed", "trialing", "paid"].includes(norm) || status === true;
       const pretty = isPro ? "Pro" : "Free";
+
+      // If Stripe reports an end-of-term (e.g., user set cancel at period end), show it.
+      let endLine = "";
+      const profile = userAndStatus?.profile || null;
+      const subEnd = profile?.subscription_end ? new Date(profile.subscription_end) : null;
+      if (subEnd && !isNaN(subEnd.getTime())) {
+        const when = subEnd.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+        const label = profile?.cancel_at_period_end ? "Ends" : "Renews";
+        endLine = `<div><strong>${label}:</strong> ${when}</div>`;
+      }
       document.getElementById("acct-summary").innerHTML = `
         <div><strong>Email:</strong> ${user.email}</div>
         <div><strong>User ID:</strong> <span class="muted">${user.id}</span></div>
       `;
       document.getElementById("sub-status").innerHTML = `
         <div><strong>Status:</strong> ${pretty}</div>
+        ${endLine}
       `;
       const upgradeBtn = document.getElementById("upgrade-btn");
       const manageBtn = document.getElementById("manage-btn");

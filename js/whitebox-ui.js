@@ -154,7 +154,8 @@
       await supabase.from("profiles").upsert({
         id: user.id,
         email: user.email,
-    } catch (_) {}
+    });
+  } catch (_) {}
   }
 
   async function init() {
