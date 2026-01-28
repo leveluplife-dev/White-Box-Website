@@ -341,7 +341,7 @@
         $5/month). Create your account below and enter your payment
         information to start your subscription.
       </p>
-      <form id="paidSignupForm" novalidate>
+      <form id="paidSignupForm" novalidate id="signup-form">
 <div id="wb-signup-msg" style="margin:10px 0;color:#b45309;"></div>
         <label for="name">Name</label>
         <input type="text" id="name" name="name" required />
@@ -559,5 +559,37 @@
     <script src="/js/whitebox-ui.js"></script>
 
   <script src="/js/nav.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("signup-form");
+  if (!form) return;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById("name")?.value;
+    const email = document.getElementById("email")?.value;
+    const password = document.getElementById("password")?.value;
+    const confirm = document.getElementById("confirm_password")?.value;
+
+    if (!email || !password || password !== confirm) {
+      alert("Please check your inputs.");
+      return;
+    }
+
+    const { data, error } = await supabase.auth.signUp({ email, password });
+
+    if (error) {
+      console.error("Signup error:", error);
+      alert(error.message);
+      return;
+    }
+
+    window.location.href = "thank_you_pro.html";
+  });
+});
+</script>
+
 </body>
 </html>

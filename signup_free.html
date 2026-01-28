@@ -342,7 +342,7 @@
         started with core filtering features and take control of what you see.
         After you sign up, we'll send you a link to download the extension.
       </p>
-      <form id="freeSignupForm" novalidate>
+      <form id="freeSignupForm" novalidate id="signup-form">
 <div id="wb-signup-msg" style="margin:10px 0;color:#b45309;"></div>
         <label for="name">Name</label>
         <input type="text" id="name" name="name" autocomplete="name" required />
@@ -584,5 +584,37 @@
 <script src="/js/whitebox-ui.js"></script>
 
   <script src="/js/nav.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("signup-form");
+  if (!form) return;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById("name")?.value;
+    const email = document.getElementById("email")?.value;
+    const password = document.getElementById("password")?.value;
+    const confirm = document.getElementById("confirm_password")?.value;
+
+    if (!email || !password || password !== confirm) {
+      alert("Please check your inputs.");
+      return;
+    }
+
+    const { data, error } = await supabase.auth.signUp({ email, password });
+
+    if (error) {
+      console.error("Signup error:", error);
+      alert(error.message);
+      return;
+    }
+
+    window.location.href = "thank_you_free.html";
+  });
+});
+</script>
+
 </body>
 </html>
