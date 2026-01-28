@@ -1,31 +1,97 @@
 /**
  * WhiteBox Agency site UI helpers
- * FIXED: robust signup handling for button-click + form-submit
+ * TEMPORARY DEBUG INSTRUMENTATION ENABLED
+ * Search for "WB_DEBUG" to remove all debug code later
  */
 
 (function () {
-  function el(id) { return document.getElementById(id); }
 
-  async function init() {
-    if (!window.getSupabaseClient) return;
-    const supabase = window.getSupabaseClient();
+  // WB_DEBUG: prove script execution
+  console.log("WB_DEBUG 🚨 whitebox-ui.js EXECUTED");
 
-    try { window.wireSignupGuards?.(supabase); } catch (_) {}
-    try { window.wireSignupSubmit?.(supabase); } catch (_) {}
+  function el(id) {
+    return document.getElementById(id);
   }
 
-  document.addEventListener("DOMContentLoaded", init);
+  document.addEventListener("DOMContentLoaded", () => {
+    // WB_DEBUG: prove DOM readiness
+    console.log("WB_DEBUG 🚨 DOMContentLoaded fired");
+
+    // WB_DEBUG: list all buttons
+    const buttons = document.querySelectorAll("button");
+    console.log("WB_DEBUG 🚨 buttons found:", buttons.length, buttons);
+
+    // WB_DEBUG: list all forms
+    const forms = document.querySelectorAll("form");
+    console.log("WB_DEBUG 🚨 forms found:", forms.length, forms);
+
+    // WB_DEBUG: attach click logger to all buttons
+    buttons.forEach((btn, i) => {
+      btn.addEventListener("click", () => {
+        console.log(`WB_DEBUG 🚨 button[${i}] CLICKED`, btn.textContent);
+      });
+    });
+
+    // WB_DEBUG: attach submit logger to all forms
+    forms.forEach((form, i) => {
+      form.addEventListener("submit", () => {
+        console.log(`WB_DEBUG 🚨 form[${i}] SUBMIT event fired`);
+      });
+    });
+
+    // WB_DEBUG: check Supabase availability
+    console.log("WB_DEBUG 🚨 window.getSupabaseClient:", window.getSupabaseClient);
+    console.log("WB_DEBUG 🚨 window.supabase:", window.supabase);
+
+    init();
+  });
+
+  async function init() {
+    // WB_DEBUG: init entered
+    console.log("WB_DEBUG 🚨 init() entered");
+
+    if (!window.getSupabaseClient) {
+      console.warn("WB_DEBUG ⚠️ getSupabaseClient not found");
+      return;
+    }
+
+    const supabase = window.getSupabaseClient();
+
+    // WB_DEBUG: Supabase client resolved
+    console.log("WB_DEBUG 🚨 Supabase client:", supabase);
+
+    try {
+      window.wireSignupGuards?.(supabase);
+      console.log("WB_DEBUG 🚨 wireSignupGuards attached");
+    } catch (e) {
+      console.error("WB_DEBUG ❌ wireSignupGuards error", e);
+    }
+
+    try {
+      window.wireSignupSubmit?.(supabase);
+      console.log("WB_DEBUG 🚨 wireSignupSubmit attached");
+    } catch (e) {
+      console.error("WB_DEBUG ❌ wireSignupSubmit error", e);
+    }
+  }
+
 })();
 
 
 // ---------------- Signup guards ----------------
-function wireSignupGuards(supabase){
+function wireSignupGuards(supabase) {
+  // WB_DEBUG
+  console.log("WB_DEBUG 🚨 wireSignupGuards() called");
+
   const path = (window.location.pathname || "").toLowerCase();
   if (!path.includes("signup") && !path.includes("pro_")) return;
 
   const msg = document.getElementById("wb-signup-msg");
 
   supabase.auth.getUser().then(({ data }) => {
+    // WB_DEBUG
+    console.log("WB_DEBUG 🚨 auth.getUser()", data);
+
     if (data?.user) {
       if (msg) {
         msg.innerHTML =
@@ -39,6 +105,9 @@ function wireSignupGuards(supabase){
   });
 
   window.__wbHandleSignupError = function (err) {
+    // WB_DEBUG
+    console.log("WB_DEBUG 🚨 signup error handler:", err);
+
     const text = err?.message || "";
     if (/already|exists|registered/i.test(text)) {
       if (msg) {
@@ -52,29 +121,46 @@ function wireSignupGuards(supabase){
 }
 
 
-// ---------------- Signup submit (FIXED) ----------------
+// ---------------- Signup submit ----------------
 function wireSignupSubmit(supabase) {
+  // WB_DEBUG
+  console.log("WB_DEBUG 🚨 wireSignupSubmit() called");
+
   const msg = document.getElementById("wb-signup-msg");
 
   function getValue(id, fallbackName) {
-    return (
+    const value =
       document.getElementById(id)?.value ??
       document.querySelector(`[name="${fallbackName}"]`)?.value ??
-      ""
-    ).trim();
+      "";
+
+    // WB_DEBUG
+    console.log(`WB_DEBUG 🚨 getValue(${id}/${fallbackName}) =`, value);
+
+    return value.trim();
   }
 
   async function handleSignup() {
+    // WB_DEBUG
+    console.log("WB_DEBUG 🚨 handleSignup() invoked");
+
     const email = getValue("email", "email");
     const password = getValue("password", "password");
     const confirm = getValue("confirm_password", "confirm");
 
     if (!email || !password || password !== confirm) {
+      console.warn("WB_DEBUG ⚠️ input validation failed");
       if (msg) msg.textContent = "Please check your inputs.";
       return;
     }
 
-    const { error } = await supabase.auth.signUp({ email, password });
+    // WB_DEBUG
+    console.log("WB_DEBUG 🚨 calling supabase.auth.signUp", email);
+
+    const { data, error } = await supabase.auth.signUp({ email, password });
+
+    // WB_DEBUG
+    console.log("WB_DEBUG 🚨 signup result", { data, error });
 
     if (error) {
       if (window.__wbHandleSignupError?.(error)) return;
@@ -88,17 +174,19 @@ function wireSignupSubmit(supabase) {
       : "/thank_you_free.html";
   }
 
-  // 1️⃣ Support real form submit if present
-  document.querySelectorAll("form").forEach(form => {
+  // WB_DEBUG: form submit wiring
+  document.querySelectorAll("form").forEach((form, i) => {
+    console.log(`WB_DEBUG 🚨 attaching submit handler to form[${i}]`);
     form.addEventListener("submit", e => {
       e.preventDefault();
       handleSignup();
     });
   });
 
-  // 2️⃣ Support button click (YOUR CURRENT CASE)
-  document.querySelectorAll("button").forEach(btn => {
+  // WB_DEBUG: button click wiring
+  document.querySelectorAll("button").forEach((btn, i) => {
     if (/create account/i.test(btn.textContent)) {
+      console.log(`WB_DEBUG 🚨 attaching click handler to button[${i}]`);
       btn.addEventListener("click", e => {
         e.preventDefault();
         handleSignup();
