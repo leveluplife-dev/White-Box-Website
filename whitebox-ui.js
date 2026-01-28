@@ -121,8 +121,9 @@
     updateStaticUpgradeLink({ user: null, status: "free" });
     setNavReady();
 
-    try { wireSignupGuards(supabase); } catch (_) {}
-    try { wireSignupSubmit(supabase); } catch (_) {}
+    // ✅ FIX: call via window to support module/defer loading
+    try { window.wireSignupGuards?.(supabase); } catch (_) {}
+    try { window.wireSignupSubmit?.(supabase); } catch (_) {}
 
     const info = await getUserAndStatus(supabase);
     if (info.user) await ensureProfileExists(supabase, info.user);
@@ -137,7 +138,7 @@
 })();
 
 
-// --- Signup UX guards (unchanged) ---
+// --- Signup UX guards ---
 function wireSignupGuards(supabase){
   const path = (window.location.pathname || "").toLowerCase();
   const isSignupPage = path.includes("signup_") || path.includes("choose_plan");
@@ -166,7 +167,7 @@ function wireSignupGuards(supabase){
 }
 
 
-// --- ACTUAL SIGNUP HANDLER (NEW) ---
+// --- ACTUAL SIGNUP HANDLER ---
 function wireSignupSubmit(supabase) {
   const form = document.getElementById("signup-form");
   if (!form) return;
@@ -198,3 +199,8 @@ function wireSignupSubmit(supabase) {
       : "/thank_you_free.html";
   });
 }
+
+
+// ✅ FIX: explicitly expose for module/defer environments
+window.wireSignupGuards = wireSignupGuards;
+window.wireSignupSubmit = wireSignupSubmit;
