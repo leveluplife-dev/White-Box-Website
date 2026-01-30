@@ -1,294 +1,351 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WhiteBox Agency – Pro: Create Account</title>
-    <style>
-      body {
-        margin: 0;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-          Arial, sans-serif;
-        background: #f6f9fc;
-        color: #333;
-        line-height: 1.6;
-      }
-      .header {
-        background: linear-gradient(135deg, #bde3ff 0%, #eaf4ff 100%);
-        padding: 1.5rem;
-        border-bottom: 1px solid #d6e4f1;
-        text-align: center;
-      }
-      .header h1 {
-        margin: 0;
-        font-size: 2.5rem;
-        color: #0b3d91;
-      }
-      .container {
-        width: 90%;
-        max-width: 700px;
-        margin: 2rem auto;
-        background: #fff;
-        border-radius: 6px;
-        padding: 2rem;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-      }
-      label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-      }
-      input[type="text"],
-      input[type="email"],
-      input[type="password"] {
-        width: 100%;
-        padding: 0.75rem;
-        box-sizing: border-box;
-        border: 1px solid #ccd7e6;
-        border-radius: 4px;
-        margin-bottom: 1rem;
-        font-size: 1rem;
-      }
-      .button {
-        display: inline-block;
-        background: #28a745;
-        color: #fff;
-        padding: 0.75rem 1.5rem;
-        border: none;
-        border-radius: 4px;
-        font-size: 1rem;
-        font-weight: 600;
-        text-decoration: none;
-        text-align: center;
-        cursor: pointer;
-      }
-      .button:hover {
-        background: #218838;
-      }
-      .note {
-        margin-top: 1rem;
-        font-size: 0.9rem;
-        color: #666;
-        text-align: center;
-      }
-      .back-link {
-        display: block;
-        margin-top: 2rem;
-        text-align: center;
-      }
-      .back-link a {
-        color: #007bff;
-      }
-    
-      .error-text{color:#b00020;font-size:0.92rem;margin:0.35rem 0 0.75rem;}
-      .input-error{border:1.5px solid #b00020 !important; outline:none;}
-      .hint{color:#5b6f86;font-size:0.92rem;margin:0.25rem 0 0.75rem;}
-      .button[disabled]{opacity:.6;cursor:not-allowed;}
 
-      /* Top navigation bar (shared across pages) */
-      .top-nav {
-        width: 100%;
-        max-width: 100%;
-        margin: 0;
-        padding: 1rem 0;
-        display: flex;
-        justify-content: flex-end;
-        flex-wrap: wrap;
-        gap: 1.25rem;
-        font-size: 1rem;
-        left: 0;
-  right: 0;
-}
-      .top-nav a {
-        color: #0b3d91;
-        font-weight: 600;
-        text-decoration: none;
-              font-size: 1rem;
-      }
-      .top-nav a:hover {
-        text-decoration: underline;
-      }
-
-      /* Shared top navigation */
-      .top-nav{
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        padding: 1rem 2rem;
-        background: rgba(255,255,255,0.9);
-        border-bottom:1px solid #e5ebf5;
-        position: sticky;
-        top: 0;
-        z-index: 50;
-        backdrop-filter: blur(10px);
-      }
-      .brand-link{
-        display:flex;
-        align-items:center;
-        gap:0.75rem;
-        text-decoration:none;
-        color:#0b2b4b;
-      }
-      .top-nav img{
-        height: 44px;
-        width: auto;
-        display:block;
-      }
-      .brand-stack{
-        display:flex;
-        flex-direction:column;
-        line-height:1.05;
-      }
-      .brand-name{
-        font-weight:800;
-        letter-spacing:-0.02em;
-        font-size: 1.05rem;
-        color: #0b2b4b;
-}
-      .brand-tagline{
-        font-size: 0.88rem;
-        color:#3b5872;
-        font-weight:600;
-      }
-      .nav-right a{
-        margin-left: 1.25rem;
-        text-decoration:none;
-        color:#0b2b4b;
-        font-weight:600;
-        font-size: 1rem;
-      }
-      .nav-right a:hover{ text-decoration: underline; }
-      .nav-cta{
-        padding: 0.55rem 1rem;
-        border-radius: 6px;
-        background:#007bff;
-        color:white !important;
-        text-decoration:none;
-      }
-      .nav-cta:hover{ filter: brightness(0.95); text-decoration:none; }
-      @media (max-width: 760px){
-        .top-nav{ padding: 0.9rem 1rem; }
-        .brand-tagline{ display:none; }
-        .nav-right a{ margin-left: 0.75rem; }
-      }
-
-
-      /* Constrain nav content while keeping full-width background */
-      .top-nav{ 
-        padding: 0;
-      }
-      .top-nav-inner{
-        width: 100%;
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 1rem 2rem;
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-      }
-      @media (max-width: 760px){
-        .top-nav-inner{ padding: 0.9rem 1rem; }
-      }
-
-      .nav-right a:not(.nav-cta){
-          margin-bottom: 0.2rem;
-        }
-        .nav-cta{
-          flex: 1 0 100%;
-          width: 100%;
-          margin-left: 0 !important;
-          text-align: center;
-        }
-      }
-
-      .top-nav-inner{
-          width: 100%;
-        }
-
-        /* Use a 3-column grid so links are neatly arranged */
-        .nav-right{
-          display: grid !important;
-          grid-template-columns: repeat(3, auto);
-          justify-content: end;
-          align-items: center;
-          column-gap: 0.85rem;
-          row-gap: 0.55rem;
-        }
-
-        /* Remove desktop left-margins so grid spacing is consistent */
-        .nav-right a{
-          margin-left: 0 !important;
-          white-space: nowrap;
-          font-size: 0.98rem;
-        }
-
-        /* Put Sign Up on row 2 and let it sit on the right side (not full-width) */
-        .nav-cta{
-          grid-column: 2 / 4;      /* right two columns */
-          justify-self: end;
-          width: auto;
-          margin-top: 0;
-          padding: 0.55rem 0.95rem;
-          border-radius: 10px;
-        }
-      }
-
-      /* Mobile header layout (v2): stack nav under brand to avoid cramped links at ~390px */
-      @media (max-width: 760px){
-        .top-nav{
-          padding: 0.85rem 1rem;
-        }
-
-        /* Stack brand + links */
-        .top-nav-inner{
-          display: flex !important;
-          flex-direction: column !important;
-          align-items: flex-start !important;
-          gap: 0.55rem;
-        }
-
-        .nav-left{
-          width: 100%;
-        }
-
-        .nav-right{
-          width: 100%;
-          display: flex !important;
-          flex-wrap: wrap !important;
-          justify-content: flex-end;
-          align-items: center;
-          gap: 0.7rem;
-        }
-
-        /* Normalize spacing on mobile */
-        .nav-right a{
-          margin-left: 0 !important;
-          white-space: nowrap;
-          font-size: 0.98rem;
-        }
-
-        /* Make the CTA a bit smaller so it doesn't dominate */
-        .nav-cta{
-          padding: 0.45rem 0.8rem;
-          border-radius: 10px;
-        }
-      }
-</style>
-    <link rel="stylesheet" href="/css/whitebox.css">
-
-<script>
-(function(){
-  try{
-    var has = false;
-    for (var i=0;i<localStorage.length;i++){
-      var k = localStorage.key(i);
-      if (k && k.indexOf("sb-")===0 && k.indexOf("-auth-token")>0){ has = true; break; }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WhiteBox Agency – Pro: Create Account</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+        Arial, sans-serif;
+      background: #f6f9fc;
+      color: #333;
+      line-height: 1.6;
     }
-    if (!has && localStorage.getItem("whitebox.auth")) has = true;
-    if (has) { document.documentElement.classList.add("wb-has-session"); document.documentElement.classList.add("wb-nav-ready"); }
-  }catch(e){}
-})();
-</script>
+
+    .header {
+      background: linear-gradient(135deg, #bde3ff 0%, #eaf4ff 100%);
+      padding: 1.5rem;
+      border-bottom: 1px solid #d6e4f1;
+      text-align: center;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      color: #0b3d91;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 700px;
+      margin: 2rem auto;
+      background: #fff;
+      border-radius: 6px;
+      padding: 2rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.75rem;
+      box-sizing: border-box;
+      border: 1px solid #ccd7e6;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+
+    .button {
+      display: inline-block;
+      background: #28a745;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      background: #218838;
+    }
+
+    .note {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #666;
+      text-align: center;
+    }
+
+    .back-link {
+      display: block;
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .back-link a {
+      color: #007bff;
+    }
+
+    .error-text {
+      color: #b00020;
+      font-size: 0.92rem;
+      margin: 0.35rem 0 0.75rem;
+    }
+
+    .input-error {
+      border: 1.5px solid #b00020 !important;
+      outline: none;
+    }
+
+    .hint {
+      color: #5b6f86;
+      font-size: 0.92rem;
+      margin: 0.25rem 0 0.75rem;
+    }
+
+    .button[disabled] {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    /* Top navigation bar (shared across pages) */
+    .top-nav {
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+      padding: 1rem 0;
+      display: flex;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      font-size: 1rem;
+      left: 0;
+      right: 0;
+    }
+
+    .top-nav a {
+      color: #0b3d91;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+
+    .top-nav a:hover {
+      text-decoration: underline;
+    }
+
+    /* Shared top navigation */
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(255, 255, 255, 0.9);
+      border-bottom: 1px solid #e5ebf5;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+    }
+
+    .brand-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: #0b2b4b;
+    }
+
+    .top-nav img {
+      height: 44px;
+      width: auto;
+      display: block;
+    }
+
+    .brand-stack {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.05;
+    }
+
+    .brand-name {
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      font-size: 1.05rem;
+      color: #0b2b4b;
+    }
+
+    .brand-tagline {
+      font-size: 0.88rem;
+      color: #3b5872;
+      font-weight: 600;
+    }
+
+    .nav-right a {
+      margin-left: 1.25rem;
+      text-decoration: none;
+      color: #0b2b4b;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .nav-right a:hover {
+      text-decoration: underline;
+    }
+
+    .nav-cta {
+      padding: 0.55rem 1rem;
+      border-radius: 6px;
+      background: #007bff;
+      color: white !important;
+      text-decoration: none;
+    }
+
+    .nav-cta:hover {
+      filter: brightness(0.95);
+      text-decoration: none;
+    }
+
+    @media (max-width: 760px) {
+      .top-nav {
+        padding: 0.9rem 1rem;
+      }
+
+      .brand-tagline {
+        display: none;
+      }
+
+      .nav-right a {
+        margin-left: 0.75rem;
+      }
+    }
+
+
+    /* Constrain nav content while keeping full-width background */
+    .top-nav {
+      padding: 0;
+    }
+
+    .top-nav-inner {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    @media (max-width: 760px) {
+      .top-nav-inner {
+        padding: 0.9rem 1rem;
+      }
+    }
+
+    .nav-right a:not(.nav-cta) {
+      margin-bottom: 0.2rem;
+    }
+
+    .nav-cta {
+      flex: 1 0 100%;
+      width: 100%;
+      margin-left: 0 !important;
+      text-align: center;
+    }
+
+    .top-nav-inner {
+      width: 100%;
+    }
+
+    /* Use a 3-column grid so links are neatly arranged */
+    .nav-right {
+      display: grid !important;
+      grid-template-columns: repeat(3, auto);
+      justify-content: end;
+      align-items: center;
+      column-gap: 0.85rem;
+      row-gap: 0.55rem;
+    }
+
+    /* Remove desktop left-margins so grid spacing is consistent */
+    .nav-right a {
+      margin-left: 0 !important;
+      white-space: nowrap;
+      font-size: 0.98rem;
+    }
+
+    /* Put Sign Up on row 2 and let it sit on the right side (not full-width) */
+    .nav-cta {
+      grid-column: 2 / 4;
+      /* right two columns */
+      justify-self: end;
+      width: auto;
+      margin-top: 0;
+      padding: 0.55rem 0.95rem;
+      border-radius: 10px;
+    }
+
+    /* Mobile header layout (v2): stack nav under brand to avoid cramped links at ~390px */
+    @media (max-width: 760px) {
+      .top-nav {
+        padding: 0.85rem 1rem;
+      }
+
+      /* Stack brand + links */
+      .top-nav-inner {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.55rem;
+      }
+
+      .nav-left {
+        width: 100%;
+      }
+
+      .nav-right {
+        width: 100%;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 0.7rem;
+      }
+
+      /* Normalize spacing on mobile */
+      .nav-right a {
+        margin-left: 0 !important;
+        white-space: nowrap;
+        font-size: 0.98rem;
+      }
+
+      /* Make the CTA a bit smaller so it doesn't dominate */
+      .nav-cta {
+        padding: 0.45rem 0.8rem;
+        border-radius: 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="/css/whitebox.css">
+
+  <script>
+    (function () {
+      try {
+        var has = false;
+        for (var i = 0; i < localStorage.length; i++) {
+          var k = localStorage.key(i);
+          if (k && k.indexOf("sb-") === 0 && k.indexOf("-auth-token") > 0) { has = true; break; }
+        }
+        if (!has && localStorage.getItem("whitebox.auth")) has = true;
+        if (has) { document.documentElement.classList.add("wb-has-session"); document.documentElement.classList.add("wb-nav-ready"); }
+      } catch (e) { }
+    })();
+  </script>
 
 
   <!-- Favicon -->
@@ -298,11 +355,12 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180x180.png">
 
 </head>
-  <body>
-    
-        <nav class="top-nav">
-      <div class="top-nav-inner">
-<div class="nav-left">
+
+<body>
+
+  <nav class="top-nav">
+    <div class="top-nav-inner">
+      <div class="nav-left">
         <a href="index.html" class="brand-link">
           <img src="/white-box-logo.png" alt="WhiteBox Agency logo" />
           <span class="brand-stack">
@@ -314,140 +372,140 @@
       <div class="nav-right">
         <button class="nav-toggle" id="wb-nav-toggle" aria-label="Menu" aria-expanded="false">☰</button>
         <div class="nav-links" id="wb-nav-links">
-<a href="index.html">Home</a>
-        <a href="version.html">Version</a>
-        <a href="feedback.html">Feedback</a>
-        <span id="wb-nav-auth"><a href="login.html">Login</a>
-        <a class="nav-cta" href="choose_plan.html">Sign Up</a></span>
+          <a href="index.html">Home</a>
+          <a href="version.html">Version</a>
+          <a href="feedback.html">Feedback</a>
+          <span id="wb-nav-auth"><a href="login.html">Login</a>
+            <a class="nav-cta" href="choose_plan.html">Sign Up</a></span>
         </div>
-    </div>
       </div>
-    </nav>
+    </div>
+  </nav>
   <div class="container" id="wb-userbar">
-  <span class="wb-welcome" id="wb-welcome">Welcome, <span id="wb-user-name">there</span></span>
-  <span class="wb-status-pill" id="wb-plan-pill">Free</span>
-  <a class="nav-link" href="/account/" id="wb-account-link">Account</a>
-  <a class="nav-link" href="choose_plan.html" id="wb-upgrade-link">Upgrade</a>
-  <button class="btn" id="wb-logout-btn" type="button">Log out</button>
-</div>
-<div class="header">
-      <h1>Create Your Pro Account</h1>
-    </div>
-    <div class="container">
-      <p>
-        To access the Pro version with advanced filtering features, please create
-        an account. As an early adopter you’ll lock in <strong>$3 per
+    <span class="wb-welcome" id="wb-welcome">Welcome, <span id="wb-user-name">there</span></span>
+    <span class="wb-status-pill" id="wb-plan-pill">Free</span>
+    <a class="nav-link" href="/account/" id="wb-account-link">Account</a>
+    <a class="nav-link" href="choose_plan.html" id="wb-upgrade-link">Upgrade</a>
+    <button class="btn" id="wb-logout-btn" type="button">Log out</button>
+  </div>
+  <div class="header">
+    <h1>Create Your Pro Account</h1>
+  </div>
+  <div class="container">
+    <p>
+      To access the Pro version with advanced filtering features, please create
+      an account. As an early adopter you’ll lock in <strong>$3 per
         month</strong> when you prepay for six months (regular price $5/month).
-      </p>
-      <p>
-        After you submit this form, we’ll send a verification email to confirm
-        your address. Please check your inbox and click the link to activate
-        your account before proceeding.
-      </p>
-      <form id="proSignupForm" novalidate>
-        <label for="name">Name</label>
-        <input type="text" id="name" name="name" required />
-        <label for="email">Email address</label>
-        <input type="email" id="email" name="email" required />
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}" title="At least 8 characters with uppercase, lowercase, and a number." />
-        <div class="hint">At least 8 characters with upper, lower, and a number.</div>
-        <label for="confirm_password">Confirm Password</label>
-        <input type="password" id="confirm_password" name="confirm_password" required />
-        <!-- In a real application this button would submit the form and send a verification email -->
-      </form>
+    </p>
+    <p>
+      After you submit this form, we’ll send a verification email to confirm
+      your address. Please check your inbox and click the link to activate
+      your account before proceeding.
+    </p>
+    <form id="proSignupForm" novalidate>
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" required />
+      <label for="email">Email address</label>
+      <input type="email" id="email" name="email" required />
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}"
+        title="At least 8 characters with uppercase, lowercase, and a number." />
+      <div class="hint">At least 8 characters with upper, lower, and a number.</div>
+      <label for="confirm_password">Confirm Password</label>
+      <input type="password" id="confirm_password" name="confirm_password" required />
       <button class="button" id="continueBtn" type="submit" disabled>Create Account &amp; Continue</button>
-      <p class="note">
-        This sign‑up form is a placeholder. Connect it to your user
-        management system and email verification flow when you’re ready.
-      </p>
-      <div class="back-link">
-        <a href="index.html">&larr; Back to home</a>
-      </div>
+    </form>
+    <p class="note">
+      This sign‑up form is a placeholder. Connect it to your user
+      management system and email verification flow when you’re ready.
+    </p>
+    <div class="back-link">
+      <a href="index.html">&larr; Back to home</a>
     </div>
-  
-    <script>
-      function validateEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
-      function isStrongPassword(p){ return p.length>=8 && /[A-Z]/.test(p) && /[a-z]/.test(p) && /\d/.test(p); }
-      function setError(el, msg){
-        el.classList.add('input-error');
-        let err = el.nextElementSibling;
-        if(!err || !err.classList.contains('error-text')){
-          err = document.createElement('div');
-          err.className='error-text';
-          el.insertAdjacentElement('afterend', err);
-        }
-        err.textContent = msg;
+  </div>
+
+  <script>
+    function validateEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+    function isStrongPassword(p) { return p.length >= 8 && /[A-Z]/.test(p) && /[a-z]/.test(p) && /\d/.test(p); }
+    function setError(el, msg) {
+      el.classList.add('input-error');
+      let err = el.nextElementSibling;
+      if (!err || !err.classList.contains('error-text')) {
+        err = document.createElement('div');
+        err.className = 'error-text';
+        el.insertAdjacentElement('afterend', err);
       }
-      function clearError(el){
-        el.classList.remove('input-error');
-        const err = el.nextElementSibling;
-        if(err && err.classList.contains('error-text')) err.remove();
-      }
+      err.textContent = msg;
+    }
+    function clearError(el) {
+      el.classList.remove('input-error');
+      const err = el.nextElementSibling;
+      if (err && err.classList.contains('error-text')) err.remove();
+    }
 
-      const form=document.getElementById('proSignupForm');
-      const name=document.getElementById('name');
-      const email=document.getElementById('email');
-      const pass=document.getElementById('password');
-      const confirm=document.getElementById('confirm_password');
-      const btn=form.querySelector('button[type="submit"]');
+    const form = document.getElementById('proSignupForm');
+    const name = document.getElementById('name');
+    const email = document.getElementById('email');
+    const pass = document.getElementById('password');
+    const confirm = document.getElementById('confirm_password');
+    const btn = form.querySelector('button[type="submit"]');
 
-      const touched=new Set();
+    const touched = new Set();
 
-      function validateField(el){
-        clearError(el);
-        const v=(el.value||'').trim();
-        if(el===name){
-          if(v.length===0){ setError(el,'Name is required.'); return false; }
-          if(v.length<2){ setError(el,'Please enter your full name.'); return false; }
-          return true;
-        }
-        if(el===email){
-          if(v.length===0){ setError(el,'Email is required.'); return false; }
-          if(!validateEmail(v)){ setError(el,'Please enter a valid email address.'); return false; }
-          return true;
-        }
-        if(el===pass){
-          if(pass.value.length===0){ setError(el,'Password is required.'); return false; }
-          if(!isStrongPassword(pass.value)){ setError(el,'Password must be 8+ chars and include upper, lower, and a number.'); return false; }
-          return true;
-        }
-        if(el===confirm){
-          if(confirm.value.length===0){ setError(el,'Please confirm your password.'); return false; }
-          if(confirm.value!==pass.value){ setError(el,'Passwords do not match.'); return false; }
-          return true;
-        }
+    function validateField(el) {
+      clearError(el);
+      const v = (el.value || '').trim();
+      if (el === name) {
+        if (v.length === 0) { setError(el, 'Name is required.'); return false; }
+        if (v.length < 2) { setError(el, 'Please enter your full name.'); return false; }
         return true;
       }
-
-      function validateLive(){
-        const ok =
-          name.value.trim().length>=2 &&
-          validateEmail(email.value.trim()) &&
-          isStrongPassword(pass.value) &&
-          confirm.value.length>0 &&
-          confirm.value===pass.value;
-        btn.disabled=!ok;
-        return ok;
+      if (el === email) {
+        if (v.length === 0) { setError(el, 'Email is required.'); return false; }
+        if (!validateEmail(v)) { setError(el, 'Please enter a valid email address.'); return false; }
+        return true;
       }
+      if (el === pass) {
+        if (pass.value.length === 0) { setError(el, 'Password is required.'); return false; }
+        if (!isStrongPassword(pass.value)) { setError(el, 'Password must be 8+ chars and include upper, lower, and a number.'); return false; }
+        return true;
+      }
+      if (el === confirm) {
+        if (confirm.value.length === 0) { setError(el, 'Please confirm your password.'); return false; }
+        if (confirm.value !== pass.value) { setError(el, 'Passwords do not match.'); return false; }
+        return true;
+      }
+      return true;
+    }
 
-      [name,email,pass,confirm].forEach(el=>{
-        el.addEventListener('blur', ()=>{ touched.add(el); validateField(el); validateLive(); });
-        el.addEventListener('input', ()=>{ if(touched.has(el) || el.value.length>0){ validateField(el);} else { clearError(el);} validateLive(); });
-      });
+    function validateLive() {
+      const ok =
+        name.value.trim().length >= 2 &&
+        validateEmail(email.value.trim()) &&
+        isStrongPassword(pass.value) &&
+        confirm.value.length > 0 &&
+        confirm.value === pass.value;
+      btn.disabled = !ok;
+      return ok;
+    }
 
-      validateLive();
+    [name, email, pass, confirm].forEach(el => {
+      el.addEventListener('blur', () => { touched.add(el); validateField(el); validateLive(); });
+      el.addEventListener('input', () => { if (touched.has(el) || el.value.length > 0) { validateField(el); } else { clearError(el); } validateLive(); });
+    });
 
-      form.addEventListener('submit', (e)=>{
-        e.preventDefault();
-        let ok=true;
-        [name,email,pass,confirm].forEach(el=>{ ok = validateField(el) && ok; });
-        if(ok){
-          const plan = new URLSearchParams(window.location.search).get('plan') || '6mo';
-          window.location.href='pro_disclosure.html?plan=' + encodeURIComponent(plan);
-        }
-      });
-    </script>
+    validateLive();
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      let ok = true;
+      [name, email, pass, confirm].forEach(el => { ok = validateField(el) && ok; });
+      if (ok) {
+        const plan = new URLSearchParams(window.location.search).get('plan') || '6mo';
+        window.location.href = 'pro_disclosure.html?plan=' + encodeURIComponent(plan);
+      }
+    });
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
@@ -457,22 +515,23 @@
 
   <script src="/js/nav.js"></script>
 
-<script>
-  // If already signed in, skip Pro sign-up form and go directly to checkout page.
-  (async () => {
-    try {
-      if (!window.getSupabaseClient) return;
-      const supabase = window.getSupabaseClient();
-      const { data } = await supabase.auth.getSession();
-      if (data?.session) {
-        const params = new URLSearchParams(window.location.search);
-        const plan = params.get("plan") || "monthly";
-        // After account creation, show early-access disclosure before payment.
-        window.location.replace(`pro_disclosure.html?plan=${encodeURIComponent(plan)}`);
-      }
-    } catch (e) {}
-  })();
-</script>
+  <script>
+    // If already signed in, skip Pro sign-up form and go directly to checkout page.
+    (async () => {
+      try {
+        if (!window.getSupabaseClient) return;
+        const supabase = window.getSupabaseClient();
+        const { data } = await supabase.auth.getSession();
+        if (data?.session) {
+          const params = new URLSearchParams(window.location.search);
+          const plan = params.get("plan") || "monthly";
+          // After account creation, show early-access disclosure before payment.
+          window.location.replace(`pro_disclosure.html?plan=${encodeURIComponent(plan)}`);
+        }
+      } catch (e) { }
+    })();
+  </script>
 
 </body>
+
 </html>
