@@ -329,7 +329,7 @@
   <span class="wb-status-pill" id="wb-plan-pill">Free</span>
   <a class="nav-link" href="/account/" id="wb-account-link">Account</a>
   <a class="nav-link" href="choose_plan.html" id="wb-upgrade-link">Upgrade</a>
-  <button class="btn" id="wb-logout-btn" type="submit">Log out</button>
+  <button class="btn" id="wb-logout-btn" type="button">Log out</button>
 </div>
 <div class="header">
       <h1>Sign up for the Pro Version</h1>
@@ -341,7 +341,7 @@
         $5/month). Create your account below and enter your payment
         information to start your subscription.
       </p>
-      <form id="paidSignupForm" novalidate id="signup-form">
+      <form id="paidSignupForm" novalidate>
 <div id="wb-signup-msg" style="margin:10px 0;color:#b45309;"></div>
         <label for="name">Name</label>
         <input type="text" id="name" name="name" required />
@@ -559,4 +559,5 @@
     <script src="/js/whitebox-ui.js"></script>
 
   <script src="/js/nav.js"></script>
-
+</body>
+</html>
