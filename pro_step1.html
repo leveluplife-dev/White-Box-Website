@@ -421,6 +421,7 @@
       }
 
       function validateLive(){
+        if(!btn) return false;
         const ok =
           name.value.trim().length>=2 &&
           validateEmail(email.value.trim()) &&
@@ -431,22 +432,22 @@
         return ok;
       }
 
-      [name,email,pass,confirm].forEach(el=>{
+      [name,email,pass,confirm].filter(Boolean).forEach(el=>{
         el.addEventListener('blur', ()=>{ touched.add(el); validateField(el); validateLive(); });
         el.addEventListener('input', ()=>{ if(touched.has(el) || el.value.length>0){ validateField(el);} else { clearError(el);} validateLive(); });
       });
 
-      validateLive();
+      if(btn) validateLive();
 
-      form.addEventListener('submit', (e)=>{
+      if(form){ form.addEventListener('submit', (e)=>{
         e.preventDefault();
         let ok=true;
-        [name,email,pass,confirm].forEach(el=>{ ok = validateField(el) && ok; });
+        [name,email,pass,confirm].filter(Boolean).forEach(el=>{ ok = validateField(el) && ok; });
         if(ok){
           const plan = new URLSearchParams(window.location.search).get('plan') || '6mo';
           window.location.href='pro_disclosure.html?plan=' + encodeURIComponent(plan);
         }
-      });
+      }); }
     </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
