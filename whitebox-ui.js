@@ -162,19 +162,20 @@
     if (!window.getSupabaseClient) return;
     const supabase = window.getSupabaseClient();
 
-    // 🚫 IMPORTANT:
-    // Signup pages are transitional and must not run the full auth lifecycle.
-    // Supabase does not create a session until email confirmation.
-    // Running auth resolution here causes unintended redirects.
     const path = (window.location.pathname || "").toLowerCase();
-    const isSignupPage =
-      path.includes("signup_") ||
-      path.includes("choose_plan") ||
-      path.includes("welcome_") ||
-      path.includes("thank_you");
 
-    if (isSignupPage) {
-      // Render basic nav only, then STOP.
+    // 🚫 CRITICAL FIX:
+    // Signup + welcome pages are transitional.
+    // They must NOT resolve auth state or redirect.
+    const isTransitionalPage =
+      path.includes("signup") ||
+      path.includes("welcome") ||
+      path.includes("thank") ||
+      path.includes("pro_disclosure") ||
+      path.includes("pro_payment");
+
+    if (isTransitionalPage) {
+      // Render minimal logged-out UI and STOP
       renderNav({ user: null, status: "free" });
       renderWelcome({ user: null, status: "free" });
       updatePlanPill("free");
@@ -183,55 +184,28 @@
       return;
     }
 
-    // Bootstrapped header to avoid any "logged-out" flash while we fetch session/user.
-    const cachedStatus = localStorage.getItem("wb_cached_status") || "free";
-    const cachedName = localStorage.getItem("wb_cached_name") || "";
-    const cachedEmail = localStorage.getItem("wb_cached_email") || "";
-    const hasSession = document.documentElement.classList.contains("wb-has-session");
+    // --- NORMAL AUTH FLOW BELOW ---
 
-    if (hasSession) {
-      renderNav({ user: { email: cachedEmail, user_metadata: { full_name: cachedName } }, status: cachedStatus });
-      renderWelcome({ user: { email: cachedEmail, user_metadata: { full_name: cachedName } }, status: cachedStatus });
-      updatePlanPill(cachedStatus);
-      updateStaticUpgradeLink({ user: { email: cachedEmail, user_metadata: { full_name: cachedName } }, status: cachedStatus });
-    } else {
-      renderNav({ user: null, status: "free" });
-      renderWelcome({ user: null, status: "free" });
-      updatePlanPill("free");
-      updateStaticUpgradeLink({ user: null, status: "free" });
-    }
-    setNavReady();
-
-    // Page-specific guards (safe no-op on pages that don't have the expected elements)
-    try { wireSignupGuards(supabase); } catch (_) { }
-
-    // Now resolve the real session/user
     const info = await getUserAndStatus(supabase);
 
-    // Cache for faster bootstraps on next navigation
-    try {
-      if (info.user) {
-        const name = info.user.user_metadata?.full_name || info.user.user_metadata?.name || "";
-        localStorage.setItem("wb_cached_status", info.status || "free");
-        localStorage.setItem("wb_cached_email", info.user.email || "");
-        localStorage.setItem("wb_cached_name", name);
-      } else {
-        localStorage.removeItem("wb_cached_status");
-        localStorage.removeItem("wb_cached_email");
-        localStorage.removeItem("wb_cached_name");
-      }
-    } catch (_) { }
-
-    // If logged in, ensure profile row exists (optional) then re-render with authoritative data
     if (info.user) {
-      await ensureProfileExists(supabase, info.user);
+      const name =
+        info.user.user_metadata?.full_name ||
+        info.user.user_metadata?.name ||
+        "";
+      localStorage.setItem("wb_cached_status", info.status || "free");
+      localStorage.setItem("wb_cached_email", info.user.email || "");
+      localStorage.setItem("wb_cached_name", name);
+    } else {
+      localStorage.removeItem("wb_cached_status");
+      localStorage.removeItem("wb_cached_email");
+      localStorage.removeItem("wb_cached_name");
     }
 
-    const finalStatus = info.status || "free";
-    renderNav({ user: info.user, status: finalStatus });
-    renderWelcome({ user: info.user, status: finalStatus });
-    updatePlanPill(finalStatus);
-    updateStaticUpgradeLink({ user: info.user, status: finalStatus });
+    renderNav({ user: info.user, status: info.status });
+    renderWelcome({ user: info.user, status: info.status });
+    updatePlanPill(info.status);
+    updateStaticUpgradeLink({ user: info.user, status: info.status });
     setNavReady();
   }
 
