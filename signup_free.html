@@ -533,6 +533,7 @@
     // This page intentionally does NOT redirect after signup.
     // Supabase sessions are created only after email confirmation.
     async function bootstrap() {
+      const supabase = window.getSupabaseClient();
       // If already logged in, redirect (hide free signup)
       try {
         const { data: { session } } = await supabase.auth.getSession();
