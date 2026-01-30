@@ -15,7 +15,7 @@ window.WHITEBOX_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3
 // Extension store URLs
 // NOTE: Store pages don't "download" automatically. Users are taken to the store listing and then
 // click the store's install button (e.g., "Get" on Edge).
-window.WHITEBOX_CHROME_STORE_URL = "https://chromewebstore.google.com/detail/whitebox/migfcmjbhmgffhnibcajdbbhnplfpeje";
+window.WHITEBOX_CHROME_STORE_URL = ""; // pending Google review
 window.WHITEBOX_EDGE_STORE_URL = "https://microsoftedge.microsoft.com/addons/detail/whitebox/facndlhcibibolgjnmjlddenjbjdnpbd";
 
 

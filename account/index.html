@@ -297,44 +297,5 @@
       });
     });
   </script>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const deleteBtn = document.getElementById("delete-account-btn");
-  if (!deleteBtn) return;
-
-  deleteBtn.addEventListener("click", async () => {
-    const confirmed = confirm("This will permanently delete your account. This cannot be undone. Continue?");
-    if (!confirmed) return;
-
-    const confirmedAgain = confirm("Final confirmation: Delete your account?");
-    if (!confirmedAgain) return;
-
-    const { data: sessionData } = await supabase.auth.getSession();
-    const token = sessionData?.session?.access_token;
-    if (!token) {
-      alert("Not authenticated.");
-      return;
-    }
-
-    const res = await fetch("/functions/v1/delete-user", {
-      method: "POST",
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
-
-    if (res.ok) {
-      await supabase.auth.signOut();
-      localStorage.clear();
-      sessionStorage.clear();
-      window.location.href = "/";
-    } else {
-      alert("Failed to delete account. Please contact support.");
-    }
-  });
-});
-</script>
-
 </body>
 </html>
