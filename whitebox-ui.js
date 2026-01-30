@@ -1,121 +1,280 @@
 /**
- * WhiteBox Agency – UI helpers
+ * WhiteBox Agency site UI helpers
+ * - Shows login state in nav
+ * - Displays "Welcome <name>" + subscription status when placeholders exist
+ * - Provides simple account actions (logout)
  *
- * DEBUG BUILD
- * All debug lines are marked with: // WB_DEBUG
+ * Requires:
+ *  - js/supabase-config.js (window.WHITEBOX_SUPABASE_URL / window.WHITEBOX_SUPABASE_ANON_KEY)
+ *  - js/supabase-client.js (window.getSupabaseClient)
  */
 
 (function () {
-  // WB_DEBUG
-  console.log('[WB_DEBUG] whitebox-ui.js loaded');
+  function el(id) { return document.getElementById(id); }
 
-  function $(id) {
-    return document.getElementById(id);
+  function setNavReady() {
+    document.documentElement.classList.add("wb-nav-ready");
   }
 
-  function onReady(fn) {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', fn);
-    } else {
-      fn();
-    }
+  function updatePlanPill(status) {
+    const pill = el("wb-plan-pill");
+    if (!pill) return;
+    const isPro = (status === "pro" || status === "active" || status === "subscribed" || status === true);
+    pill.textContent = isPro ? "Pro" : "Free";
+    pill.classList.toggle("pro", isPro);
   }
 
-  // WB_DEBUG
-  console.log('[WB_DEBUG] document.readyState =', document.readyState);
-
-  onReady(async () => {
-    // WB_DEBUG
-    console.log('[WB_DEBUG] DOMContentLoaded fired');
-
-    // ---- Detect page ----
-    const isFree =
-      !!document.getElementById('freeSignupForm') ||
-      window.location.pathname.includes('signup_free');
-
-    const isPaid =
-      !!document.getElementById('paidSignupForm') ||
-      window.location.pathname.includes('signup_paid') ||
-      window.location.pathname.includes('pro_step');
-
-    // WB_DEBUG
-    console.log('[WB_DEBUG] page detection', {
-      isFree,
-      isPaid,
-      path: window.location.pathname
-    });
-
-    // ---- Check Supabase ----
-    if (!window.supabase && !window.whiteboxSupabase) {
-      // WB_DEBUG
-      console.error('[WB_DEBUG] Supabase client NOT found on window');
-    } else {
-      // WB_DEBUG
-      console.log('[WB_DEBUG] Supabase client detected', {
-        supabase: !!window.supabase,
-        whiteboxSupabase: !!window.whiteboxSupabase
-      });
+  function updateStaticUpgradeLink({ user, status }) {
+    const link = el("wb-upgrade-link");
+    if (!link) return;
+    // If you're not logged in, keep Upgrade visible.
+    if (!user) {
+      link.style.display = "";
+      return;
     }
+    const isPro = (status === "pro" || status === "active" || status === "subscribed" || status === true);
+    link.style.display = isPro ? "none" : "";
+  }
 
-    // ---- Inspect buttons ----
-    const buttons = Array.from(document.querySelectorAll('button'));
+  // NOTE: This helper is used by multiple pages (including /account/).
+  // It must be available globally to avoid "ReferenceError: getUserAndStatus is not defined".
+  async function getUserAndStatus(supabase) {
+    const { data: sessionData } = await supabase.auth.getSession();
+    const session = sessionData?.session || null;
+    if (!session) return { session: null, user: null, status: "free" };
 
-    // WB_DEBUG
-    console.log(
-      '[WB_DEBUG] buttons on page:',
-      buttons.map(b => ({
-        text: b.textContent.trim(),
-        id: b.id,
-        type: b.type,
-        disabled: b.disabled
-      }))
-    );
+    const { data: userData } = await supabase.auth.getUser();
+    const user = userData?.user || null;
+    if (!user) return { session, user: null, status: "free" };
 
-    buttons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        // WB_DEBUG
-        console.log('[WB_DEBUG] button CLICK detected:', {
-          text: btn.textContent.trim(),
-          id: btn.id,
-          disabled: btn.disabled
-        });
-      });
-    });
-
-    // ---- Inspect forms ----
-    const forms = Array.from(document.querySelectorAll('form'));
-
-    // WB_DEBUG
-    console.log(
-      '[WB_DEBUG] forms on page:',
-      forms.map(f => ({
-        id: f.id,
-        action: f.action,
-        hasSubmitListener: 'unknown'
-      }))
-    );
-
-    forms.forEach(form => {
-      form.addEventListener('submit', e => {
-        // WB_DEBUG
-        console.log('[WB_DEBUG] FORM SUBMIT event fired', {
-          id: form.id,
-          defaultPrevented: e.defaultPrevented
-        });
-      });
-    });
-
-    // ---- Session check (non-blocking) ----
+    // Preferred: profiles table (RLS-protected), fallback: user metadata.
+    // NOTE: On Supabase/PostgREST, selecting columns that do not exist can yield a 400.
+    // To be resilient across schema iterations, select(*) and then read fields if present.
+    // Also note: is_pro may be a boolean (true/false) depending on how it was written.
+    let status = (user?.user_metadata?.subscription_status ?? user?.user_metadata?.is_pro ?? "free");
+    let profile = null;
     try {
-      const client = window.whiteboxSupabase || window.supabase;
-      if (client?.auth?.getSession) {
-        const { data } = await client.auth.getSession();
-        // WB_DEBUG
-        console.log('[WB_DEBUG] getSession result:', data);
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (!error && data) {
+        profile = data;
+
+        // If is_pro is true, treat the user as Pro even if subscription_status is stale.
+        if (data.is_pro === true) {
+          status = "pro";
+        } else if (typeof data.subscription_status !== "undefined" && data.subscription_status !== null) {
+          status = data.subscription_status;
+        } else if (typeof data.is_pro !== "undefined" && data.is_pro !== null) {
+          status = data.is_pro;
+        }
       }
-    } catch (err) {
-      // WB_DEBUG
-      console.error('[WB_DEBUG] getSession threw error', err);
+    } catch (_) { }
+
+    // Normalize to a string status we can consistently use across the UI.
+    if (typeof status === "boolean") {
+      status = status ? "pro" : "free";
+    }
+    if (typeof status !== "string") status = String(status ?? "free");
+    status = status.toLowerCase();
+
+    return { session, user, status, profile };
+  }
+
+  // Expose helpers needed by standalone pages.
+  window.getUserAndStatus = getUserAndStatus;
+
+  function renderNav({ user, status }) {
+    const host = el("wb-nav-auth");
+    if (!host) return;
+
+    // Use an absolute path so it works from /account/ and any nested routes.
+    const accountHref = "/account/";
+    if (!user) {
+      host.innerHTML = `
+        <a class="btn btn-secondary btn-sm" href="/login.html">Log In</a>
+        <a class="btn btn-primary btn-sm" href="/choose_plan.html">Sign Up</a>
+      `;
+      return;
+    }
+
+    const label = (status === "pro" || status === "active" || status === "subscribed" || status === true) ? "Pro" : "Free";
+    host.innerHTML = `
+      <a class="btn btn-secondary btn-sm" href="${accountHref}">Account</a>
+      ${label === "Free" ? `<a class="btn btn-primary btn-sm" href="/choose_plan.html">Upgrade</a>` : ``}
+      <button class="btn btn-ghost btn-sm" id="wb-logout">Log out</button>
+    `;
+
+    const btn = el("wb-logout");
+    if (btn) btn.addEventListener("click", async () => {
+      // Switch UI immediately
+      renderNav({ user: null, status: "free" });
+      renderWelcome({ user: null, status: "free" });
+      setNavReady();
+      try { await window.getSupabaseClient().auth.signOut(); } catch (_) { }
+      // Optional: keep user on the current page; if you prefer redirect, uncomment next line
+      // window.location.href = "index.html";
+    });
+  }
+
+  function renderWelcome({ user, status }) {
+    const host = el("wb-userbar");
+    if (!host) return;
+
+    if (!user) {
+      host.innerHTML = "";
+      return;
+    }
+
+    const display =
+      user.user_metadata?.full_name ||
+      user.user_metadata?.name ||
+      user.email ||
+      "there";
+
+    const label = (status === "pro" || status === "active" || status === "subscribed" || status === true) ? "Pro" : "Free";
+    host.innerHTML = `
+      <div class="wb-userbar-inner">
+        <span>Welcome, <strong>${escapeHtml(display)}</strong></span>
+      </div>
+    `;
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, (m) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+    }[m]));
+  }
+
+  async function ensureProfileExists(supabase, user) {
+    // This requires an INSERT policy (see SETUP.md). If it fails, we just ignore it.
+    try {
+      await supabase.from("profiles").upsert({
+        id: user.id,
+        email: user.email,
+      });
+    } catch (_) { }
+  }
+
+  async function init() {
+    if (!window.getSupabaseClient) return;
+    const supabase = window.getSupabaseClient();
+
+    // 🚫 IMPORTANT:
+    // Signup pages are transitional and must not run the full auth lifecycle.
+    // Supabase does not create a session until email confirmation.
+    // Running auth resolution here causes unintended redirects.
+    const path = (window.location.pathname || "").toLowerCase();
+    const isSignupPage =
+      path.includes("signup_") ||
+      path.includes("choose_plan") ||
+      path.includes("welcome_") ||
+      path.includes("thank_you");
+
+    if (isSignupPage) {
+      // Render basic nav only, then STOP.
+      renderNav({ user: null, status: "free" });
+      renderWelcome({ user: null, status: "free" });
+      updatePlanPill("free");
+      updateStaticUpgradeLink({ user: null, status: "free" });
+      setNavReady();
+      return;
+    }
+
+    // Bootstrapped header to avoid any "logged-out" flash while we fetch session/user.
+    const cachedStatus = localStorage.getItem("wb_cached_status") || "free";
+    const cachedName = localStorage.getItem("wb_cached_name") || "";
+    const cachedEmail = localStorage.getItem("wb_cached_email") || "";
+    const hasSession = document.documentElement.classList.contains("wb-has-session");
+
+    if (hasSession) {
+      renderNav({ user: { email: cachedEmail, user_metadata: { full_name: cachedName } }, status: cachedStatus });
+      renderWelcome({ user: { email: cachedEmail, user_metadata: { full_name: cachedName } }, status: cachedStatus });
+      updatePlanPill(cachedStatus);
+      updateStaticUpgradeLink({ user: { email: cachedEmail, user_metadata: { full_name: cachedName } }, status: cachedStatus });
+    } else {
+      renderNav({ user: null, status: "free" });
+      renderWelcome({ user: null, status: "free" });
+      updatePlanPill("free");
+      updateStaticUpgradeLink({ user: null, status: "free" });
+    }
+    setNavReady();
+
+    // Page-specific guards (safe no-op on pages that don't have the expected elements)
+    try { wireSignupGuards(supabase); } catch (_) { }
+
+    // Now resolve the real session/user
+    const info = await getUserAndStatus(supabase);
+
+    // Cache for faster bootstraps on next navigation
+    try {
+      if (info.user) {
+        const name = info.user.user_metadata?.full_name || info.user.user_metadata?.name || "";
+        localStorage.setItem("wb_cached_status", info.status || "free");
+        localStorage.setItem("wb_cached_email", info.user.email || "");
+        localStorage.setItem("wb_cached_name", name);
+      } else {
+        localStorage.removeItem("wb_cached_status");
+        localStorage.removeItem("wb_cached_email");
+        localStorage.removeItem("wb_cached_name");
+      }
+    } catch (_) { }
+
+    // If logged in, ensure profile row exists (optional) then re-render with authoritative data
+    if (info.user) {
+      await ensureProfileExists(supabase, info.user);
+    }
+
+    const finalStatus = info.status || "free";
+    renderNav({ user: info.user, status: finalStatus });
+    renderWelcome({ user: info.user, status: finalStatus });
+    updatePlanPill(finalStatus);
+    updateStaticUpgradeLink({ user: info.user, status: finalStatus });
+    setNavReady();
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+})();
+
+
+// --- Signup UX guards ---
+function wireSignupGuards(supabase) {
+  const path = (window.location.pathname || "").toLowerCase();
+  const isSignupPage = path.includes("signup_") || path.includes("choose_plan");
+  if (!isSignupPage) return;
+
+  const msg = document.getElementById("wb-signup-msg");
+
+  // If already logged in, prevent creating another account
+  supabase.auth.getUser().then(({ data }) => {
+    if (data && data.user) {
+      if (msg) msg.innerHTML = 'You are already logged in. <a href="/account/">Go to Account</a> or <a href="/choose_plan.html">Upgrade to Pro</a>.';
+      // Disable obvious signup submit buttons
+      document.querySelectorAll("form button[type='submit'], form input[type='submit']").forEach(btn => {
+        btn.setAttribute("disabled", "disabled");
+        btn.style.opacity = "0.6";
+        btn.title = "You are already logged in.";
+      });
+      // Disable any "Create free account" style buttons if present
+      const freeBtn = document.getElementById("create-free") || document.getElementById("createFree");
+      if (freeBtn) {
+        freeBtn.setAttribute("disabled", "disabled");
+        freeBtn.style.opacity = "0.6";
+        freeBtn.title = "You are already logged in.";
+      }
     }
   });
-})();
+
+  // Helper to show "already registered" message on signup submit
+  window.__wbHandleSignupError = function (err) {
+    const msg2 = document.getElementById("wb-signup-msg");
+    const text = (err && (err.message || err.error_description || err.error)) ? (err.message || err.error_description || err.error) : String(err || "");
+    if (/already|exists|registered/i.test(text)) {
+      if (msg2) msg2.innerHTML = 'It looks like you already have an account. <a href="login.html">Log in instead</a>.';
+      return true;
+    }
+    return false;
+  }
+}
