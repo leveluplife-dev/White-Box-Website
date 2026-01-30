@@ -71,7 +71,7 @@
           status = data.is_pro;
         }
       }
-    } catch (_) {}
+    } catch (_) { }
 
     // Normalize to a string status we can consistently use across the UI.
     if (typeof status === "boolean") {
@@ -113,7 +113,7 @@
       renderNav({ user: null, status: "free" });
       renderWelcome({ user: null, status: "free" });
       setNavReady();
-      try { await window.getSupabaseClient().auth.signOut(); } catch (_) {}
+      try { await window.getSupabaseClient().auth.signOut(); } catch (_) { }
       // Optional: keep user on the current page; if you prefer redirect, uncomment next line
       // window.location.href = "index.html";
     });
@@ -154,63 +154,58 @@
       await supabase.from("profiles").upsert({
         id: user.id,
         email: user.email,
-    });
-  } catch (_) {}
+      });
+    } catch (_) { }
   }
 
   async function init() {
     if (!window.getSupabaseClient) return;
     const supabase = window.getSupabaseClient();
 
-    // Bootstrapped header to avoid any "logged-out" flash while we fetch session/user.
-    const cachedStatus = localStorage.getItem("wb_cached_status") || "free";
-    const cachedName = localStorage.getItem("wb_cached_name") || "";
-    const cachedEmail = localStorage.getItem("wb_cached_email") || "";
-    const hasSession = document.documentElement.classList.contains("wb-has-session");
+    const path = (window.location.pathname || "").toLowerCase();
 
-    if (hasSession) {
-      renderNav({ user: { email: cachedEmail, user_metadata: { full_name: cachedName } }, status: cachedStatus });
-      renderWelcome({ user: { email: cachedEmail, user_metadata: { full_name: cachedName } }, status: cachedStatus });
-      updatePlanPill(cachedStatus);
-      updateStaticUpgradeLink({ user: { email: cachedEmail, user_metadata: { full_name: cachedName } }, status: cachedStatus });
-    } else {
+    // 🚫 CRITICAL FIX:
+    // Signup + welcome pages are transitional.
+    // They must NOT resolve auth state or redirect.
+    const isTransitionalPage =
+      path.includes("signup") ||
+      path.includes("welcome") ||
+      path.includes("thank") ||
+      path.includes("pro_disclosure") ||
+      path.includes("pro_payment");
+
+    if (isTransitionalPage) {
+      // Render minimal logged-out UI and STOP
       renderNav({ user: null, status: "free" });
       renderWelcome({ user: null, status: "free" });
       updatePlanPill("free");
       updateStaticUpgradeLink({ user: null, status: "free" });
+      setNavReady();
+      return;
     }
-    setNavReady();
 
-    // Page-specific guards (safe no-op on pages that don't have the expected elements)
-    try { wireSignupGuards(supabase); } catch (_) {}
+    // --- NORMAL AUTH FLOW BELOW ---
 
-    // Now resolve the real session/user
     const info = await getUserAndStatus(supabase);
 
-    // Cache for faster bootstraps on next navigation
-    try {
-      if (info.user) {
-        const name = info.user.user_metadata?.full_name || info.user.user_metadata?.name || "";
-        localStorage.setItem("wb_cached_status", info.status || "free");
-        localStorage.setItem("wb_cached_email", info.user.email || "");
-        localStorage.setItem("wb_cached_name", name);
-      } else {
-        localStorage.removeItem("wb_cached_status");
-        localStorage.removeItem("wb_cached_email");
-        localStorage.removeItem("wb_cached_name");
-      }
-    } catch (_) {}
-
-    // If logged in, ensure profile row exists (optional) then re-render with authoritative data
     if (info.user) {
-      await ensureProfileExists(supabase, info.user);
+      const name =
+        info.user.user_metadata?.full_name ||
+        info.user.user_metadata?.name ||
+        "";
+      localStorage.setItem("wb_cached_status", info.status || "free");
+      localStorage.setItem("wb_cached_email", info.user.email || "");
+      localStorage.setItem("wb_cached_name", name);
+    } else {
+      localStorage.removeItem("wb_cached_status");
+      localStorage.removeItem("wb_cached_email");
+      localStorage.removeItem("wb_cached_name");
     }
 
-    const finalStatus = info.status || "free";
-    renderNav({ user: info.user, status: finalStatus });
-    renderWelcome({ user: info.user, status: finalStatus });
-    updatePlanPill(finalStatus);
-    updateStaticUpgradeLink({ user: info.user, status: finalStatus });
+    renderNav({ user: info.user, status: info.status });
+    renderWelcome({ user: info.user, status: info.status });
+    updatePlanPill(info.status);
+    updateStaticUpgradeLink({ user: info.user, status: info.status });
     setNavReady();
   }
 
@@ -219,7 +214,7 @@
 
 
 // --- Signup UX guards ---
-function wireSignupGuards(supabase){
+function wireSignupGuards(supabase) {
   const path = (window.location.pathname || "").toLowerCase();
   const isSignupPage = path.includes("signup_") || path.includes("choose_plan");
   if (!isSignupPage) return;
@@ -227,30 +222,30 @@ function wireSignupGuards(supabase){
   const msg = document.getElementById("wb-signup-msg");
 
   // If already logged in, prevent creating another account
-  supabase.auth.getUser().then(({data})=>{
-    if (data && data.user){
+  supabase.auth.getUser().then(({ data }) => {
+    if (data && data.user) {
       if (msg) msg.innerHTML = 'You are already logged in. <a href="/account/">Go to Account</a> or <a href="/choose_plan.html">Upgrade to Pro</a>.';
       // Disable obvious signup submit buttons
-      document.querySelectorAll("form button[type='submit'], form input[type='submit']").forEach(btn=>{
-        btn.setAttribute("disabled","disabled");
-        btn.style.opacity="0.6";
-        btn.title="You are already logged in.";
+      document.querySelectorAll("form button[type='submit'], form input[type='submit']").forEach(btn => {
+        btn.setAttribute("disabled", "disabled");
+        btn.style.opacity = "0.6";
+        btn.title = "You are already logged in.";
       });
       // Disable any "Create free account" style buttons if present
       const freeBtn = document.getElementById("create-free") || document.getElementById("createFree");
-      if (freeBtn){
-        freeBtn.setAttribute("disabled","disabled");
-        freeBtn.style.opacity="0.6";
-        freeBtn.title="You are already logged in.";
+      if (freeBtn) {
+        freeBtn.setAttribute("disabled", "disabled");
+        freeBtn.style.opacity = "0.6";
+        freeBtn.title = "You are already logged in.";
       }
     }
   });
 
   // Helper to show "already registered" message on signup submit
-  window.__wbHandleSignupError = function(err){
+  window.__wbHandleSignupError = function (err) {
     const msg2 = document.getElementById("wb-signup-msg");
-    const text = (err && (err.message || err.error_description || err.error)) ? (err.message || err.error_description || err.error) : String(err||"");
-    if (/already|exists|registered/i.test(text)){
+    const text = (err && (err.message || err.error_description || err.error)) ? (err.message || err.error_description || err.error) : String(err || "");
+    if (/already|exists|registered/i.test(text)) {
       if (msg2) msg2.innerHTML = 'It looks like you already have an account. <a href="login.html">Log in instead</a>.';
       return true;
     }
