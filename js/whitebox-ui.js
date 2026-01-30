@@ -162,6 +162,8 @@
     if (!window.getSupabaseClient) return;
     const supabase = window.getSupabaseClient();
 
+    try { wireSignupGuards(supabase); } catch (_) { }
+    
     const path = (window.location.pathname || "").toLowerCase();
 
     // 🚫 CRITICAL FIX:
@@ -216,39 +218,48 @@
 // --- Signup UX guards ---
 function wireSignupGuards(supabase) {
   const path = (window.location.pathname || "").toLowerCase();
-  const isSignupPage = path.includes("signup_") || path.includes("choose_plan");
+
+  const isSignupPage =
+    path.includes("signup") ||
+    path.includes("choose_plan") ||
+    path.includes("welcome") ||
+    path.includes("thank");
+
   if (!isSignupPage) return;
 
   const msg = document.getElementById("wb-signup-msg");
 
-  // If already logged in, prevent creating another account
-  supabase.auth.getUser().then(({ data }) => {
-    if (data && data.user) {
-      if (msg) msg.innerHTML = 'You are already logged in. <a href="/account/">Go to Account</a> or <a href="/choose_plan.html">Upgrade to Pro</a>.';
-      // Disable obvious signup submit buttons
-      document.querySelectorAll("form button[type='submit'], form input[type='submit']").forEach(btn => {
-        btn.setAttribute("disabled", "disabled");
-        btn.style.opacity = "0.6";
-        btn.title = "You are already logged in.";
-      });
-      // Disable any "Create free account" style buttons if present
-      const freeBtn = document.getElementById("create-free") || document.getElementById("createFree");
-      if (freeBtn) {
-        freeBtn.setAttribute("disabled", "disabled");
-        freeBtn.style.opacity = "0.6";
-        freeBtn.title = "You are already logged in.";
+  // Only block signup if the user has an ACTIVE SESSION
+  supabase.auth.getSession().then(({ data }) => {
+    if (data && data.session) {
+      if (msg) {
+        msg.innerHTML =
+          'You are already logged in. <a href="/account/">Go to Account</a> or <a href="/choose_plan.html">Upgrade to Pro</a>.';
       }
+
+      document
+        .querySelectorAll("form button[type='submit'], form input[type='submit']")
+        .forEach(btn => {
+          btn.disabled = true;
+          btn.style.opacity = "0.6";
+          btn.title = "You are already logged in.";
+        });
     }
   });
 
-  // Helper to show "already registered" message on signup submit
   window.__wbHandleSignupError = function (err) {
     const msg2 = document.getElementById("wb-signup-msg");
-    const text = (err && (err.message || err.error_description || err.error)) ? (err.message || err.error_description || err.error) : String(err || "");
-    if (/already|exists|registered/i.test(text)) {
-      if (msg2) msg2.innerHTML = 'It looks like you already have an account. <a href="login.html">Log in instead</a>.';
+    const text = String(
+      err?.message || err?.error_description || err || ""
+    ).toLowerCase();
+
+    if (/already|exists|registered/.test(text)) {
+      if (msg2) {
+        msg2.innerHTML =
+          'It looks like you already have an account. <a href="login.html">Log in instead</a>.';
+      }
       return true;
     }
     return false;
-  }
+  };
 }

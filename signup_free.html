@@ -529,6 +529,9 @@
       return ok;
     }
 
+    // IMPORTANT:
+    // This page intentionally does NOT redirect after signup.
+    // Supabase sessions are created only after email confirmation.
     async function bootstrap() {
       // If already logged in, redirect (hide free signup)
       try {
