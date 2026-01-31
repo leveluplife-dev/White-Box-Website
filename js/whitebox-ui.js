@@ -163,10 +163,10 @@
     const supabase = window.getSupabaseClient();
 
     try { wireSignupGuards(supabase); } catch (_) { }
-    
+
     const path = (window.location.pathname || "").toLowerCase();
 
-    // 🚫 CRITICAL FIX:
+    // CRITICAL FIX:
     // Signup + welcome pages are transitional.
     // They must NOT resolve auth state or redirect.
     const isTransitionalPage =
@@ -174,7 +174,8 @@
       path.includes("welcome") ||
       path.includes("thank") ||
       path.includes("pro_disclosure") ||
-      path.includes("pro_payment");
+      path.includes("pro_payment") ||
+      path.includes("confirmed");
 
     if (isTransitionalPage) {
       // Render minimal logged-out UI and STOP
@@ -225,6 +226,7 @@ function wireSignupGuards(supabase) {
     path.includes("welcome") ||
     path.includes("thank");
 
+  if (path.includes("confirmed")) return;
   if (!isSignupPage) return;
 
   const msg = document.getElementById("wb-signup-msg");
