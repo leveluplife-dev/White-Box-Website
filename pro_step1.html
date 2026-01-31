@@ -415,10 +415,6 @@
       <input type="password" id="confirm_password" name="confirm_password" required />
       <button class="button" id="continueBtn" type="submit" disabled>Create Account &amp; Continue</button>
     </form>
-    <p class="note">
-      This sign‑up form is a placeholder. Connect it to your user
-      management system and email verification flow when you’re ready.
-    </p>
     <div class="back-link">
       <a href="index.html">&larr; Back to home</a>
     </div>
@@ -496,49 +492,50 @@
 
     validateLive();
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-  let ok = true;
-  [name, email, pass, confirm].forEach(el => {
-    ok = validateField(el) && ok;
-  });
-  if (!ok) return;
+      let ok = true;
+      [name, email, pass, confirm].forEach(el => {
+        ok = validateField(el) && ok;
+      });
+      if (!ok) return;
 
-  btn.disabled = true;
-  btn.textContent = 'Creating account…';
+      btn.disabled = true;
+      btn.textContent = 'Creating account…';
 
-  const plan = new URLSearchParams(window.location.search).get('plan') || '6mo';
-  const supabase = window.getSupabaseClient();
+      const plan = new URLSearchParams(window.location.search).get('plan') || '6mo';
+      const supabase = window.getSupabaseClient();
 
-  const { error } = await supabase.auth.signUp({
-    email: email.value.trim(),
-    password: pass.value,
-    options: {
-      data: {
-        full_name: name.value.trim(),
-        is_pro_intent: true,
-        selected_plan: plan
+      const { error } = await supabase.auth.signUp({
+        email: email.value.trim(),
+        password: pass.value,
+        options: {
+          emailRedirectTo: 'https://whitebox-agency.com/auth/confirmed.html',
+          data: {
+            full_name: name.value.trim(),
+            is_pro_intent: true,
+            selected_plan: plan
+          }
+        }
+      });
+
+      if (error) {
+        btn.disabled = false;
+        btn.textContent = 'Create Account & Continue';
+        alert(error.message);
+        return;
       }
-    }
-  });
 
-  if (error) {
-    btn.disabled = false;
-    btn.textContent = 'Create Account & Continue';
-    alert(error.message);
-    return;
-  }
-
-  // ✅ STOP HERE — wait for email confirmation
-  form.innerHTML = `
+      // ✅ STOP HERE — wait for email confirmation
+      form.innerHTML = `
     <p><strong>Account created!</strong></p>
     <p>
       Please check your email and confirm your account before continuing.
       After confirming, return here and log in.
     </p>
   `;
-});
+    });
 
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -557,12 +554,12 @@ form.addEventListener('submit', async (e) => {
         if (!window.getSupabaseClient) return;
         const supabase = window.getSupabaseClient();
         const { data } = await supabase.auth.getSession();
-//        if (data?.session) { // Temporarily disabled auto-session redirect. You can re-enable it later, once confirmation logic is fully verified.
-//          const params = new URLSearchParams(window.location.search);
-//          const plan = params.get("plan") || "monthly";
-//          // After account creation, show early-access disclosure before payment.
-//          window.location.replace(`pro_disclosure.html?plan=${encodeURIComponent(plan)}`);
-//        }
+        //        if (data?.session) { // Temporarily disabled auto-session redirect. You can re-enable it later, once confirmation logic is fully verified.
+        //          const params = new URLSearchParams(window.location.search);
+        //          const plan = params.get("plan") || "monthly";
+        //          // After account creation, show early-access disclosure before payment.
+        //          window.location.replace(`pro_disclosure.html?plan=${encodeURIComponent(plan)}`);
+        //        }
       } catch (e) { }
     })();
   </script>

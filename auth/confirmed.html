@@ -1,0 +1,49 @@
+<body>
+
+    <div style="max-width:600px;margin:4rem auto;text-align:center;">
+        <h2>Confirming your account…</h2>
+        <p>Please wait while we finish setting things up.</p>
+    </div>
+
+    <script> // confirmed.html--This html file is for the supabase email confirmation to link to. The email links to this page that then links to the correct next in the flow for both free and pro versions
+        (async () => {
+            if (!window.getSupabaseClient) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            const supabase = window.getSupabaseClient();
+
+            let session = null;
+
+            // 🔁 Wait briefly for session to hydrate after email confirmation
+            for (let i = 0; i < 5; i++) {
+                const { data } = await supabase.auth.getSession();
+                if (data?.session) {
+                    session = data.session;
+                    break;
+                }
+                await new Promise(r => setTimeout(r, 400));
+            }
+
+            if (!session) {
+                // Last-resort fallback
+                window.location.href = '/login.html';
+                return;
+            }
+
+            const user = session.user;
+            const meta = user.user_metadata || {};
+
+            if (meta.is_pro_intent) {
+                const plan = meta.selected_plan || 'monthly';
+                window.location.replace(
+                    `/pro_disclosure.html?plan=${encodeURIComponent(plan)}`
+                );
+            } else {
+                window.location.replace('/free_welcome.html');
+            }
+        })();
+    </script>
+
+</body>

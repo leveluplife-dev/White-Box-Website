@@ -531,7 +531,7 @@
 
     // IMPORTANT:
     // This page intentionally does NOT redirect after signup.
-    // Supabase sessions are created only after email confirmation.
+    // Supabase creates the user immediately and session only after email confirmation.
     async function bootstrap() {
       const supabase = window.getSupabaseClient();
       // If already logged in, redirect (hide free signup)
@@ -594,6 +594,7 @@
             email,
             password,
             options: {
+              emailRedirectTo: 'https://whitebox-agency.com/auth/confirmed.html',
               data: {
                 full_name: name,
                 email_prefs_updates: true,
